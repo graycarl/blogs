@@ -7,23 +7,21 @@ SITENAME = u'HHBCARL'
 SITEURL = ''
 
 TIMEZONE = 'Europe/Paris'
-
 DEFAULT_LANG = u'en'
 
 # Feed generation is usually not desired when developing
+# FEED_ALL_RSS = "feeds/all.rss.xml"
 FEED_ALL_ATOM = None
 CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
 
 # Blogroll
 LINKS =  (('Pelican', 'http://getpelican.com/'),
-          ('Python.org', 'http://python.org/'),
-          ('Jinja2', 'http://jinja.pocoo.org/'),
-          ('You can modify those links in your config file', '#'),)
+          ('Python China', 'http://python-china.org/'))
 
 # Social widget
-SOCIAL = (('You can add links in your config file', '#'),
-          ('Another social link', '#'),)
+SOCIAL = (('GitHub', 'http://github.com/graycarl'),
+        ('Weibo', 'http://weibo.com/graycarl'),)
 
 DEFAULT_PAGINATION = 10
 
