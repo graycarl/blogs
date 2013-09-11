@@ -25,5 +25,7 @@ SOCIAL = (('GitHub', 'http://github.com/graycarl'),
 
 DEFAULT_PAGINATION = 10
 
+FILES_TO_COPY = (('extra/CNAME', 'CNAME'),)
+
 # Uncomment following line if you want document-relative URLs when developing
 #RELATIVE_URLS = True
