@@ -3,8 +3,6 @@ Date: 2013-09-11 09:53
 Tags: macos, goagent, daemon
 Slug: how-macos-launch-the-daemon-on-startup
 
-# Goagent在MacOS上的自启动的实现
-
 主要是想知道MacOS上面的开机自启动的程序是如何实现的。
 
 Goagent提供了一个Python脚本来添加自启动的配置，脚本如下
