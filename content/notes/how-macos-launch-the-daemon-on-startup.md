@@ -99,4 +99,3 @@ Goagent提供了一个Python脚本来添加自启动的配置，脚本如下
     sudo launchctl load $plist_filename
 
 其他详细的配置介绍可以参见[官方文档][http://developer.apple.com/library/mac/#documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html].
-
