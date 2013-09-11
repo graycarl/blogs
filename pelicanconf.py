@@ -5,6 +5,8 @@ from __future__ import unicode_literals
 AUTHOR = u'hongbo'
 SITENAME = u'HHBCARL'
 SITEURL = ''
+# DISQUS_SITENAME = "blog.graycarl.me"
+DUOSHUO_SITENAME = "carlblog"
 
 TIMEZONE = 'Europe/Paris'
 DEFAULT_LANG = u'en'
@@ -26,6 +28,8 @@ SOCIAL = (('GitHub', 'http://github.com/graycarl'),
 DEFAULT_PAGINATION = 10
 
 FILES_TO_COPY = (('extra/CNAME', 'CNAME'),)
+
+THEME = "/Users/carl/source/pelican-subtle/"
 
 # Uncomment following line if you want document-relative URLs when developing
 #RELATIVE_URLS = True

@@ -3,6 +3,7 @@ Date: 2013-09-11 09:53
 Tags: macos, goagent, daemon
 Slug: how-macos-launch-the-daemon-on-startup
 
+
 主要是想知道MacOS上面的开机自启动的程序是如何实现的。
 
 Goagent提供了一个Python脚本来添加自启动的配置，脚本如下
@@ -38,7 +39,27 @@ Goagent提供了一个Python脚本来添加自启动的配置，脚本如下
         <true/>
         <key>StandardErrorPath</key>
         <string>%(dirname)s/proxy.log</string>
-       ychain Failed!'
+        <key>StandardOutPath</key>
+        <string>%(dirname)s/proxy.log</string>
+        <key>UserName</key>
+        <string>root</string>
+        <key>WorkingDirectory</key>
+        <string>%(dirname)s</string>
+        <key>StandardOutPath</key>
+        <string>/var/log/goagent.log</string>
+        <key>StandardErrorPath</key>
+        <string>/var/log/goagent.log</string>
+    </dict>
+    </plist>''' % dict(dirname=os.path.abspath(os.path.dirname(__file__)))
+        filename = '/System/Library/LaunchDaemons/org.goagent.macos.plist'
+        print 'write plist to %s' % filename
+        with open(filename, 'wb') as fp:
+            fp.write(PLIST)
+        print 'write plist to %s done' % filename
+        print 'Adding CA.crt to system keychain, You may need to input your password...'
+        cmd = 'sudo security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" "%s/CA.crt"' % os.path.abspath(os.path.dirname(__file__))
+        if os.system(cmd) != 0:
+            print 'Adding CA.crt to system keychain Failed!'
             sys.exit(0)
         print 'Adding CA.crt to system keychain Done'
 
@@ -51,14 +72,14 @@ Goagent提供了一个Python脚本来添加自启动的配置，脚本如下
            main()
        except KeyboardInterrupt:
            pass
-}}}
+
 
 可以看出来，这个脚本做了两件事，添加自启动配置和添加CA证书。证书那个就先不关心了，就看下自启动都做了什么。
 
 其实就将一段xml配置写进了`/System/Library/LaunchDaemons/org.goagent.macos.plist`文件里面了，其他啥也没有。
 
 下面再看下这个文件的内容都有些啥。
-{{{ lang=xml >
+
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
     <plist version="1.0">
@@ -89,11 +110,13 @@ Goagent提供了一个Python脚本来添加自启动的配置，脚本如下
     </dict>
     </plist>
 
+
 现在服务已经可以在开机时候自动启动了。再参考一下官方文档，发现可以有一个命令来配合使用。
 
     停止服务
     sudo launchctl unload $plist_filename
     启动服务
     sudo launchctl load $plist_filename
+
 
 其他详细的配置介绍可以参见[官方文档][http://developer.apple.com/library/mac/#documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html].
