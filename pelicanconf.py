@@ -11,6 +11,9 @@ DUOSHUO_SITENAME = "carlblog"
 TIMEZONE = 'Europe/Paris'
 DEFAULT_LANG = u'en'
 
+# Baidu Tongji
+BAIDU_TONGJI = True
+
 # Feed generation is usually not desired when developing
 # FEED_ALL_RSS = "feeds/all.rss.xml"
 FEED_ALL_ATOM = None

@@ -1,4 +1,4 @@
-Title: 于知道SQLAlchemy里面filter到底是怎么回事了
+Title: 终于知道SQLAlchemy里面filter到底是怎么回事了
 Date: 2012-10-07 23:42
 Tags: python, sqlalchemy, sql
 Slug: filters-in-sqlalchemy
