@@ -11,6 +11,9 @@ DUOSHUO_SITENAME = "carlblog"
 TIMEZONE = 'Europe/Paris'
 DEFAULT_LANG = u'en'
 
+DISPLAY_CATEGORIES_ON_MENU = True
+DISPLAY_PAGES_ON_MEUN = False
+
 # Baidu Tongji
 BAIDU_TONGJI = True
 
@@ -29,10 +32,12 @@ SOCIAL = (('GitHub', 'http://github.com/graycarl'),
         ('Weibo', 'http://weibo.com/graycarl'),)
 
 DEFAULT_PAGINATION = 10
+SUMMARY_MAX_LENGTH = 20
 
 FILES_TO_COPY = (('extra/CNAME', 'CNAME'),)
 
-THEME = "/Users/carl/source/pelican-subtle/"
+# THEME = "/Users/carl/source/pelican-subtle/"
+THEME = "/Users/carl/source/pelican-hhb/"
 
 # Uncomment following line if you want document-relative URLs when developing
 #RELATIVE_URLS = True
