@@ -1,4 +1,4 @@
-Title: 关于我
+Title: about me
 Date: 2013-09-11 00:12
 Category: me
 Slug: about-me
