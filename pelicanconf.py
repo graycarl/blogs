@@ -3,7 +3,8 @@
 from __future__ import unicode_literals
 
 AUTHOR = u'hongbo'
-SITENAME = u'HHBCARL'
+SITENAME = u'Hongbo He'
+SITESUBTITLE = u'我要成为全端'
 SITEURL = ''
 # DISQUS_SITENAME = "blog.graycarl.me"
 DUOSHUO_SITENAME = "carlblog"
