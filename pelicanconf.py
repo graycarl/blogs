@@ -25,17 +25,18 @@ CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
 
 # Blogroll
-LINKS =  (('Pelican', 'http://getpelican.com/'),
-          ('Python China', 'http://python-china.org/'))
+LINKS = (('Pelican', 'http://getpelican.com/'),
+         ('Python China', 'http://python-china.org/'))
 
 # Social widget
 SOCIAL = (('GitHub', 'http://github.com/graycarl'),
-        ('Weibo', 'http://weibo.com/graycarl'),)
+          ('Weibo', 'http://weibo.com/graycarl'),)
 
 DEFAULT_PAGINATION = 10
 SUMMARY_MAX_LENGTH = 20
 
-FILES_TO_COPY = (('extra/CNAME', 'CNAME'),)
+FILES_TO_COPY = (('extra/CNAME', 'CNAME'),
+                 ('resources/hhbavatar.jpg', 'hhbavatar.jpg'))
 
 # THEME = "/Users/carl/source/pelican-subtle/"
 THEME = "/Users/carl/source/pelican-hhb/"
