@@ -243,14 +243,12 @@ UTC DateTime => Local DateTime
 对于非`aware`的对象，可以先将其转换成`aware`的再操作：
 
     >>> dt_naive = datetime.utcnow()
-    >>>rint datetime.now(tz_us)
-    2014-03-20 23:58:45.427634-07:00
-    >>> print datetime.now(pytz.UTC)
-    2014-03-21 06:58:56.507517+00:00
-
-并且它是`aware`的
-
-    cn = dt_utc.astimezone(tz_cn)
+    >>> print dt_naive
+    2014-03-21 07:05:58.194690
+    >>> dt_utc = dt_naive.replace(tzinfo=pytz.UTC)
+    >>> print dt_utc
+    2014-03-21 07:05:58.194690+00:00
+    >>> dt_cn = dt_utc.astimezone(tz_cn)
     >>> print dt_cn
     2014-03-21 15:05:58.194690+08:00
 
