@@ -38,8 +38,8 @@ SUMMARY_MAX_LENGTH = 20
 FILES_TO_COPY = (('extra/CNAME', 'CNAME'),
                  ('resources/hhbavatar.jpg', 'hhbavatar.jpg'))
 
-# THEME = "/Users/carl/source/pelican-subtle/"
-THEME = "/Users/carl/source/pelican-hhb/"
+THEME = "pelican-hhb"
+# THEME = "/Users/carl/source/pelican-hhb/"
 
 # Uncomment following line if you want document-relative URLs when developing
 #RELATIVE_URLS = True

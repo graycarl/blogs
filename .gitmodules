@@ -1,0 +1,3 @@
+[submodule "pelican-hhb"]
+	path = pelican-hhb
+	url = https://github.com/graycarl/pelican-hhb.git
