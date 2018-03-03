@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>PythonChallenge[4-5] - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li class="uk-active"><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/python-challenge-4-5.html" rel="bookmark"
+                title="Permalink to PythonChallenge[4-5]">PythonChallenge[4-5]</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-09-03T01:39:00+08:00">2012-09-03 01:39</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <h2>第四题</h2>
+<p>打开上一题的地址后，出来了提示让我们把地址改成<a href="http://www.pythonchallenge.com/pc/def/linkedlist.php">http://www.pythonchallenge.com/pc/def/linkedlist.php</a>。</p>
+<p>再开地址后，出现一张图片。点击图片，跳到地址<a href="http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=12345">http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=12345</a>。内容为</p>
+<blockquote>
+<p>and the next nothing is 44827</p>
+</blockquote>
+<p>再进连接<a href="http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=44827">http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=44827</a>，内容为</p>
+<blockquote>
+<p>and the next nothing is 45439</p>
+</blockquote>
+<p>看来我们是要找到这个规律了。</p>
+<p>先把这些数字按顺序列出来</p>
+<blockquote>
+<p>12345
+44827
+45439
+94485
+72198
+80992
+8880
+40961</p>
+</blockquote>
+<p>靠，看来是没有规律的，只能用程序自动往下走了。</p>
+<div class="highlight"><pre><span></span><span class="c1">#work in python3</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
+
+<span class="n">baseurl</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=&quot;</span>
+<span class="nb">next</span> <span class="o">=</span> <span class="s2">&quot;12345&quot;</span>
+
+<span class="k">while</span><span class="p">(</span><span class="nb">next</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;open: &quot;</span> <span class="o">+</span> <span class="n">baseurl</span> <span class="o">+</span> <span class="nb">next</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">baseurl</span><span class="o">+</span><span class="nb">next</span><span class="p">)</span> <span class="k">as</span> <span class="n">pf</span><span class="p">:</span>
+        <span class="nb">str</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;get: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;and the next nothing is&quot;</span><span class="p">):</span>
+            <span class="nb">next</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;next: &quot;</span><span class="o">+</span><span class="nb">next</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;End&quot;</span><span class="p">)</span>
+            <span class="k">break</span>
+</pre></div>
+
+
+<p>把程序跑起来，然后就等着吧。</p>
+<blockquote>
+<p>......
+open: http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=75635
+get: and the next nothing is 52899
+next: 52899
+open: http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=52899
+get: and the next nothing is 66831
+next: 66831
+open: http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=66831
+get: peak.html
+End</p>
+</blockquote>
+<p>好了，找到下一关入口了<a href="http://www.pythonchallenge.com/pc/def/peak.html">http://www.pythonchallenge.com/pc/def/peak.html</a>。</p>
+<h2>第五题</h2>
+<p>一座叫peak hell的山，html里面有这么一段</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;peakhell</span> <span class="na">src=</span><span class="s">&quot;banner.p&quot;</span><span class="nt">&gt;</span> <span class="nt">&lt;/peakhell&gt;</span>
+</pre></div>
+
+
+<p>再访问<a href="http://www.pythonchallenge.com/pc/def/banner.p">http://www.pythonchallenge.com/pc/def/banner.p</a>得到一个文件。打开后里面实在是看不懂。</p>
+<blockquote>
+<p>(lp0
+(lp1
+(S' '
+p2
+I95
+tp3
+aa(lp4
+(g2
+I14
+tp5
+a(S'#'
+p6
+...</p>
+</blockquote>
+<p>没法办法了，做个弊吧。上网找到线索，原来peak hell是想指的是python的pickle模块，我们需要用这个模块反序列化这个文件内容，再打印出来</p>
+<div class="highlight"><pre><span></span><span class="c1"># work on python3</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;banner.p&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="nb">file</span><span class="p">:</span>
+    <span class="n">pick</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="nb">file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">pick</span><span class="p">)</span>
+</pre></div>
+
+
+<p>得到如下玩意
+<blockquote>
+[(' ', 95)]<br/>
+[(' ', 14), ('#', 5), (' ', 70), ('#', 5), (' ', 1)]<br/>
+[(' ', 15), ('#', 4), (' ', 71), ('#', 4), (' ', 1)]<br/>
+[(' ', 15), ('#', 4), (' ', 71), ('#', 4), (' ', 1)]<br/>
+[(' ', 15), ('#', 4), (' ', 71), ('#', 4), (' ', 1)]<br/>
+[(' ', 15), ('#', 4), (' ', 71), ('#', 4), (' ', 1)]<br/>
+[(' ', 15), ('#', 4), (' ', 71), ('#', 4), (' ', 1)]<br/>
+[(' ', 15), ('#', 4), (' ', 71), ('#', 4), (' ', 1)]<br/>
+[(' ', 15), ('#', 4), (' ', 71), ('#', 4), (' ', 1)]<br/>
+......
+</blockquote></p>
+<p>好像知道要干什么了，它是想用"#"拼出来什么东西吧，那就继续</p>
+<div class="highlight"><pre><span></span><span class="c1">#work in python3</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;banner.p&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="nb">file</span><span class="p">:</span>
+    <span class="n">pick</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="nb">file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">pick</span><span class="p">:</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">char</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">char</span><span class="o">*</span><span class="n">num</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>执行结果，相当帅气</p>
+<blockquote>
+<pre>
+
+              #####                                                                      #####
+               ####                                                                       ####
+               ####                                                                       ####
+               ####                                                                       ####
+               ####                                                                       ####
+               ####                                                                       ####
+               ####                                                                       ####
+               ####                                                                       ####
+      ###      ####   ###         ###       #####   ###    #####   ###          ###       ####
+   ###   ##    #### #######     ##  ###      #### #######   #### #######     ###  ###     ####
+  ###     ###  #####    ####   ###   ####    #####    ####  #####    ####   ###     ###   ####
+ ###           ####     ####   ###    ###    ####     ####  ####     ####  ###      ####  ####
+ ###           ####     ####          ###    ####     ####  ####     ####  ###       ###  ####
+####           ####     ####     ##   ###    ####     ####  ####     #### ####       ###  ####
+####           ####     ####   ##########    ####     ####  ####     #### ##############  ####
+####           ####     ####  ###    ####    ####     ####  ####     #### ####            ####
+####           ####     #### ####     ###    ####     ####  ####     #### ####            ####
+ ###           ####     #### ####     ###    ####     ####  ####     ####  ###            ####
+  ###      ##  ####     ####  ###    ####    ####     ####  ####     ####   ###      ##   ####
+   ###    ##   ####     ####   ###########   ####     ####  ####     ####    ###    ##    ####
+      ###     ######    #####    ##    #### ######    ###########    #####      ###      ######
+</pre>
+</blockquote>
+
+<p>好了，这个应该就是入口了<a href="http://www.pythonchallenge.com/pc/def/channel.html">http://www.pythonchallenge.com/pc/def/channel.html</a>。</p>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

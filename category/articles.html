@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li class="uk-active"><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+
+<div class="post-list">
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/knowledge-and-experience.html" rel="bookmark" title="Permalink to 知识在于积累？知识在于经历">知识在于积累？知识在于经历</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-06-06T15:02:00+08:00">2014-06-06 15:02</abbr></p>
+        <p class="uk-article-content"> <p>今天折腾代码的时候突然有了感悟，也可以说是自己给自己找到的合理的安慰。</p>
+<p>我的工作就是在实现各种各样的功能，解决各种各样的问题，所以在这个过程中查阅了无数的资料，用到了无数的技术。</p>
+<p>然后，有一天，在寻找一个问题的解决方案的时候，我发现这个问题我以前经历过的，但是现在忘了。于是，只能重新重新在网络上查阅资料。</p>
+<p>每当遇到这样的情况的时候我都会很郁闷，感觉这本来是自己已经积累的知识就这么“挥发”了，只能重新积累，等待什么时候再次“挥发”了。</p>
+<p>现在这种情况遇到的越来越频繁，让我觉得自己在各种“重复过程“中浪费时间。但我知道事情并不是这样的，只是缺少对这种现象的一种”正确“的看待方式。</p>
+<p>于是，标题的文字就这么出来了。</p>
+<p>真正的知识并不是对一种技术的熟悉，并不是对某种方案的实现细节的记忆，正真的知识应该是”对这个世界的理解“。当我们对这个世界真正理解之后，所有的”方案“和”技术“等玩意在需要的时候就会不自觉的出现了。</p>
+<p>为什么说是”不自觉“的出现呢，因为它可能是在我花了不到一分钟的时间的”Google“后出现，可能是在我花了一分钟时间了解了某个技术的大体框架之后立刻就”猜“出了它的详细用法 …</p> </p>
+        <p><a class="uk-button read-on" href="/knowledge-and-experience.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/python-datetime-and-timezone.html" rel="bookmark" title="Permalink to Python datetime and timezone">Python datetime and timezone</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-03-21T15:17:00+08:00">2014-03-21 15:17</abbr></p>
+        <p class="uk-article-content"> <p>悲剧的发现之前一直都理解有误啊，仔细读了一遍文档，这里做个记录。</p>
+<h2>基本类型</h2>
+<p><code>datetime</code>库里面主要有这么五种数据：</p>
+<ul>
+<li>date</li>
+<li>datetime</li>
+<li>time</li>
+<li>timedelta</li>
+<li>tzinfo</li>
+</ul>
+<h3>date</h3>
+<p><code>date</code>表示纯粹的日期数据，即“2020-02-21”这种，不含时区概念。</p>
+<p>文档里面有这么一句：</p>
+<blockquote>
+<p>January 1 of year 1 is called day number 1, January 2 of year 1 is called day number 2, and so on.</p>
+</blockquote>
+<p>在加上<code>date.fromordinal</code>和<code>date.toorinal</code>这两个方法，我觉得其内部可能就是用 …</p> </p>
+        <p><a class="uk-button read-on" href="/python-datetime-and-timezone.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/git-split-subdir-to-submodule.html" rel="bookmark" title="Permalink to 如何把GIT仓库的子目录独立为子模块">如何把GIT仓库的子目录独立为子模块</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2013-12-08T12:27:00+08:00">2013-12-08 12:27</abbr></p>
+        <p class="uk-article-content"> <p>最近在给考拉山后台添砖加瓦的过程中，发现了两个问题：</p>
+<ul>
+<li>对于当前的同一套逻辑，我已经有4个view层工作在上面了，马上还要再加上一个view，专门用来显示分享出去的页面；</li>
+<li>接下来还要再加上同步evernote这种异步任务；</li>
+<li>而现在这些代码都还在同一个GIT仓库中；</li>
+</ul>
+<p>这种混乱的场景已经快让我不能忍了，于是乎决定把这个大仓库中的所有<code>business</code>和<code>model</code>的代码独立到一个<code>submodule</code>中，这样接下来就可以进一步的拆分各个view让它们都引用这个<code>submodule</code>。</p>
+<p>还好之前的代码结构还算比较好，所有<code>business</code>和<code>model</code>的代码都在一个名为<code>coloshine</code>的目录中，所以接下来只要解决如何把一个子目录独立成一个<code>submodule</code>并且保存分支和提交历史这个问题就好了。</p>
+<p>对GIT还没精通到这个程度，只能上网Google，现贴出方案；</p>
+<h2>准备</h2>
+<p>当前的目录结构如下：</p>
+<div class="highlight"><pre><span></span>coloshine-server
+├── ....
+├── coloshine  -&gt; 想要变成子模块的目录
+├── coloshine_account
+├── coloshine_admin
+├── coloshine_api
+├── coloshine_pics
+├── ...
+</pre></div>
+
+
+<p>Clone一个新的仓库到目录<code>coloshine</code></p>
+<div class="highlight"><pre><span></span>git clone coloshine-server coloshine
+</pre></div>
+
+
+<p>这时<code>coloshine</code>仓库的目录结构应该是和 …</p> </p>
+        <p><a class="uk-button read-on" href="/git-split-subdir-to-submodule.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/Flask-start-sub-request.html" rel="bookmark" title="Permalink to Flask如何在请求处理过程中创建并处理一个子请求">Flask如何在请求处理过程中创建并处理一个子请求</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2013-09-13T13:30:00+08:00">2013-09-13 13:30</abbr></p>
+        <p class="uk-article-content"> <h2>起因</h2>
+<p>之前已经用<code>flask</code>实现了<code>restful</code>的接口，接口主要是提供给移动平台的App使用的。</p>
+<p>之前看过WunderList的Web的上收发请求使用了一种<strong>批量</strong>的请求来一次性处理多个请求的使用方法，又加上移动平台App的网络和性能的问题，觉得我也应该做这么一个<strong>批量</strong>接口，基本定义如下：</p>
+<div class="highlight"><pre><span></span><span class="n">method</span><span class="o">:</span> <span class="n">post</span>
+<span class="n">uri</span><span class="o">:</span> <span class="sr">/app/</span><span class="n">batch</span>
+<span class="n">data</span><span class="o">:[</span><span class="n">json</span><span class="o">]</span>
+    <span class="o">{</span>
+        <span class="s2">&quot;on-fail&quot;</span><span class="o">:</span> <span class="s2">&quot;ignore|stop&quot;</span><span class="o">,</span>
+        <span class="s2">&quot;requests&quot;</span><span class="o">:</span> <span class="o">[</span>
+            <span class="o">{</span>
+                <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;get&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;uri&quot;</span><span class="o">:</span> <span class="s2">&quot;/user/~me&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;args&quot;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="s2">&quot;arg1&quot;</span><span class="o">:</span> <span class="s2">&quot;value1&quot;</span><span class="o">,</span>
+                    <span class="s2">&quot;arg2&quot;</span><span class="o">:</span> <span class="s2">&quot;value2&quot;</span>
+                <span class="o">}</span>
+            <span class="o">},</span>
+            <span class="o">{</span>
+                <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;put&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;uri&quot;</span><span class="o">:</span> <span class="s2">&quot;/user/~me/oauth/QZONE&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;args&quot;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="s2">&quot;arg1&quot;</span><span class="o">:</span> <span class="s2">&quot;value1&quot;</span><span class="o">,</span>
+                    <span class="s2">&quot;arg2&quot;</span><span class="o">:</span> <span class="s2">&quot;value2&quot;</span><span class="o">,</span>
+                <span class="o">}</span>
+            <span class="o">},</span>
+            <span class="o">....</span>
+        <span class="o">]</span>
+    <span class="o">}</span>
+
+<span class="k">return</span><span class="o">:[</span><span class="n">json …</span></pre></div> </p>
+        <p><a class="uk-button read-on" href="/Flask-start-sub-request.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/filters-in-sqlalchemy.html" rel="bookmark" title="Permalink to 终于知道SQLAlchemy里面filter到底是怎么回事了">终于知道SQLAlchemy里面filter到底是怎么回事了</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-10-07T23:42:00+08:00">2012-10-07 23:42</abbr></p>
+        <p class="uk-article-content"> <p>之前一直对这个很迷惑，为什么SQLAlchemy的代码可以这么写</p>
+<div class="highlight"><pre><span></span><span class="n">reply_list</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CommentBase</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="n">User</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">CommentBase</span><span class="o">.</span><span class="n">user_id</span><span class="o">==</span><span class="n">User</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">CommentBase</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">op</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">)(</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">CommentBase</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">id_list</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</pre></div>
+
+
+<p>那个扎眼的"=="难道不会直接把CommentBase.user_id和User.id比较出结果再传入filter函数吗，filter是怎么知道这个比较逻辑并生成对应的SQL语句的呢。</p>
+<p>在网上找了好久也没有找到答案，因为我一直以为在function的内部是可以有方法得到该方法被调用的时候传入的表达式（表达式字串）的。</p>
+<p>直到后来看到了StackOverFlow上的这么一条：</p>
+<blockquote>
+<p>What advantage is there to overriding the == operator in an ORM?</p>
+<p>Apparently alot …</p></blockquote> </p>
+        <p><a class="uk-button read-on" href="/filters-in-sqlalchemy.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/vim-python3-autocomplete-on-windows.html" rel="bookmark" title="Permalink to Windows下gVim使用python3的智能提示">Windows下gVim使用python3的智能提示</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-09-17T00:58:00+08:00">2012-09-17 00:58</abbr></p>
+        <p class="uk-article-content"> <p>之前一直以为windows下的gvim是不支持python的只能提示(<code>Ctrl-x Ctrl-o</code>)的，因为每次执行都会被提示需要在编译时加上<code>+python</code>。今天又上网搜了下该问题，发现貌似并不是这个问题。</p>
+<p>在gvim中执行<code>:version</code>输出如下</p>
+<div class="highlight"><pre><span></span>VIM - Vi IMproved 7.3 (2010 Aug 15, compiled Oct 27 2010 17:59:02)
+MS-Windows 32 位图形界面版本 带 OLE 支持
+包含补丁: 1-46
+编译者 Bram@KIBAALE
+大型版本 带图形界面。  可使用(+)与不可使用(-)的功能:
++arabic +autocmd +balloon_eval +browse ++builtin_terms +byte_offset +cindent
++clientserver …</pre></div> </p>
+        <p><a class="uk-button read-on" href="/vim-python3-autocomplete-on-windows.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/python-challenge-18-19.html" rel="bookmark" title="Permalink to PythonChallenge[18-19]">PythonChallenge[18-19]</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-09-06T22:02:00+08:00">2012-09-06 22:02</abbr></p>
+        <p class="uk-article-content"> <h2>第十八题</h2>
+<p>这题太难，提示都是网上找到的，哎，看来智商的确不够啊。</p>
+<p>一开始是两张图片，几乎完全一样，只有亮度不同。标题是<strong>can you tell the diffrence</strong>，源码中有<strong>it is more obvious that you might think</strong>，不同的就是亮度嘛，所以下一步就是访问<a href="http://www.pythonchallenge.com/pc/return/brightness.html">http://www.pythonchallenge.com/pc/return/brightness.html</a>。</p>
+<div class="highlight"><pre><span></span>......
+    <span class="p">&lt;</span><span class="nt">font</span> <span class="na">color</span><span class="o">=</span><span class="s">&quot;gold&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;balloons.jpg&quot;</span> <span class="na">border</span><span class="o">=</span><span class="s">&quot;0&quot;</span><span class="p">/&gt;</span>
+<span class="c">&lt;!-- it is more obvious that what you might …</span></pre></div> </p>
+        <p><a class="uk-button read-on" href="/python-challenge-18-19.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/python-challenge-16-17.html" rel="bookmark" title="Permalink to PythonChallenge[16-17]">PythonChallenge[16-17]</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-09-05T01:37:00+08:00">2012-09-05 01:37</abbr></p>
+        <p class="uk-article-content"> <h2>第十六题</h2>
+<p>打开页面还是图片，里面有一些杂乱的原色。可以注意到，几乎像素的每一行都有一个紫色短线。</p>
+<p>页面的标题是<em>let me get this straight</em>，把它弄直？</p>
+<div class="highlight"><pre><span></span><span class="c1">#work on python2</span>
+<span class="kn">import</span> <span class="nn">Image</span>
+
+<span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;mozart.gif&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+<span class="n">new</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+<span class="n">size</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span>
+<span class="k">print</span> <span class="n">image</span><span class="o">.</span><span class="n">mode</span>
+
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+    <span class="n">old</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for …</span></pre></div> </p>
+        <p><a class="uk-button read-on" href="/python-challenge-16-17.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/python-challenge-14-15.html" rel="bookmark" title="Permalink to PythonChallenge[14-15]">PythonChallenge[14-15]</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-09-04T21:37:00+08:00">2012-09-04 21:37</abbr></p>
+        <p class="uk-article-content"> <h2>第十四题</h2>
+<p>打开页面，一张面包图片，下面是一个类似条形码的小图。</p>
+<p>再看下html</p>
+<div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>walk around<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/css&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;../style.css&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">center</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;italy.jpg&quot;</span><span class="p">&gt;&lt;</span><span class="nt">br</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">br</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- remember: 100*100 = (100+99+99+98) + (...  --&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;wire.png&quot;</span> <span class="na">width</span><span class="o">=</span><span class="s">&quot;100&quot;</span> <span class="na">height</span><span class="o">=</span><span class="s">&quot;100&quot;</span><span class="p">&gt;</span>
+
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<p>那段注释肯定是关键点之一，正好与图片长宽一样。</p>
+<p>不管怎样，先把图片弄下来吧 …</p> </p>
+        <p><a class="uk-button read-on" href="/python-challenge-14-15.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/python-challenge-12-13.html" rel="bookmark" title="Permalink to PythonChallenge[12-13]">PythonChallenge[12-13]</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-09-03T20:16:00+08:00">2012-09-03 20:16</abbr></p>
+        <p class="uk-article-content"> <h2>第十二题</h2>
+<p>打开页面，又是图片，上面一个人正在发扑克牌，没有啥其他信息了。</p>
+<p>以为又是图片处理，但是看了半天图片，也没有找到什么线索，只好又依靠Google了。</p>
+<p>在html中看见图片的名称为evil1.jpg，那么是不是还有evil2.jpg呢？打开<a href="http://www.pythonchallenge.com/pc/return/evil2.jpg">http://www.pythonchallenge.com/pc/return/evil2.jpg</a>，果然又是一张图片，上面说不是jpg，是gfx。在打开<a href="http://www.pythonchallenge.com/pc/return/evil2.gfx">http://www.pythonchallenge.com/pc/return/evil2.gfx</a>得到evil2.gfx文件。</p>
+<p>关于这个文件的用法，是根据那张扑克牌的图片得来的，扑克牌正在被分发成5组，这个文件也应该分发成5个文件。（能想到吗，反正我是想不到)</p>
+<div class="highlight"><pre><span></span><span class="c1"># work on python3</span>
+<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/tmp/evil2.gfx …</span></pre></div> </p>
+        <p><a class="uk-button read-on" href="/python-challenge-12-13.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/python-challenge-10-11.html" rel="bookmark" title="Permalink to PythonChallenge[10-11]">PythonChallenge[10-11]</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-09-03T17:55:00+08:00">2012-09-03 17:55</abbr></p>
+        <p class="uk-article-content"> <h2>第十题</h2>
+<p>打开页面是一张图片，下面给出问题</p>
+<blockquote>
+<p>len(a[30]) = ?</p>
+</blockquote>
+<p>点击图片出现如下内容</p>
+<blockquote>
+<p>a = [1, 11, 21, 1211, 111221,</p>
+</blockquote>
+<p>就是找规律了。本来以为不能，结果耗了好长时间也没发现规律。只能又是依靠google了。</p>
+<p>规律就是，队列中的每个元素都是对前一个元素的描述</p>
+<blockquote>
+<p>1
+11 表示前一个元素是1个1
+21 表示前一个元素的2个1
+1211 表示前一个元素是1个2和1个1
+......</p>
+</blockquote>
+<p>好了，<em>找到</em>规律就可以写代码了。</p>
+<div class="highlight"><pre><span></span><span class="c1"># work on python3</span>
+<span class="k">def</span> <span class="nf">descrip</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="n">des</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">curchar</span><span class="p">,</span><span class="n">curcount</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">0</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="n">curchar</span><span class="p">:</span>
+            <span class="n">curcount</span> <span class="o">+=</span> <span class="mi">1 …</span></pre></div> </p>
+        <p><a class="uk-button read-on" href="/python-challenge-10-11.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/python-challenge-8-9.html" rel="bookmark" title="Permalink to PythonChallenge[8-9]">PythonChallenge[8-9]</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-09-03T05:07:00+08:00">2012-09-03 05:07</abbr></p>
+        <p class="uk-article-content"> <h2>第八题</h2>
+<p>打开<a href="http://www.pythonchallenge.com/pc/def/integrity.html">http://www.pythonchallenge.com/pc/def/integrity.html</a>后又是一个图片，下面一句话</p>
+<blockquote>
+<p>Where is the missing link?</p>
+</blockquote>
+<p>再看html源码，最后有两行数据</p>
+<div class="highlight"><pre><span></span>    ......
+    <span class="p">&lt;</span><span class="nt">font</span> <span class="na">color</span><span class="o">=</span><span class="s">&quot;#303030&quot;</span> <span class="na">size</span><span class="o">=</span><span class="s">&quot;+2&quot;</span><span class="p">&gt;</span>Where is the missing link?<span class="p">&lt;/</span><span class="nt">font</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!--</span>
+<span class="c">un: &#39;BZh91AY&amp;SYA\xaf\x82\r\x00\x00\x01\x01\x80\x02\xc0\x02\x00 \x00!\x9ah3M\x07 …</span></pre></div> </p>
+        <p><a class="uk-button read-on" href="/python-challenge-8-9.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/python-challenge-6-7.html" rel="bookmark" title="Permalink to PythonChallenge[6-7]">PythonChallenge[6-7]</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-09-03T02:32:00+08:00">2012-09-03 02:32</abbr></p>
+        <p class="uk-article-content"> <h2>第六题</h2>
+<p>打开<a href="http://www.pythonchallenge.com/pc/def/channel.html">http://www.pythonchallenge.com/pc/def/channel.html</a>看到的又是一幅图片，还是得看看html源码</p>
+<div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span> <span class="c">&lt;!-- &lt;-- zip --&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>now there are pairs<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/css&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;../style.css&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">center</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;channel.jpg&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">br</span><span class="p">/&gt;</span>
+......
+</pre></div>
+
+
+<p>嗯，好像没啥特殊的，除了这个"zip"。好吧，又被难住了，上网找下线索，说是把网址改成zip结尾的。</p>
+<p>得到一个zip文件，打开看看，有个readme</p>
+<blockquote>
+<p>welcome …</p></blockquote> </p>
+        <p><a class="uk-button read-on" href="/python-challenge-6-7.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/python-challenge-4-5.html" rel="bookmark" title="Permalink to PythonChallenge[4-5]">PythonChallenge[4-5]</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-09-03T01:39:00+08:00">2012-09-03 01:39</abbr></p>
+        <p class="uk-article-content"> <h2>第四题</h2>
+<p>打开上一题的地址后，出来了提示让我们把地址改成<a href="http://www.pythonchallenge.com/pc/def/linkedlist.php">http://www.pythonchallenge.com/pc/def/linkedlist.php</a>。</p>
+<p>再开地址后，出现一张图片。点击图片，跳到地址<a href="http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=12345">http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=12345</a>。内容为</p>
+<blockquote>
+<p>and the next nothing is 44827</p>
+</blockquote>
+<p>再进连接<a href="http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=44827">http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=44827</a>，内容为</p>
+<blockquote>
+<p>and the next nothing is 45439 …</p></blockquote> </p>
+        <p><a class="uk-button read-on" href="/python-challenge-4-5.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/how-the-web-works-chinese.html" rel="bookmark" title="Permalink to 翻译：How the web works - cgi and http explained">翻译：How the web works - cgi and http explained</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-09-01T17:16:00+08:00">2012-09-01 17:16</abbr></p>
+        <p class="uk-article-content"> <p>发现这是一篇1999年的文章，12年了都，觉得时间过的好快，那时的我应该根本就没见过电脑吧。<a href="http://www.garshol.priv.no/download/text/http-tut.html">原文地址</a></p>
+<h2>介绍</h2>
+<h3>关于本文</h3>
+<p>本文的目的是就当前web技术的工作原理给出基本解释。很多社区论坛的文章中很明确的表明了我们应该懂这些知识，但是我没有在网络上找到一篇能够完整介绍相关技术的文章，所以我决定将这些相关文章的内容集合到本文中，完整的介绍Web技术的工作原理。希望这对你有用。</p>
+<p>本文涵盖了http协议（用于传输和接受网页）以及一些服务端程序和脚本的相关技术。本文假定你已经知道如何如构建一个网页，对html有较好的理解，并且对url有基本了解（url其实就是一个地址，你想要获取的文档的地址）。</p>
+<p>本文可能存在不完善的地方，欢迎反馈。如果你不是一名专业人员，发现对本文有任何不懂的地方，或者发现本文并没有回答你所有的疑问，欢迎联系我。同样欢迎对本文的修正和意见。</p>
+<h3>一些背景</h3>
+<p>当你在上网时，情况通常是这样的：你坐在你的电脑前，想要查看网络上的一篇文章，并且你知道这篇文章的地址(url)。</p>
+<p>由于你想访问的这篇文章很可能是在离你非常遥远的地球的的某个角落的硬盘上，你需要一些条件才能来访问到它。首先是你的浏览器，你会打开你的浏览器，将url写入地址栏（或者其他方法告诉浏览器地址，比如点击一个超链接）。</p>
+<p>当然，这还不够，你的浏览器不可能直接从遥远角落的另一块磁盘上读出数据。为了你能够访问到这篇文章，存放这篇文章的计算机上必须运行一个网络服务器(web server)。Web …</p> </p>
+        <p><a class="uk-button read-on" href="/how-the-web-works-chinese.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/bottle-py-analyse-2.html" rel="bookmark" title="Permalink to Bottle.py分析2">Bottle.py分析2</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-08-24T04:00:00+08:00">2012-08-24 04:00</abbr></p>
+        <p class="uk-article-content"> <p>接上篇，前面分析了Bottle里面的<code>route</code>和<code>run</code>是怎么工作的，以及它们之间的联系；接下来，我们从<code>bottle.run</code>入手，分析它是如何运行起来的。</p>
+<h2>bottle.run</h2>
+<p>先把代码列出来：</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">server</span><span class="o">=</span><span class="s1">&#39;wsgiref&#39;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">,</span>
+        <span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">reloader</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">plugins</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="o">...</span><span class="err">此处省略</span><span class="o">...</span>
+    <span class="k">if</span> <span class="n">NORUN</span><span class="p">:</span> <span class="k">return</span>
+    <span class="k">if</span> <span class="n">reloader</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">environ …</span></pre></div> </p>
+        <p><a class="uk-button read-on" href="/bottle-py-analyse-2.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/bottle-py-analyse-1.html" rel="bookmark" title="Permalink to Bottle.py分析1">Bottle.py分析1</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-08-24T03:52:00+08:00">2012-08-24 03:52</abbr></p>
+        <p class="uk-article-content"> <h2>前言</h2>
+<p>想下一份工作尝试一下python的web开发，正好趁着这个找工作的间隙时间自己充充电，打算用python的一个web开发框架做一个自己的博客。</p>
+<p>选定了使用一个精简的web框架bottle来做开发。其他的一个更成熟的框架比如django等以前也大概了解过，为什么选择这个精简框架呢？主要是想重点学习一下web开发的原理和相关基本知识。这个框架只有3000+行python代码，是一个单独文件，且对除了python标准库之外没有其他依赖。这样，里面的各个关键点应该就可以没有过多的封装很清晰的展现出来。即使把这个框架整个读一篇应该也不是很难吧。</p>
+<h2>整体概览</h2>
+<p>直接来分析代码不合适，还是从基本使用开始吧，就以官方的第一个例子来做例子。</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bottle</span> <span class="kn">import</span> <span class="n">route</span><span class="p">,</span> <span class="n">run</span>
+
+<span class="nd">@route</span><span class="p">(</span><span class="s1">&#39;/hello/:name&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;World&#39;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39;Hello </span><span class="si">%s</span><span class="s1">!&#39;</span> <span class="o">%</span> <span class="n">name</span>
+
+<span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)</span>
+</pre></div>
+
+
+<p>上面是官方的实例代码，也就是使用bottle来做web开发的一个最简单的demo。代码很简单，第一行从bottle模块中导入<code>route</code>和<code>run</code>两个量。<code>route</code>是一个python的装饰器 …</p> </p>
+        <p><a class="uk-button read-on" href="/bottle-py-analyse-1.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/python-challenge.html" rel="bookmark" title="Permalink to Python Challenge">Python Challenge</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-08-24T03:33:00+08:00">2012-08-24 03:33</abbr></p>
+        <p class="uk-article-content"> <p><a href="http://www.pythonchallenge.com/">pythonchallenge</a> 这个网站挺有意思，以后没事做做题。据说闯到18关以上就是高手了^_^。</p>
+<h2>第0题</h2>
+<p>这就很简单了</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+
+<span class="k">print</span> <span class="mi">2</span><span class="o">**</span><span class="mi">38</span>
+</pre></div>
+
+
+<p>所以就是http://www.pythonchallenge.com/pc/def/274877906944.html了。</p>
+<h2>第一题</h2>
+<p>看图片可以看出了将每个字母按ascii码的值加上2，翻译一遍。</p>
+<p>但是我还不熟悉python嘛，都不知道怎么来取每个字母的ascii码。难道这样就没办法了吗，反正没有性能要求，就先用数组来映射嘛。</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+
+<span class="n">a</span><span class="o">=</span><span class="s2">&quot;abcdefghijklmnopqrstuvwxyzab&quot;</span>
+
+<span class="n">source</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">g fmnc wms bgblr rpylqjyrc gr zw fylb. rfyrq ufyr amknsrcpq ypc dmp.</span>
+<span class="s2">bmgle gr …</span></pre></div> </p>
+        <p><a class="uk-button read-on" href="/python-challenge.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/hackers-and-painters-read-think.html" rel="bookmark" title="Permalink to 黑客与画家读后感">黑客与画家读后感</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-08-24T03:27:00+08:00">2012-08-24 03:27</abbr></p>
+        <p class="uk-article-content"> <p>读完了《黑客与画家》，深深的被作者缜密而又清晰的思维所折服啊，实在是不服不行。</p>
+<p>有人说，通常人们看完这本书后会有两种反应：一个是想要创业；一个是立刻开始学习Lisp。的确是这样。这也反应了这本书的两个很核心的思想。</p>
+<p>总是觉得自己和书中描绘的那种优秀的“黑客”的性格思维还是比较匹配的，但是看看自己现在的水平，实在是差之（千里）²。不过仍然让我确信了自己的一些想法还是对的。</p>
+<p>不管怎么说，我就应该成为一名真正的黑客，这就是我的方向。所以，抓紧时间往前跑吧。</p> </p>
+        <p><a class="uk-button read-on" href="/hackers-and-painters-read-think.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+</div>
+
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>SQLAlchemy中的级联删除 - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li class="uk-active"><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/sqlalchemy-cascade-delete.html" rel="bookmark"
+                title="Permalink to SQLAlchemy中的级联删除">SQLAlchemy中的级联删除</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-03-24T16:13:00+08:00">2014-03-24 16:13</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <p>又被一个问题折腾了半天，找到原因，记录下来。</p>
+<h2>问题描述</h2>
+<p>使用<code>SQLAlchemy</code>建立一对多的<code>relationship</code>：</p>
+<div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Parent</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">Model</span><span class="p">)</span><span class="o">:</span>
+    <span class="nx">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;parent&quot;</span>
+    <span class="nx">id</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Column</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">Integer</span><span class="p">,</span> <span class="nx">primary_key</span><span class="o">=</span><span class="nx">True</span><span class="p">)</span>
+    <span class="nx">name</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Column</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">Text</span><span class="p">)</span>
+
+
+<span class="kr">class</span> <span class="nx">Child</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">Model</span><span class="p">)</span><span class="o">:</span>
+    <span class="nx">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;child&quot;</span>
+    <span class="nx">id</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Column</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">Integer</span><span class="p">,</span> <span class="nx">primary_key</span><span class="o">=</span><span class="nx">True</span><span class="p">)</span>
+
+    <span class="nx">parent_id</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Column</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">Integer</span><span class="p">,</span>
+                          <span class="nx">db</span><span class="p">.</span><span class="nx">ForeignKey</span><span class="p">(</span><span class="s2">&quot;parent.id&quot;</span><span class="p">,</span> <span class="nx">ondelete</span><span class="o">=</span><span class="s2">&quot;CASCADE&quot;</span><span class="p">),</span>
+                          <span class="nx">nullable</span><span class="o">=</span><span class="nx">False</span><span class="p">)</span>
+    <span class="nx">parent</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">relationship</span><span class="p">(</span><span class="s2">&quot;Parent&quot;</span><span class="p">,</span> <span class="nx">backref</span><span class="o">=</span><span class="s2">&quot;children&quot;</span><span class="p">)</span>
+
+    <span class="nx">name</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Column</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">Text</span><span class="p">)</span>
+</pre></div>
+
+
+<p>先增加一个<code>parent</code>和其下的两个<code>child</code>，然后删除这个<code>parent</code></p>
+<div class="highlight"><pre><span></span>#增加记录
+p = Parent(name=&quot;P1&quot;)
+p.children.append(Child(name=&quot;C1&quot;))
+p.children.append(Child(name=&quot;C2&quot;))
+db.session.add(p)
+db.session.commit()
+
+#删除记录
+db.session.delete(p)
+db.session.commit()
+</pre></div>
+
+
+<p>报错：</p>
+<div class="highlight"><pre><span></span>BEGIN (implicit)
+SELECT parent.id AS parent_id, parent.name AS parent_name
+FROM parent
+WHERE parent.id = ?
+(1,)
+SELECT child.id AS child_id, child.parent_id AS child_parent_id, child.name AS child_name
+FROM child
+WHERE ? = child.parent_id
+(1,)
+UPDATE child SET parent_id=? WHERE child.id = ?
+(None, 1)
+ROLLBACK
+Traceback (most recent call last):
+  File &quot;main.py&quot;, line 44, in &lt;module&gt;
+    test()
+  File &quot;main.py&quot;, line 41, in test
+    db.session.commit()
+  ……
+  File &quot;build/bdist.macosx-10.4-x86_64/egg/sqlalchemy/engine/default.py&quot;, line 388, in do_execute
+sqlalchemy.exc.IntegrityError: (IntegrityError) child.parent_id may not be NULL u&#39;UPDATE child SET parent_id=? WHERE child.id = ?&#39; (None, 1)
+</pre></div>
+
+
+<p>很明显错误原因是由于<code>sa</code>在处理删除<code>parent</code>的时候产生了</p>
+<div class="highlight"><pre><span></span>&#39;UPDATE child SET parent_id=? WHERE child.id = ?&#39; (None, 1)
+</pre></div>
+
+
+<p>这样的SQL语句。而<code>child</code>的外键设置里面明确有<code>nullable=False</code>，所以提交失败。</p>
+<h2>问题解决</h2>
+<p>我之前一直以为当我在外键设置里面有<code>ondelete="CASCADE"</code>这一条之后，<code>sa</code>应该会自动产生级联的删除命令，或者只产生单独对<code>parent</code>的删除SQL，让数据库自己产生对<code>child</code>的删除。可事实是<code>sa</code>产生了<code>SET NULL</code>这样的SQL，为什么呢。</p>
+<p>网上搜索未果，再从官方文档找答案，终于找到了。</p>
+<h3>ForeignKey(..ondelete)</h3>
+<p>这里的<code>ondelete</code>控制的只是创建数据库Schema时候的ONDELETE规则，不会影响运行中<code>sa</code>如何产生SQL命令。</p>
+<h3>relationship(…cascade)</h3>
+<p>这里参数参数才会影响<code>sa</code>如何级联产生SQL语句，默认值为<code>save-update, merge</code>，这就是罪魁祸首。</p>
+<p>把它设置成<code>all, delete-orphan</code>之后，<code>sa</code>就会产生级联的删除命令，而不是<code>set null</code>命令了。</p>
+<div class="highlight"><pre><span></span>parent = db.relationship(&quot;Parent&quot;, backref=db.backref(&quot;children&quot;,  cascade=&quot;all, delete-orphan&quot;))
+</pre></div>
+
+
+<p>输出：</p>
+<div class="highlight"><pre><span></span>BEGIN (implicit)
+SELECT parent.id AS parent_id, parent.name AS parent_name
+FROM parent
+WHERE parent.id = ?
+(1,)
+SELECT child.id AS child_id, child.parent_id AS child_parent_id, child.name AS child_name
+FROM child
+WHERE ? = child.parent_id
+(1,)
+DELETE FROM child WHERE child.id = ?
+((1,), (2,))
+DELETE FROM parent WHERE parent.id = ?
+(1,)
+COMMIT
+</pre></div>
+
+
+<p>cascade还有很多其他选项，可具体查看文档。</p>
+<h3>relationship(…passive_deletes)</h3>
+<p>这是另一种可选的解决方案。</p>
+<p>如果想完全靠数据库的<code>ONDELETE</code>规则在自动删除数据，应该将该<code>passive_deletes</code>置为True，这样就不会在删除的时候产生多余的SQL命令了。</p>
+<div class="highlight"><pre><span></span>parent = db.relationship(&quot;Parent&quot;, backref=db.backref(&quot;children&quot;,  passive_deletes=True))
+</pre></div>
+
+
+<p>输出:</p>
+<div class="highlight"><pre><span></span>SELECT parent.id AS parent_id, parent.name AS parent_name
+FROM parent
+WHERE parent.id = ?
+(1,)
+DELETE FROM parent WHERE parent.id = ?
+(1,)
+COMMIT
+</pre></div>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

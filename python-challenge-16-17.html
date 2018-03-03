@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>PythonChallenge[16-17] - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li class="uk-active"><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/python-challenge-16-17.html" rel="bookmark"
+                title="Permalink to PythonChallenge[16-17]">PythonChallenge[16-17]</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-09-05T01:37:00+08:00">2012-09-05 01:37</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <h2>第十六题</h2>
+<p>打开页面还是图片，里面有一些杂乱的原色。可以注意到，几乎像素的每一行都有一个紫色短线。</p>
+<p>页面的标题是<em>let me get this straight</em>，把它弄直？</p>
+<div class="highlight"><pre><span></span><span class="c1">#work on python2</span>
+<span class="kn">import</span> <span class="nn">Image</span>
+
+<span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;mozart.gif&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+<span class="n">new</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+<span class="n">size</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span>
+<span class="k">print</span> <span class="n">image</span><span class="o">.</span><span class="n">mode</span>
+
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+    <span class="n">old</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">pixel</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">getpixel</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">pixel</span> <span class="o">==</span> <span class="n">old</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">x</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">old</span> <span class="o">=</span> <span class="n">pixel</span>
+        <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span> <span class="c1">#find the short line</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">i</span><span class="o">+</span><span class="n">start</span> <span class="o">&gt;=</span> <span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">getpixel</span><span class="p">((</span><span class="n">i</span><span class="o">+</span><span class="n">start</span><span class="o">-</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">y</span><span class="p">)))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">getpixel</span><span class="p">((</span><span class="n">i</span><span class="o">+</span><span class="n">start</span><span class="p">,</span><span class="n">y</span><span class="p">)))</span>
+            <span class="k">break</span>
+
+<span class="n">new</span><span class="o">.</span><span class="n">putdata</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">new</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+
+<p>代码有点丑，但是能work，最后会出来一张图片，上面有个单词<em>romance</em>，应该就是下一关入口了吧，<a href="http://www.pythonchallenge.com/pc/return/romance.html">http://www.pythonchallenge.com/pc/return/romance.html</a>。</p>
+<h2>第十七题</h2>
+<p>这题实在有点太复杂了，只能上网找到思路。</p>
+<p>列出提示</p>
+<ol>
+<li>图中是一块饼干，名称为Cookies。</li>
+<li>大图左下角有个小图，为第四题中的图片。</li>
+</ol>
+<p>说明是和Cookies有关了，还和第四题有关。继续</p>
+<ol>
+<li>打开第四页页面，查看Cookies，看到这么一条
+    &gt; info: you should have followed busynothing...</li>
+<li>把第四题的解决方法中的nothing改成busynothing，即<a href="http://www.pythonchallenge.com/pc/def/linkedlist.php?busynothing=12345">http://www.pythonchallenge.com/pc/def/linkedlist.php?busynothing=12345</a>，返现该cookie编程了'B'。</li>
+<li>继续往下Cookie依次是'BZh...'</li>
+</ol>
+<p>看来这段Cookie应该是会拼接成一个bz的压缩流了。得把它弄出来。</p>
+<div class="highlight"><pre><span></span><span class="c1">#work on python3</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">unquote_plus</span>
+<span class="kn">import</span> <span class="nn">bz2</span>
+
+<span class="n">baseurl</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;http://www.pythonchallenge.com/pc/def/linkedlist.php?busynothing=&quot;</span>
+<span class="nb">next</span> <span class="o">=</span> <span class="s2">&quot;12345&quot;</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">while</span><span class="p">(</span><span class="nb">next</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;open: &quot;</span> <span class="o">+</span> <span class="n">baseurl</span> <span class="o">+</span> <span class="nb">next</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">baseurl</span><span class="o">+</span><span class="nb">next</span><span class="p">)</span> <span class="k">as</span> <span class="n">pf</span><span class="p">:</span>
+        <span class="nb">str</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="n">ck</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">info</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Set-Cookie&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;get: &quot;</span> <span class="o">+</span> <span class="n">ck</span><span class="p">);</span> <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ck</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;and the next busynothing is&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="nb">next</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;next: &quot;</span><span class="o">+</span><span class="nb">next</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;End&quot;</span><span class="p">)</span>
+            <span class="k">break</span>
+
+<span class="c1"># have got all the cookie</span>
+<span class="c1"># python3 using &#39;utf-8&#39; as default encoding, so we have to specify</span>
+<span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">cookie</span> <span class="o">=</span> <span class="n">unquote_plus</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;iso-8859-1&#39;</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">bz2</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">cookie</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;iso-8859-1&#39;</span><span class="p">)))</span>
+</pre></div>
+
+
+<p>这段代码用Python3写真是纠结啊，编码问题费了我好长时间。最后运行结果如下</p>
+<blockquote>
+<p>b'is it the 26th already? call his father and inform him that "the flowers are on their way". he\'ll understand.'</p>
+</blockquote>
+<p>居然还得绕，要找mozart的爸爸的电话，好吧，应该是之前的那题中用到的电话薄了。</p>
+<div class="highlight"><pre><span></span><span class="c1">#work on python3</span>
+<span class="kn">from</span> <span class="nn">xmlrpc</span> <span class="kn">import</span> <span class="n">client</span>
+
+<span class="n">server</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">Server</span><span class="p">(</span><span class="s2">&quot;http://www.pythonchallenge.com/pc/phonebook.php&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">server</span><span class="o">.</span><span class="n">phone</span><span class="p">(</span><span class="s2">&quot;Leopold&quot;</span><span class="p">))</span>
+</pre></div>
+
+
+<p>好了，最终得到'555-VIOLIN'，尝试<a href="http://www.pythonchallenge.com/pc/return/violin.html">http://www.pythonchallenge.com/pc/return/violin.html</a>，提示修改下地址，那就是<a href="http://www.pythonchallenge.com/pc/stuff/violin.php">http://www.pythonchallenge.com/pc/stuff/violin.php</a>了。</p>
+<p>结果打开后居然还是没到下一关，老爸的图片出来了，标题是<em>It's me. what do you want?</em>, 看来得把信息给他，就是那句<em>the flowers are on their way</em>。</p>
+<p>尝试用<em>../violin.php?inform=xxx</em>的方式，怎么试都没有效果，还是得求助Google，发现是要用Cookie来传信息（我怎么这么笨）。</p>
+<div class="highlight"><pre><span></span><span class="c1">#work on python3</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">build_opener</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">quote_plus</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;http://www.pythonchallenge.com/pc/stuff/violin.php&quot;</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;the flowers are on their way&quot;</span>
+
+<span class="n">opener</span> <span class="o">=</span> <span class="n">build_opener</span><span class="p">()</span>
+<span class="n">opener</span><span class="o">.</span><span class="n">addheaders</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;Cookie&quot;</span><span class="p">,</span> <span class="s2">&quot;info=&quot;</span><span class="o">+</span><span class="n">quote_plus</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;iso-8859-1&#39;</span><span class="p">)))</span>
+
+<span class="n">req</span> <span class="o">=</span> <span class="n">opener</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+</pre></div>
+
+
+<p>好了，最终输入的html包含了leopold的一句话</p>
+<blockquote>
+<p>oh well, don’t you dare to forget the balloons</p>
+</blockquote>
+<p>Balloons，应该就是下一关了吧，<a href="http://www.pythonchallenge.com/pc/return/balloons.html">http://www.pythonchallenge.com/pc/return/balloons.html</a>。</p>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+.hhb-banner {
+
+}
+
+body {
+    padding-top: 70px;
+    font-family: Georgia, 'Xin Gothic', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.entry-title {
+    font-size: 130%;
+}
+.entry-title a {
+    color: black;
+}
+
+.container {
+    max-width: 800px;
+}
+
+.footer {
+    color: #999;
+    text-align: center;
+    padding: 30px 0px;
+    margin-top: 70px;
+    border-top: 1px solid #e5e5e5;
+    background-color: #f5f5f5;
+}

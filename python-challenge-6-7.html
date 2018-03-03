@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>PythonChallenge[6-7] - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li class="uk-active"><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/python-challenge-6-7.html" rel="bookmark"
+                title="Permalink to PythonChallenge[6-7]">PythonChallenge[6-7]</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-09-03T02:32:00+08:00">2012-09-03 02:32</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <h2>第六题</h2>
+<p>打开<a href="http://www.pythonchallenge.com/pc/def/channel.html">http://www.pythonchallenge.com/pc/def/channel.html</a>看到的又是一幅图片，还是得看看html源码</p>
+<div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span> <span class="c">&lt;!-- &lt;-- zip --&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>now there are pairs<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/css&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;../style.css&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">center</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;channel.jpg&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">br</span><span class="p">/&gt;</span>
+......
+</pre></div>
+
+
+<p>嗯，好像没啥特殊的，除了这个"zip"。好吧，又被难住了，上网找下线索，说是把网址改成zip结尾的。</p>
+<p>得到一个zip文件，打开看看，有个readme</p>
+<blockquote>
+<p>welcome to my zipped list.</p>
+<p>hint1: start from 90052
+hint2: answer is inside the zip</p>
+</blockquote>
+<p>在看下其他文件，知道了原来是和第四题一个思路，这次是想考下zipfile模块的用法，那好吧</p>
+<div class="highlight"><pre><span></span><span class="c1">#work on python3</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+
+<span class="n">z</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="s2">&quot;channel.zip&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+
+<span class="nb">next</span> <span class="o">=</span> <span class="s2">&quot;90052&quot;</span>
+<span class="n">head</span> <span class="o">=</span> <span class="s2">&quot;Next nothing is&quot;</span>
+
+<span class="k">while</span> <span class="nb">next</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;open: &quot;</span> <span class="o">+</span> <span class="nb">next</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
+    <span class="nb">str</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">next</span><span class="o">+</span><span class="s2">&quot;.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;got: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">head</span><span class="p">):</span>
+        <span class="nb">next</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;next: &quot;</span> <span class="o">+</span> <span class="nb">next</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">break</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;END&quot;</span>
+</pre></div>
+
+
+<p>执行后，输出如下
+<blockquote><pre>
+open: 45100.txt
+got: Next nothing is 68628
+next: 68628
+open: 68628.txt
+got: Next nothing is 67824
+next: 67824
+open: 67824.txt
+got: Next nothing is 46145
+next: 46145
+open: 46145.txt
+got: Collect the comments.
+END
+</pre></blockquote></p>
+<p>看来还不行，让我们看看zip文件的comments。试了一下发现该zip文件的z.comment为空。难道是里面文件的comments？</p>
+<div class="highlight"><pre><span></span><span class="c1">#work on python3</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+
+<span class="n">z</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="s2">&quot;channel.zip&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+
+<span class="nb">next</span> <span class="o">=</span> <span class="s2">&quot;90052&quot;</span>
+<span class="n">head</span> <span class="o">=</span> <span class="s2">&quot;Next nothing is&quot;</span>
+<span class="n">comments</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">while</span> <span class="nb">next</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;open: &quot;</span> <span class="o">+</span> <span class="nb">next</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
+    <span class="nb">str</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">next</span><span class="o">+</span><span class="s2">&quot;.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;got: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="n">comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">getinfo</span><span class="p">(</span><span class="nb">next</span><span class="o">+</span><span class="s2">&quot;.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">comment</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">head</span><span class="p">):</span>
+        <span class="nb">next</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;next: &quot;</span> <span class="o">+</span> <span class="nb">next</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">break</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;END&quot;</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;ok let&#39;s print the comments&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">comments</span><span class="p">))</span>
+</pre></div>
+
+
+<p>好了，现在可以看见结果了</p>
+<blockquote><pre>
+open: 46145.txt
+got: Collect the comments.
+END
+ok let's print the comments
+****************************************************************
+****************************************************************
+**                                                            **
+**   OO    OO    XX      YYYY    GG    GG  EEEEEE NN      NN  **
+**   OO    OO  XXXXXX   YYYYYY   GG   GG   EEEEEE  NN    NN   **
+**   OO    OO XXX  XXX YYY   YY  GG GG     EE       NN  NN    **
+**   OOOOOOOO XX    XX YY        GGG       EEEEE     NNNN     **
+**   OOOOOOOO XX    XX YY        GGG       EEEEE      NN      **
+**   OO    OO XXX  XXX YYY   YY  GG GG     EE         NN      **
+**   OO    OO  XXXXXX   YYYYYY   GG   GG   EEEEEE     NN      **
+**   OO    OO    XX      YYYY    GG    GG  EEEEEE     NN      **
+**                                                            **
+****************************************************************
+ **************************************************************
+</pre></blockquote>
+
+<p>下一关的地址应该就是<a href="http://www.pythonchallenge.com/pc/def/hockey.html">http://www.pythonchallenge.com/pc/def/hockey.html</a>了。</p>
+<p>但是进去之后显示一句</p>
+<blockquote>
+<p>it's in the air. look at the letters.
+然后又是啥线索也没有了。</p>
+</blockquote>
+<p>在上网查下，原来下一关是oxygen（上附图中的小字），太变态了，怎能猜得着？？</p>
+<p>这样，地址就变成了<a href="http://www.pythonchallenge.com/pc/def/oxygen.html">http://www.pythonchallenge.com/pc/def/oxygen.html</a>了。</p>
+<h2>第七题</h2>
+<p>打开<a href="http://www.pythonchallenge.com/pc/def/oxygen.html">http://www.pythonchallenge.com/pc/def/oxygen.html</a>后就得到一幅图像，html中也没有更多信息。图片中间有一层灰度变化的线，估计把灰度提取出来就是线索了吧。</p>
+<div class="highlight"><pre><span></span><span class="c1">#work on python2</span>
+<span class="kn">import</span> <span class="nn">Image</span>
+
+<span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;oxygen.png&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+
+<span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span>
+<span class="n">ss</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">mid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">height</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1"># 这里7是灰色方格宽度</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">width</span><span class="p">,</span><span class="mi">7</span><span class="p">):</span>
+    <span class="n">curc</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">getpixel</span><span class="p">((</span><span class="n">i</span><span class="p">,</span><span class="n">mid</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">curc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">curc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">curc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">curc</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+        <span class="n">ss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="n">curc</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+<span class="k">print</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ss</span><span class="p">)</span>
+</pre></div>
+
+
+<p>运行输出</p>
+<blockquote>
+<p>smart guy, you made it. the next level is [105, 110, 116, 101, 103, 114, 105, 116, 121]</p>
+</blockquote>
+<p>再把这个数组转成char</p>
+<div class="highlight"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">ll</span> <span class="o">=</span> <span class="p">[</span><span class="mi">105</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">116</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">103</span><span class="p">,</span> <span class="mi">114</span><span class="p">,</span> <span class="mi">105</span><span class="p">,</span> <span class="mi">116</span><span class="p">,</span> <span class="mi">121</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">chr</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">ll</span><span class="p">])</span>
+<span class="n">integrity</span>
+</pre></div>
+
+
+<p>所以，下一关就是<a href="http://www.pythonchallenge.com/pc/def/integrity.html">http://www.pythonchallenge.com/pc/def/integrity.html</a>了。</p>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

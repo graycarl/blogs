@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>PythonChallenge[8-9] - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li class="uk-active"><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/python-challenge-8-9.html" rel="bookmark"
+                title="Permalink to PythonChallenge[8-9]">PythonChallenge[8-9]</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-09-03T05:07:00+08:00">2012-09-03 05:07</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <h2>第八题</h2>
+<p>打开<a href="http://www.pythonchallenge.com/pc/def/integrity.html">http://www.pythonchallenge.com/pc/def/integrity.html</a>后又是一个图片，下面一句话</p>
+<blockquote>
+<p>Where is the missing link?</p>
+</blockquote>
+<p>再看html源码，最后有两行数据</p>
+<div class="highlight"><pre><span></span>    ......
+    <span class="p">&lt;</span><span class="nt">font</span> <span class="na">color</span><span class="o">=</span><span class="s">&quot;#303030&quot;</span> <span class="na">size</span><span class="o">=</span><span class="s">&quot;+2&quot;</span><span class="p">&gt;</span>Where is the missing link?<span class="p">&lt;/</span><span class="nt">font</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!--</span>
+<span class="c">un: &#39;BZh91AY&amp;SYA\xaf\x82\r\x00\x00\x01\x01\x80\x02\xc0\x02\x00 \x00!\x9ah3M\x07&lt;]\xc9\x14\xe1BA\x06\xbe\x084&#39;</span>
+<span class="c">pw: &#39;BZh91AY&amp;SY\x94$|\x0e\x00\x00\x00\x81\x00\x03$ \x00!\x9ah3M\x13&lt;]\xc9\x14\xe1BBP\x91\xf08&#39;</span>
+<span class="c">--&gt;</span>
+</pre></div>
+
+
+<p>这两行数据显然一个是username一个是password。内容是加密的，但是开头暴露他们是被bzip压缩的。</p>
+<p>点击图片会弹出对话框要求用户名和密码，很显然，就是从上面的两行数据得到了。</p>
+<div class="highlight"><pre><span></span><span class="c1">#work on python3</span>
+<span class="kn">import</span> <span class="nn">bz2</span>
+
+<span class="n">unstr</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;BZh91AY&amp;SYA</span><span class="se">\xaf\x82\r\x00\x00\x01\x01\x80\x02\xc0\x02\x00</span><span class="s1"> </span><span class="se">\x00</span><span class="s1">!</span><span class="se">\x9a</span><span class="s1">h3M</span><span class="se">\x07</span><span class="s1">&lt;]</span><span class="se">\xc9\x14\xe1</span><span class="s1">BA</span><span class="se">\x06\xbe\x08</span><span class="s1">4&#39;</span>
+<span class="n">pwstr</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;BZh91AY&amp;SY</span><span class="se">\x94</span><span class="s1">$|</span><span class="se">\x0e\x00\x00\x00\x81\x00\x03</span><span class="s1">$ </span><span class="se">\x00</span><span class="s1">!</span><span class="se">\x9a</span><span class="s1">h3M</span><span class="se">\x13</span><span class="s1">&lt;]</span><span class="se">\xc9\x14\xe1</span><span class="s1">BBP</span><span class="se">\x91\xf0</span><span class="s1">8&#39;</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">bz2</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">unstr</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">bz2</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">pwstr</span><span class="p">))</span>
+</pre></div>
+
+
+<p>运行，输出</p>
+<blockquote>
+<p>b'huge'
+b'file'</p>
+</blockquote>
+<p>好了，把用户名密码填进去，就到下一关了。</p>
+<h2>第九题</h2>
+<p>打开后又是图片，上面一些分散的黑点。看html源码，发现两点线索
+1. <code>title</code>内容是<strong>connect the dots</strong>
+2. 注释给出来两组数据</p>
+<p>嗯，看来就要玩连线游戏了。</p>
+<div class="highlight"><pre><span></span><span class="c1">#work on python2</span>
+
+<span class="kn">import</span> <span class="nn">Image</span>
+
+<span class="n">str1</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">146,399,163,403,170,393,169,391,166,386,170,381,170,371,170,355,169,346,167,335,170,329,170,320,170,</span>
+<span class="s2">310,171,301,173,290,178,289,182,287,188,286,190,286,192,291,194,296,195,305,194,307,191,312,190,316,</span>
+<span class="s2">190,321,192,331,193,338,196,341,197,346,199,352,198,360,197,366,197,373,196,380,197,383,196,387,192,</span>
+<span class="s2">389,191,392,190,396,189,400,194,401,201,402,208,403,213,402,216,401,219,397,219,393,216,390,215,385,</span>
+<span class="s2">215,379,213,373,213,365,212,360,210,353,210,347,212,338,213,329,214,319,215,311,215,306,216,296,218,</span>
+<span class="s2">290,221,283,225,282,233,284,238,287,243,290,250,291,255,294,261,293,265,291,271,291,273,289,278,287,</span>
+<span class="s2">279,285,281,280,284,278,284,276,287,277,289,283,291,286,294,291,296,295,299,300,301,304,304,320,305,</span>
+<span class="s2">327,306,332,307,341,306,349,303,354,301,364,301,371,297,375,292,384,291,386,302,393,324,391,333,387,</span>
+<span class="s2">328,375,329,367,329,353,330,341,331,328,336,319,338,310,341,304,341,285,341,278,343,269,344,262,346,</span>
+<span class="s2">259,346,251,349,259,349,264,349,273,349,280,349,288,349,295,349,298,354,293,356,286,354,279,352,268,</span>
+<span class="s2">352,257,351,249,350,234,351,211,352,197,354,185,353,171,351,154,348,147,342,137,339,132,330,122,327,</span>
+<span class="s2">120,314,116,304,117,293,118,284,118,281,122,275,128,265,129,257,131,244,133,239,134,228,136,221,137,</span>
+<span class="s2">214,138,209,135,201,132,192,130,184,131,175,129,170,131,159,134,157,134,160,130,170,125,176,114,176,</span>
+<span class="s2">102,173,103,172,108,171,111,163,115,156,116,149,117,142,116,136,115,129,115,124,115,120,115,115,117,</span>
+<span class="s2">113,120,109,122,102,122,100,121,95,121,89,115,87,110,82,109,84,118,89,123,93,129,100,130,108,132,110,</span>
+<span class="s2">133,110,136,107,138,105,140,95,138,86,141,79,149,77,155,81,162,90,165,97,167,99,171,109,171,107,161,</span>
+<span class="s2">111,156,113,170,115,185,118,208,117,223,121,239,128,251,133,259,136,266,139,276,143,290,148,310,151,</span>
+<span class="s2">332,155,348,156,353,153,366,149,379,147,394,146,399</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="n">str2</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">156,141,165,135,169,131,176,130,187,134,191,140,191,146,186,150,179,155,175,157,168,157,163,157,159,</span>
+<span class="s2">157,158,164,159,175,159,181,157,191,154,197,153,205,153,210,152,212,147,215,146,218,143,220,132,220,</span>
+<span class="s2">125,217,119,209,116,196,115,185,114,172,114,167,112,161,109,165,107,170,99,171,97,167,89,164,81,162,</span>
+<span class="s2">77,155,81,148,87,140,96,138,105,141,110,136,111,126,113,129,118,117,128,114,137,115,146,114,155,115,</span>
+<span class="s2">158,121,157,128,156,134,157,136,156,136</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">array1</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">str1</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+<span class="n">array2</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">str2</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+
+<span class="c1"># draw on the picture</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;good.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+<span class="k">print</span> <span class="s2">&quot;mode:&quot;</span><span class="p">,</span><span class="n">image</span><span class="o">.</span><span class="n">mode</span>
+<span class="k">print</span> <span class="s2">&quot;size:&quot;</span><span class="p">,</span><span class="n">image</span><span class="o">.</span><span class="n">size</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">array1</span><span class="p">),</span><span class="mi">2</span><span class="p">):</span>
+    <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">array1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">array1</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">image</span><span class="o">.</span><span class="n">putpixel</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">image</span><span class="o">.</span><span class="n">putpixel</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">image</span><span class="o">.</span><span class="n">putpixel</span><span class="p">((</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">image</span><span class="o">.</span><span class="n">putpixel</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">-</span><span class="mi">1</span><span class="p">),(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">image</span><span class="o">.</span><span class="n">putpixel</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">+</span><span class="mi">1</span><span class="p">),(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">array2</span><span class="p">),</span><span class="mi">2</span><span class="p">):</span>
+    <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">array2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">array2</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">image</span><span class="o">.</span><span class="n">putpixel</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">))</span>
+    <span class="n">image</span><span class="o">.</span><span class="n">putpixel</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">))</span>
+    <span class="n">image</span><span class="o">.</span><span class="n">putpixel</span><span class="p">((</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">))</span>
+    <span class="n">image</span><span class="o">.</span><span class="n">putpixel</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">-</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">))</span>
+    <span class="n">image</span><span class="o">.</span><span class="n">putpixel</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">+</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">))</span>
+
+<span class="n">image</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+
+<p>出现了一头好像是牛的动物，试试cow吧。</p>
+<blockquote>
+<p>hmm. it's a male.</p>
+</blockquote>
+<p>嗯，差不多应该就是bull了<a href="http://www.pythonchallenge.com/pc/return/bull.html">http://www.pythonchallenge.com/pc/return/bull.html</a>，过关。</p>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

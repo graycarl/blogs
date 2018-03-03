@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>如何把GIT仓库的子目录独立为子模块 - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li class="uk-active"><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/git-split-subdir-to-submodule.html" rel="bookmark"
+                title="Permalink to 如何把GIT仓库的子目录独立为子模块">如何把GIT仓库的子目录独立为子模块</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2013-12-08T12:27:00+08:00">2013-12-08 12:27</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <p>最近在给考拉山后台添砖加瓦的过程中，发现了两个问题：</p>
+<ul>
+<li>对于当前的同一套逻辑，我已经有4个view层工作在上面了，马上还要再加上一个view，专门用来显示分享出去的页面；</li>
+<li>接下来还要再加上同步evernote这种异步任务；</li>
+<li>而现在这些代码都还在同一个GIT仓库中；</li>
+</ul>
+<p>这种混乱的场景已经快让我不能忍了，于是乎决定把这个大仓库中的所有<code>business</code>和<code>model</code>的代码独立到一个<code>submodule</code>中，这样接下来就可以进一步的拆分各个view让它们都引用这个<code>submodule</code>。</p>
+<p>还好之前的代码结构还算比较好，所有<code>business</code>和<code>model</code>的代码都在一个名为<code>coloshine</code>的目录中，所以接下来只要解决如何把一个子目录独立成一个<code>submodule</code>并且保存分支和提交历史这个问题就好了。</p>
+<p>对GIT还没精通到这个程度，只能上网Google，现贴出方案；</p>
+<h2>准备</h2>
+<p>当前的目录结构如下：</p>
+<div class="highlight"><pre><span></span>coloshine-server
+├── ....
+├── coloshine  -&gt; 想要变成子模块的目录
+├── coloshine_account
+├── coloshine_admin
+├── coloshine_api
+├── coloshine_pics
+├── ...
+</pre></div>
+
+
+<p>Clone一个新的仓库到目录<code>coloshine</code></p>
+<div class="highlight"><pre><span></span>git clone coloshine-server coloshine
+</pre></div>
+
+
+<p>这时<code>coloshine</code>仓库的目录结构应该是和<code>coloshine-server</code>完全一样的。</p>
+<h2>选择要保存的分支</h2>
+<p>通常刚clone出来的<code>coloshine</code>仓库本地只会有一个分支（比如master），如果我们希望在马上要做的子模块中保存其他的分支，那就首先把它们创建出来：</p>
+<div class="highlight"><pre><span></span>git branch -r br1 origin/br1
+git branch -r br2 origin/br2
+</pre></div>
+
+
+<p>最后<code>origin</code>这个remote是不需要的，把它删除了</p>
+<div class="highlight"><pre><span></span>git remote rm origin
+</pre></div>
+
+
+<h2>转化成子模块</h2>
+<p>这一步是最重要的步骤，命令如下：</p>
+<div class="highlight"><pre><span></span>git filter-branch --tag-name-filter cat --prune-empty --subdirectory-filter coloshine -- --all
+</pre></div>
+
+
+<p>该命令过滤所有历史提交，保留对coloshine子目录有影响的提交，并且把子目录设为该仓库的根目录。下面解释下各参数意思：</p>
+<ul>
+<li>--tag-name-filter cat 该参数控制我们要如何保存旧的tag，参数值为bash命令，cat表示原样输出。所以，如果你不关心tag，就不需要这个参数了；</li>
+<li>--prune-empty 删除空的（对子目录没有影响的）的提交</li>
+<li>--subdirectory-filter coloshine 指定子模块路径</li>
+<li>-- --all 该参数必须跟在<code>--</code>后面，表示对所有分支做操作，即对上一步创建的所有本地分支做操作。所以，如果你只想保存当前分支，就不需要这个参数了</li>
+</ul>
+<p>该命令执行完毕后，查看当前目录结构就会发现里面已经是子目录的内容了。<code>git log</code>查看提交历史已经正常保存了。</p>
+<p>至此，主要工作已经完成。但是当前的仓库中还保存这一下不需要的<code>object</code>，如果想清理这些来减小当前仓库的体积，再看下一步。</p>
+<h2>清理</h2>
+<div class="highlight"><pre><span></span>git reset --hard
+git <span class="k">for</span>-each-ref --format<span class="o">=</span><span class="s2">&quot;%(refname)&quot;</span> refs/original/ <span class="p">|</span> xargs -n <span class="m">1</span> git update-ref -d
+git reflog expire --expire<span class="o">=</span>now --all
+git gc --aggressive --prune<span class="o">=</span>now
+</pre></div>
+
+
+<p>这些命令到底是怎么work的我也没仔细研究，就不解释了。总是，我的实践证明它们是正常work的，仓库体积减小了不少。</p>
+<p>最后，我们就可以把这个新的仓库提交到服务器上，然后把旧仓库中的<code>coloshine</code>子目录删除并以<code>submodule</code>的方式添加<code>coloshine</code>仓库就好了。</p>
+<p><strong>参考链接:</strong></p>
+<ul>
+<li><a href="http://stackoverflow.com/questions/359424/detach-subdirectory-into-separate-git-repository">Detach subdirectory into separate Git repository</a></li>
+<li><a href="https://help.github.com/articles/splitting-a-subpath-out-into-a-new-repository">Splitting a subpath out into a new repository</a></li>
+</ul>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

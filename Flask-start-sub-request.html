@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>Flask如何在请求处理过程中创建并处理一个子请求 - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li class="uk-active"><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/Flask-start-sub-request.html" rel="bookmark"
+                title="Permalink to Flask如何在请求处理过程中创建并处理一个子请求">Flask如何在请求处理过程中创建并处理一个子请求</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2013-09-13T13:30:00+08:00">2013-09-13 13:30</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <h2>起因</h2>
+<p>之前已经用<code>flask</code>实现了<code>restful</code>的接口，接口主要是提供给移动平台的App使用的。</p>
+<p>之前看过WunderList的Web的上收发请求使用了一种<strong>批量</strong>的请求来一次性处理多个请求的使用方法，又加上移动平台App的网络和性能的问题，觉得我也应该做这么一个<strong>批量</strong>接口，基本定义如下：</p>
+<div class="highlight"><pre><span></span><span class="n">method</span><span class="o">:</span> <span class="n">post</span>
+<span class="n">uri</span><span class="o">:</span> <span class="sr">/app/</span><span class="n">batch</span>
+<span class="n">data</span><span class="o">:[</span><span class="n">json</span><span class="o">]</span>
+    <span class="o">{</span>
+        <span class="s2">&quot;on-fail&quot;</span><span class="o">:</span> <span class="s2">&quot;ignore|stop&quot;</span><span class="o">,</span>
+        <span class="s2">&quot;requests&quot;</span><span class="o">:</span> <span class="o">[</span>
+            <span class="o">{</span>
+                <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;get&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;uri&quot;</span><span class="o">:</span> <span class="s2">&quot;/user/~me&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;args&quot;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="s2">&quot;arg1&quot;</span><span class="o">:</span> <span class="s2">&quot;value1&quot;</span><span class="o">,</span>
+                    <span class="s2">&quot;arg2&quot;</span><span class="o">:</span> <span class="s2">&quot;value2&quot;</span>
+                <span class="o">}</span>
+            <span class="o">},</span>
+            <span class="o">{</span>
+                <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;put&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;uri&quot;</span><span class="o">:</span> <span class="s2">&quot;/user/~me/oauth/QZONE&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;args&quot;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="s2">&quot;arg1&quot;</span><span class="o">:</span> <span class="s2">&quot;value1&quot;</span><span class="o">,</span>
+                    <span class="s2">&quot;arg2&quot;</span><span class="o">:</span> <span class="s2">&quot;value2&quot;</span><span class="o">,</span>
+                <span class="o">}</span>
+            <span class="o">},</span>
+            <span class="o">....</span>
+        <span class="o">]</span>
+    <span class="o">}</span>
+
+<span class="k">return</span><span class="o">:[</span><span class="n">json</span><span class="o">]</span>
+    <span class="o">{</span>
+        <span class="s2">&quot;responses&quot;</span><span class="o">:</span> <span class="o">[</span>
+            <span class="o">{</span>
+                <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;get&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;uri&quot;</span><span class="o">:</span> <span class="s2">&quot;/user/~me&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;status_code&quot;</span><span class="o">:</span> <span class="s2">&quot;200&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;body&quot;</span><span class="o">:</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+            <span class="o">},</span>
+            <span class="o">{</span>
+                <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;put&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;uri&quot;</span><span class="o">:</span> <span class="s2">&quot;/user/~me/oauth/QZONE&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;status_code&quot;</span><span class="o">:</span> <span class="s2">&quot;200&quot;</span><span class="o">,</span>
+                <span class="s2">&quot;body&quot;</span><span class="o">:</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+            <span class="o">},</span>
+            <span class="o">....</span>
+        <span class="o">]</span>
+    <span class="o">}</span>
+</pre></div>
+
+
+<p>所以我需要在batch请求的处理过程中创建一系列的子请求并处理他们收集结果，但是不知道有没有一种比较好的实现方式。</p>
+<h2>实现</h2>
+<p>在StackOverFlow和Python-China上问了一圈没人回答之后，我觉得还是得靠自己。于是我把<code>Flask</code>里面的<code>ApplicationContext</code> <code>ReqeustContext</code> <code>werkzeug.test</code>等模块的相关实现都看了一遍，觉得可以这么做。</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">current_app</span>
+<span class="kn">from</span> <span class="nn">werkzeug.test</span> <span class="kn">import</span> <span class="n">EnvironBuilder</span>
+
+<span class="k">def</span> <span class="nf">handle_request</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">uri</span><span class="p">,</span>
+        <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="n">method</span><span class="p">,</span>
+        <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Authorization&quot;</span><span class="p">],</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="s2">&quot;PUT&quot;</span><span class="p">,</span> <span class="s2">&quot;PATCH&quot;</span><span class="p">):</span>
+        <span class="n">args</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">args</span><span class="p">[</span><span class="s2">&quot;query_string&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="n">builder</span> <span class="o">=</span> <span class="n">EnvironBuilder</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">environ</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">get_environ</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">current_app</span><span class="o">.</span><span class="n">request_context</span><span class="p">(</span><span class="n">environ</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">full_dispatch_request</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">make_response</span><span class="p">(</span>
+                <span class="n">current_app</span><span class="o">.</span><span class="n">handle_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">resp</span>
+</pre></div>
+
+
+<p>这样在batch请求的处理函数里面调用该函数即可获取子请求的处理结果。</p>
+<p>这样唯一觉得不爽的是使用了<code>werkzeug.test</code>模块，这个模块本来就应该是给测试环境使用的，我这么搞算不算滥用呢？</p>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

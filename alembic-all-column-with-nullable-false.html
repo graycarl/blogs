@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>Alembic 添加不能为空的列 - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li class="uk-active"><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/alembic-all-column-with-nullable-false.html" rel="bookmark"
+                title="Permalink to Alembic 添加不能为空的列">Alembic 添加不能为空的列</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-08-14T18:01:00+08:00">2014-08-14 18:01</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <p>当我们对一个已存在数据的Table中添加一个<code>nullable=False</code>的列时，通常<code>alembic</code>会直接报错，因为它不知道要给这个列赋予什么值，所以会默认给个<code>NULL</code>的值，但是这个值与<code>nullable=False</code>的规则冲突了。</p>
+<p>通常这种不能为空的列都是应该有一个默认值的，所以可以直接在alembic中指定这个列的默认值：</p>
+<div class="highlight"><pre><span></span><span class="n">op</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">&#39;callroom&#39;</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s1">&#39;consulvalid&#39;</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">(),</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">server_default</span><span class="o">=</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)))</span>
+</pre></div>
+
+
+<p>但也有可能这个默认值只想在Python的<code>orm</code>环境中定义，不想定义到数据库中，比如</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyClass</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">40</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="sa">u</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>这种情况下，可以这么修改alembic迁移脚本：</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy.sql</span> <span class="kn">import</span> <span class="n">table</span><span class="p">,</span> <span class="n">column</span>
+<span class="n">op</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">&#39;callroom&#39;</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s1">&#39;consulvalid&#39;</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">Boolean</span><span class="p">(),</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+<span class="n">callroom</span> <span class="o">=</span> <span class="n">table</span><span class="p">(</span><span class="s2">&quot;callroom&quot;</span><span class="p">,</span> <span class="n">column</span><span class="p">(</span><span class="s2">&quot;consulvalid&quot;</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">Boolean</span><span class="p">()))</span>
+<span class="n">op</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">callroom</span><span class="o">.</span><span class="n">update</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">consulvalid</span><span class="o">=</span><span class="bp">False</span><span class="p">))</span>
+<span class="n">op</span><span class="o">.</span><span class="n">alter_column</span><span class="p">(</span><span class="s2">&quot;callroom&quot;</span><span class="p">,</span> <span class="s2">&quot;consulvalid&quot;</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+
+
+<p>即先增加了一个<code>nullable=True</code>的列，然后将这个列设置默认值后，再改成<code>nullable=False</code>。</p>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li class="uk-active"><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+
+<div class="post-list">
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/alembic-all-column-with-nullable-false.html" rel="bookmark" title="Permalink to Alembic 添加不能为空的列">Alembic 添加不能为空的列</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-08-14T18:01:00+08:00">2014-08-14 18:01</abbr></p>
+        <p class="uk-article-content"> <p>当我们对一个已存在数据的Table中添加一个<code>nullable=False</code>的列时，通常<code>alembic</code>会直接报错，因为它不知道要给这个列赋予什么值，所以会默认给个<code>NULL</code>的值，但是这个值与<code>nullable=False</code>的规则冲突了。</p>
+<p>通常这种不能为空的列都是应该有一个默认值的，所以可以直接在alembic中指定这个列的默认值：</p>
+<div class="highlight"><pre><span></span><span class="n">op</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">&#39;callroom&#39;</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s1">&#39;consulvalid&#39;</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">(),</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">server_default</span><span class="o">=</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)))</span>
+</pre></div>
+
+
+<p>但也有可能这个默认值只想在Python的<code>orm</code>环境中定义，不想定义到数据库中，比如</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyClass</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">40</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="sa">u</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>这种情况下，可以这么修改alembic迁移脚本：</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy.sql …</span></pre></div> </p>
+        <p><a class="uk-button read-on" href="/alembic-all-column-with-nullable-false.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/sqlalchemy-set-column-modified.html" rel="bookmark" title="Permalink to SqlAlchemy 标记字段变更">SqlAlchemy 标记字段变更</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-06-16T19:59:00+08:00">2014-06-16 19:59</abbr></p>
+        <p class="uk-article-content"> <p>为了在数据库里面存储一些比较随意的结构化数据，我参照(抄袭)<code>sqlalchemy</code>的文档实现了一个自定义类型：</p>
+<div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">JSON</span><span class="p">(</span><span class="nx">TypeDecorator</span><span class="p">)</span><span class="o">:</span>
+    <span class="s2">&quot;&quot;&quot; Json String Field &quot;&quot;&quot;</span>
+    <span class="nx">impl</span> <span class="o">=</span> <span class="nx">Text</span>
+
+    <span class="nx">def</span> <span class="nx">process_bind_param</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">dialect</span><span class="p">)</span><span class="o">:</span>
+        <span class="k">if</span> <span class="nx">value</span> <span class="nx">is</span> <span class="nx">None</span>:
+            <span class="kt">return</span> <span class="nx">value</span>
+        <span class="nx">elif</span> <span class="nx">isinstance</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="p">(</span><span class="nx">dict</span><span class="p">,</span> <span class="nx">list</span><span class="p">))</span><span class="o">:</span>
+            <span class="k">return</span> <span class="nx">json</span><span class="p">.</span><span class="nx">dumps</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="o">:</span>
+            <span class="nx">raise</span> <span class="nx">ValueError</span><span class="p">(</span><span class="s2">&quot;unsupported value type&quot;</span><span class="p">)</span>
+
+    <span class="nx">def</span> <span class="nx">process_result_value</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">dialect</span><span class="p">)</span><span class="o">:</span>
+        <span class="k">if</span> <span class="nx">value</span> <span class="nx">is</span> <span class="nx">None</span>:
+            <span class="kt">return</span> <span class="nx">value …</span></pre></div> </p>
+        <p><a class="uk-button read-on" href="/sqlalchemy-set-column-modified.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/sqlalchemy-cascade-delete.html" rel="bookmark" title="Permalink to SQLAlchemy中的级联删除">SQLAlchemy中的级联删除</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-03-24T16:13:00+08:00">2014-03-24 16:13</abbr></p>
+        <p class="uk-article-content"> <p>又被一个问题折腾了半天，找到原因，记录下来。</p>
+<h2>问题描述</h2>
+<p>使用<code>SQLAlchemy</code>建立一对多的<code>relationship</code>：</p>
+<div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Parent</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">Model</span><span class="p">)</span><span class="o">:</span>
+    <span class="nx">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;parent&quot;</span>
+    <span class="nx">id</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Column</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">Integer</span><span class="p">,</span> <span class="nx">primary_key</span><span class="o">=</span><span class="nx">True</span><span class="p">)</span>
+    <span class="nx">name</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Column</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">Text</span><span class="p">)</span>
+
+
+<span class="kr">class</span> <span class="nx">Child</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">Model</span><span class="p">)</span><span class="o">:</span>
+    <span class="nx">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;child&quot;</span>
+    <span class="nx">id</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Column</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">Integer</span><span class="p">,</span> <span class="nx">primary_key</span><span class="o">=</span><span class="nx">True</span><span class="p">)</span>
+
+    <span class="nx">parent_id</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Column</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">Integer</span><span class="p">,</span>
+                          <span class="nx">db</span><span class="p">.</span><span class="nx">ForeignKey</span><span class="p">(</span><span class="s2">&quot;parent.id&quot;</span><span class="p">,</span> <span class="nx">ondelete</span><span class="o">=</span><span class="s2">&quot;CASCADE …</span></pre></div> </p>
+        <p><a class="uk-button read-on" href="/sqlalchemy-cascade-delete.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/about-xctestcase.html" rel="bookmark" title="Permalink to 关于XCTestCase">关于XCTestCase</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-02-23T18:12:00+08:00">2014-02-23 18:12</abbr></p>
+        <p class="uk-article-content"> <p>Xcode自带的测试框架貌似没有给出任何文档，一些问题只能自己测试来确定了。</p>
+<h2><code>setUp</code>和<code>tearDown</code>在什么时候被执行</h2>
+<p>经过测试发现，类方法的<code>setUp</code>会在本Case第一执行测试方法执行执行一次。而实例方法的<code>setUp</code>会在每个测试方法执行的之前执行。<code>tearDown</code>也是一样。</p>
+<div class="highlight"><pre><span></span><span class="p">+</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setUp</span>
+<span class="p">{</span>
+    <span class="c1">// called once</span>
+    <span class="p">[</span><span class="nb">super</span> <span class="n">setUp</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setUp</span>
+<span class="p">{</span>
+    <span class="c1">// called before every test functions</span>
+    <span class="p">[</span><span class="nb">super</span> <span class="n">setUp</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2>测试方法的执行顺序</h2>
+<p><strong>更新：貌似这是我的错觉，无法控制各个方法的执行顺序</strong></p>
+<p>如果我们想严格控制每个测试方法的执行顺序该怎么办呢？</p>
+<p>经过测试发现，测试方法的执行顺序类似于<code>Python</code>的单元测试，根据方法名来决定执行顺序。</p>
+<p>所以，我们可以这样定义方法名来定义执行顺序</p>
+<div class="highlight"><pre><span></span>- (void)test10SomeWord
+{
+    // some code
+}
+
+- (void)test11SomeWord
+{
+    // some code …</pre></div> </p>
+        <p><a class="uk-button read-on" href="/about-xctestcase.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/nsnumber-in-objective-c.html" rel="bookmark" title="Permalink to 关于NSNumber">关于NSNumber</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-02-19T14:05:00+08:00">2014-02-19 14:05</abbr></p>
+        <p class="uk-article-content"> <p>由于半路杀进来，一直对OC对C基本数据类型的封装感到困惑，使用的时候也很心虚。仔细看了一遍官方文档，终于理清了。</p>
+<p>这类类型有三个：<code>NSNumber</code>、<code>NSDecimalNumber</code>、<code>NSNull</code>。其中<code>NSNull</code>是一个单例，可以直接使用<code>==</code>来比较。</p>
+<p>下面着重说一下<code>NSNumber</code>。</p>
+<h2>结构</h2>
+<p><code>NSNumber</code>中保存的是实际数据的指针和类型，实际数据可以是各种类型，如(int, float, bool, struct, …)。</p>
+<p>把实际数据取出来用</p>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">nsNumber</span> <span class="n">intValue</span><span class="p">]</span>
+</pre></div>
+
+
+<p>取数据的时候会做默认的类型转换。</p>
+<h2>比较</h2>
+<p><code>NSNumber</code>中有</p>
+<div class="highlight"><pre><span></span>- (BOOL)isEqualToNumber:(NSNumber *)aNumber
+</pre></div>
+
+
+<p>该函数使用C中的比较方式来比较大小。</p>
+<p>而对于<code>isEqual</code>，看代码就知道了：</p>
+<div class="highlight"><pre><span></span><span class="p">-(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nf">isEqual:</span><span class="n">other</span> <span class="p">{</span>
+   <span class="k">if</span><span class="p">(</span><span class="nb">self</span><span class="o">==</span><span class="n">other</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">YES</span><span class="p">;</span>
+
+   <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">[</span><span class="n">other …</span></pre></div> </p>
+        <p><a class="uk-button read-on" href="/nsnumber-in-objective-c.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/about-configuation-implement.html" rel="bookmark" title="Permalink to 关于项目配置文件的实现">关于项目配置文件的实现</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-01-26T11:00:00+08:00">2014-01-26 11:00</abbr></p>
+        <p class="uk-article-content"> <p>之前写代码的时候还有一个纠结点就是如何分开项目在<strong>单元测试</strong>、<strong>DEBUG</strong>及<strong>线上环境</strong>的配置文件。尝试了各种方法，考虑了具体运行环境的配置不应该被包含到源码仓库，最终选定了<code>~/.config</code>的形式。</p>
+<h2>读取指定路径的配置</h2>
+<div class="highlight"><pre><span></span>def _get_module_from_file(filename):
+    filename = os.path.abspath(filename)
+    d = imp.new_module(&#39;config&#39;)
+    d.__file__ = filename
+    try:
+        with open(filename) as config_file:
+            exec(compile(config_file.read(), filename, &#39;exec&#39;), d.__dict__)
+    except IOError as e:
+        e.strerror = &#39;Unable to load …</pre></div> </p>
+        <p><a class="uk-button read-on" href="/about-configuation-implement.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/about-sqlalchemy-many-many-relationship.html" rel="bookmark" title="Permalink to 纠结的Many-Many关联">纠结的Many-Many关联</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-01-23T21:00:00+08:00">2014-01-23 21:00</abbr></p>
+        <p class="uk-article-content"> <p>使用了<code>SQLAlchemy</code>挺长时间的了，之前在使用的过程中一直有一件事挺纠结的，SA到底会不会在commit的使用自动对比多对多关系的变更生成合适的SQL去更新数据库呢？</p>
+<p>现决定做具体实验，搞清楚。</p>
+<h2>数据定义</h2>
+<p>数据定义如下:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Right</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 权限表 &quot;&quot;&quot;</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;right&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;Right(name=</span><span class="si">%s</span><span class="s2">)&gt;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+
+<span class="n">user_right</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+    <span class="s2">&quot;user_right&quot;</span><span class="p">,</span> <span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;user.id&quot;</span><span class="p">,</span> <span class="n">ondelete</span><span class="o">=</span><span class="s2">&quot;CASCADE&quot;</span><span class="p">)),</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;right.name …</span></pre></div> </p>
+        <p><a class="uk-button read-on" href="/about-sqlalchemy-many-many-relationship.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/about-gitignore.html" rel="bookmark" title="Permalink to 关于Gitignore的规则">关于Gitignore的规则</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-01-22T11:00:00+08:00">2014-01-22 11:00</abbr></p>
+        <p class="uk-article-content"> <p>关于<code>.gitignore</code>的语法规则我一直没有很明白，今天决心要弄懂。</p>
+<p>下面的是<strong>Manual Page</strong>的说明：</p>
+<blockquote>
+<p>A blank line matches no files, so it can serve as a separator for readability.</p>
+<p>A line starting with # serves as a comment. Put a backslash ("\") in front of the first hash for patterns that begin with a hash.</p>
+<p>An optional prefix …</p></blockquote> </p>
+        <p><a class="uk-button read-on" href="/about-gitignore.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/how-macos-launch-the-daemon-on-startup.html" rel="bookmark" title="Permalink to Goagent在MacOS上的自动启动的实现">Goagent在MacOS上的自动启动的实现</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2013-09-11T09:53:00+08:00">2013-09-11 09:53</abbr></p>
+        <p class="uk-article-content"> <p>主要是想知道MacOS上面的开机自启动的程序是如何实现的。</p>
+<p>Goagent提供了一个Python脚本来添加自启动的配置，脚本如下</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="k">def</span> <span class="nf">main_macos</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getuid</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s1">&#39;please use sudo run this script&#39;</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="n">PLIST</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="s1">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="s1">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd …</span></pre></div> </p>
+        <p><a class="uk-button read-on" href="/how-macos-launch-the-daemon-on-startup.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/vim-notes.html" rel="bookmark" title="Permalink to Vim Notes">Vim Notes</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-08-24T03:39:00+08:00">2012-08-24 03:39</abbr></p>
+        <p class="uk-article-content"> <h2>vimrc_example</h2>
+<p>在编写自己的~/.vimrc的时候，发现vim包自带的<code>vimrc_example.vim</code>文件里面已经帮我写好了很多常用配置。所以，第一步，就是将这个example包含到我们自己的vimrc中来。</p>
+<div class="highlight"><pre><span></span>source $VIMRUNTIME/vimrc_example.vim
+</pre></div>
+
+
+<h2>Tab及缩进宽度</h2>
+<p>vim默认的8个字符宽度实在看不习惯，改成4个字符的。</p>
+<div class="highlight"><pre><span></span>set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+</pre></div>
+
+
+<h2>关于配色</h2>
+<p>刚开始用vim的时候，在它自带的几种配色方案里面挑来挑去，最后选了<code>evening</code>，感觉还不错。</p>
+<div class="highlight"><pre><span></span>colo evening
+</pre></div>
+
+
+<p>后来无意中发现了<code>molokai</code>，觉得虽然颜色艳了点，整体还是挺好看的。于是就决定暂时用它了。</p>
+<p>在<a href="http://www.vim.org/scripts/script.php?script_id=2340">http://www.vim.org/scripts/script.php?script_id=2340</a>下载molokai …</p> </p>
+        <p><a class="uk-button read-on" href="/vim-notes.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
+            <a href="/bash-notes.html" rel="bookmark" title="Permalink to Bash持续积累">Bash持续积累</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-08-24T03:25:00+08:00">2012-08-24 03:25</abbr></p>
+        <p class="uk-article-content"> <h2>条件判断</h2>
+<p><strong>语法</strong>,可以用<code>[ -e /tmp/tf1 ]</code>或者<code>test -e /tmp/tf1</code>。</p>
+<h3>文件类型判断</h3>
+<div class="highlight"><pre><span></span>-e    判断文件是否存在
+-f    判断该文件是否存在且是一个文件(file)
+-d    判断该文件是否存在且是一个目录(directory)
+-b    判断该文件是否存在且是块设备
+-c    判断该文件是否存在且是字符设备
+-S    判断该文件是否存在且是一个Socket
+-p    判断该文件是否存在且是一个管道文件(pipe)
+-L    判断该文件是否存在且是一个软链接
+</pre></div>
+
+
+<h3>文件权限判断</h3>
+<div class="highlight"><pre><span></span>-r    判断该文件是否存在且具有可读权限
+-w    判断该文件是否存在且具有可写权限
+-x    判断该文件是否存在且具有可执行权限
+</pre></div>
+
+
+<h3>文件比较，例如<code>test file1 -nt file2</code>。</h3>
+<div class="highlight"><pre><span></span>-nt   判断file1是否比file2新
+-ot   判断file1是否比file2旧
+-ef   判断file1和file2是否为同一文件 …</pre></div> </p>
+        <p><a class="uk-button read-on" href="/bash-notes.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+</div>
+
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

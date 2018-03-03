@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>关于Gitignore的规则 - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li class="uk-active"><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/about-gitignore.html" rel="bookmark"
+                title="Permalink to 关于Gitignore的规则">关于Gitignore的规则</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-01-22T11:00:00+08:00">2014-01-22 11:00</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <p>关于<code>.gitignore</code>的语法规则我一直没有很明白，今天决心要弄懂。</p>
+<p>下面的是<strong>Manual Page</strong>的说明：</p>
+<blockquote>
+<p>A blank line matches no files, so it can serve as a separator for readability.</p>
+<p>A line starting with # serves as a comment. Put a backslash ("\") in front of the first hash for patterns that begin with a hash.</p>
+<p>An optional prefix "!" which negates the pattern; any matching file excluded by a previous pattern will become included again. If a negated pattern matches, this will override lower precedence patterns sources. Put a backslash ("\") in front of the first "!" for patterns that begin with a literal "!", for example, "!important!.txt".</p>
+<p>If the pattern ends with a slash, it is removed for the purpose of the following description, but it would only find a match with a directory. In other words, foo/ will match a directory foo and paths underneath it, but will not match a regular file or a symbolic link foo (this is consistent with the way how pathspec works in general in git).</p>
+<p>If the pattern does not contain a slash /, git treats it as a shell glob pattern and checks for a match against the pathname relative to the location of the .gitignore file (relative to the toplevel of the work tree if not from a .gitignore file).</p>
+<p>Otherwise, git treats the pattern as a shell glob suitable for consumption by fnmatch(3) with the FNM_PATHNAME flag: wildcards in the pattern will not match a / in the pathname. For example, "Documentation/*.html" matches "Documentation/git.html" but not "Documentation/ppc/ppc.html" or "tools/perf/Documentation/perf.html".</p>
+<p>A leading slash matches the beginning of the pathname. For example, "/*.c" matches "cat-file.c" but not "mozilla-sha1/sha1.c".</p>
+</blockquote>
+<p>我仔细读了半天，发现还是没弄懂，还是亲自做实验吧。</p>
+<p>其实没弄懂的主要是第4，5，6条，一个个解决吧。</p>
+<h2>If the pattern ends with a slash</h2>
+<p>原文这样：</p>
+<blockquote>
+<p>If the pattern ends with a slash, it is removed for the purpose of the following description, but it would only find a match with a directory. In other words, foo/ will match a directory foo and paths underneath it, but will not match a regular file or a symbolic link foo (this is consistent with the way how pathspec works in general in git).</p>
+</blockquote>
+<p>正常情况:</p>
+<div class="highlight"><pre><span></span>Carl-MBPR ➜  testgitignore git:(master) ✗ cat .gitignore
+foo/
+Carl-MBPR ➜  testgitignore git:(master) ✗ tree -a -L 1
+.
+├── .git
+├── .gitignore
+└── foo
+Carl-MBPR ➜  testgitignore git:(master) ✗ git status
+# On branch master
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#   foo
+nothing added to commit but untracked files present (use &quot;git add&quot; to track)
+Carl-MBPR ➜  testgitignore git:(master) ✗ rm foo
+Carl-MBPR ➜  testgitignore git:(master) mkdir foo
+Carl-MBPR ➜  testgitignore git:(master) touch foo/file
+Carl-MBPR ➜  testgitignore git:(master) tree -L 2
+.
+└── foo
+    └── file
+
+1 directory, 1 file
+Carl-MBPR ➜  testgitignore git:(master) git status
+# On branch master
+nothing to commit, working directory clean
+</pre></div>
+
+
+<p>子目录中的表现：</p>
+<div class="highlight"><pre><span></span>Carl-MBPR ➜  testgitignore git:(master) mkdir somefolder
+Carl-MBPR ➜  testgitignore git:(master) touch somefolder/foo
+Carl-MBPR ➜  testgitignore git:(master) ✗ git status
+# On branch master
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#   somefolder/
+nothing added to commit but untracked files present (use &quot;git add&quot; to track)
+Carl-MBPR ➜  testgitignore git:(master) ✗ rm somefolder/foo
+Carl-MBPR ➜  testgitignore git:(master) mkdir somefolder/foo
+Carl-MBPR ➜  testgitignore git:(master) touch somefolder/foo/file
+Carl-MBPR ➜  testgitignore git:(master) git status
+# On branch master
+nothing to commit, working directory clean
+</pre></div>
+
+
+<p><strong>结论</strong>：这里的规则是在所有目录层级中都有效的。</p>
+<h2>If the pattern does not contain a slash</h2>
+<blockquote>
+<p>If the pattern does not contain a slash /, git treats it as a shell glob pattern and checks for a match against the pathname relative to the location of the .gitignore file (relative to the toplevel of the work tree if not from a .gitignore file).</p>
+</blockquote>
+<p>实验：</p>
+<div class="highlight"><pre><span></span>Carl-MBPR ➜  testgitignore git:(master) cat .gitignore
+foo
+</pre></div>
+
+
+<p>正常情况：</p>
+<div class="highlight"><pre><span></span>Carl-MBPR ➜  testgitignore git:(master) touch foo
+Carl-MBPR ➜  testgitignore git:(master) git status
+# On branch master
+nothing to commit, working directory clean
+
+Carl-MBPR ➜  testgitignore git:(master) rm foo
+Carl-MBPR ➜  testgitignore git:(master) mkdir foo
+Carl-MBPR ➜  testgitignore git:(master) touch foo/file
+Carl-MBPR ➜  testgitignore git:(master) tree
+.
+└── foo
+    └── file
+
+1 directory, 1 file
+Carl-MBPR ➜  testgitignore git:(master) git status
+# On branch master
+nothing to commit, working directory clean
+</pre></div>
+
+
+<p>子目录中表现：</p>
+<div class="highlight"><pre><span></span>Carl-MBPR ➜  testgitignore git:(master) mkdir somefolder
+Carl-MBPR ➜  testgitignore git:(master) touch somefolder/foo
+Carl-MBPR ➜  testgitignore git:(master) tree
+.
+├── foo
+│   └── file
+└── somefolder
+    └── foo
+
+2 directories, 2 files
+Carl-MBPR ➜  testgitignore git:(master) git status
+# On branch master
+nothing to commit, working directory clean
+</pre></div>
+
+
+<p><strong>结论</strong>：这里的规则也是对所有子目录有效。</p>
+<h2>Otherwise, git treats the pattern as a shell glob suitable for consumption by fnmatch(3) with the FNM_PATHNAME flag</h2>
+<p>原文:</p>
+<blockquote>
+<p>Otherwise, git treats the pattern as a shell glob suitable for consumption by fnmatch(3) with the FNM_PATHNAME flag: wildcards in the pattern will not match a / in the pathname. For example, "Documentation/*.html" matches "Documentation/git.html" but not "Documentation/ppc/ppc.html" or "tools/perf/Documentation/perf.html".</p>
+</blockquote>
+<p>实验：</p>
+<div class="highlight"><pre><span></span>Carl-MBPR ➜  testgitignore git:(master) cat .gitignore
+foo/*.file
+</pre></div>
+
+
+<p>正常情况：</p>
+<div class="highlight"><pre><span></span>Carl-MBPR ➜  testgitignore git:(master) mkdir foo
+Carl-MBPR ➜  testgitignore git:(master) touch foo/aa
+Carl-MBPR ➜  testgitignore git:(master) ✗ git status
+# On branch master
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#   foo/
+nothing added to commit but untracked files present (use &quot;git add&quot; to track)
+Carl-MBPR ➜  testgitignore git:(master) ✗ mv foo/aa foo/aa.file
+Carl-MBPR ➜  testgitignore git:(master) tree
+.
+└── foo
+    └── aa.file
+
+1 directory, 1 file
+Carl-MBPR ➜  testgitignore git:(master) git status
+# On branch master
+nothing to commit, working directory clean
+</pre></div>
+
+
+<p>子目录中表现：</p>
+<div class="highlight"><pre><span></span>Carl-MBPR ➜  testgitignore git:(master) mkdir somefolder
+Carl-MBPR ➜  testgitignore git:(master) mkdir somefolder/foo
+Carl-MBPR ➜  testgitignore git:(master) touch somefolder/foo/some.file
+Carl-MBPR ➜  testgitignore git:(master) ✗ tree
+.
+├── foo
+│   └── aa.file
+└── somefolder
+    └── foo
+        └── some.file
+
+3 directories, 2 files
+Carl-MBPR ➜  testgitignore git:(master) ✗ git status
+# On branch master
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#   somefolder/
+nothing added to commit but untracked files present (use &quot;git add&quot; to track)
+</pre></div>
+
+
+<p><strong>结论</strong>：该类型规则不会在子目录中生效。</p>
+<h2>总结</h2>
+<ol>
+<li>当规则是简单文件（目录）名的匹配的话，会在当前目录和子目录中生效。</li>
+<li>如果规则中包含的路径（即使不是绝对路径），该规则都只会在当前目录生效。</li>
+<li>可以使用<code>/foo</code>的形式来从项目根目录开始匹配。</li>
+</ol>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

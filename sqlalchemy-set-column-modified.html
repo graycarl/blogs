@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>SqlAlchemy 标记字段变更 - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li class="uk-active"><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/sqlalchemy-set-column-modified.html" rel="bookmark"
+                title="Permalink to SqlAlchemy 标记字段变更">SqlAlchemy 标记字段变更</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-06-16T19:59:00+08:00">2014-06-16 19:59</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <p>为了在数据库里面存储一些比较随意的结构化数据，我参照(抄袭)<code>sqlalchemy</code>的文档实现了一个自定义类型：</p>
+<div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">JSON</span><span class="p">(</span><span class="nx">TypeDecorator</span><span class="p">)</span><span class="o">:</span>
+    <span class="s2">&quot;&quot;&quot; Json String Field &quot;&quot;&quot;</span>
+    <span class="nx">impl</span> <span class="o">=</span> <span class="nx">Text</span>
+
+    <span class="nx">def</span> <span class="nx">process_bind_param</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">dialect</span><span class="p">)</span><span class="o">:</span>
+        <span class="k">if</span> <span class="nx">value</span> <span class="nx">is</span> <span class="nx">None</span>:
+            <span class="kt">return</span> <span class="nx">value</span>
+        <span class="nx">elif</span> <span class="nx">isinstance</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="p">(</span><span class="nx">dict</span><span class="p">,</span> <span class="nx">list</span><span class="p">))</span><span class="o">:</span>
+            <span class="k">return</span> <span class="nx">json</span><span class="p">.</span><span class="nx">dumps</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="o">:</span>
+            <span class="nx">raise</span> <span class="nx">ValueError</span><span class="p">(</span><span class="s2">&quot;unsupported value type&quot;</span><span class="p">)</span>
+
+    <span class="nx">def</span> <span class="nx">process_result_value</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">dialect</span><span class="p">)</span><span class="o">:</span>
+        <span class="k">if</span> <span class="nx">value</span> <span class="nx">is</span> <span class="nx">None</span>:
+            <span class="kt">return</span> <span class="nx">value</span>
+        <span class="k">else</span><span class="o">:</span>
+            <span class="k">return</span> <span class="nx">json</span><span class="p">.</span><span class="nx">loads</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+
+
+<span class="kr">class</span> <span class="nx">MyModel</span><span class="p">(</span><span class="nx">Base</span><span class="p">)</span><span class="o">:</span>
+    <span class="p">...</span>
+    <span class="nx">json</span> <span class="o">=</span> <span class="nx">Column</span><span class="p">(</span><span class="nx">JSON</span><span class="p">,</span> <span class="k">default</span><span class="o">=</span><span class="p">[])</span>
+
+    <span class="nx">def</span> <span class="nx">add_item</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span><span class="o">:</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">json</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span>
+</pre></div>
+
+
+<p>其实这本质上就是把python的<code>dict</code>或<code>list</code>直接dumps成json内容存入数据库，从数据库读出之后再自动<code>loads</code>成<code>dict</code>或者<code>list</code>来使用。</p>
+<p>但是再使用的过程中发现了一个问题。对这个<code>MyModel</code>的实例无论怎么修改其json字段都无法正常保存到数据库中，目测应该是SA没有检测到这个字段的变化而导致的。重新翻看文档，发现文档里面已经有说明了。</p>
+<blockquote>
+<p>Note that the ORM by default will not detect “mutability” on such a type - meaning, in-place changes to values will not be detected and will not be flushed. Without further steps, you instead would need to replace the existing value with a new one on each parent object to detect changes. Note that there’s nothing wrong with this, as many applications may not require that the values are ever mutated once created. For those which do have this requirement, support for mutability is best applied using the sqlalchemy.ext.mutable extension - see the example in Mutation Tracking.</p>
+</blockquote>
+<p>再看看<code>sqlalchemy.ext.mutable</code>模块的文档，发现使用起来也没有那么简练，而我只想找个方法来主动标记字段变更就行了。于是翻看<code>mutable</code>模块的代码，找到了其最重要的一句：</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy.orm.attributes</span> <span class="kn">import</span> <span class="n">flag_modified</span>
+
+<span class="k">class</span> <span class="nc">Mutable</span><span class="p">(</span><span class="n">MutableBase</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Subclasses should call this method whenever change events occur.&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">parent</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parents</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">flag_modified</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</pre></div>
+
+
+<p>其实就是这个<code>flag_modified</code>标记了修改状态，所以只需要把我自己的代码改一句就行了。</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy.orm.attributes</span> <span class="kn">import</span> <span class="n">flag_modified</span>
+
+<span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="n">json</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">JSON</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[])</span>
+
+    <span class="k">def</span> <span class="nf">add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="n">flag_modified</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>打完收工。</p>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

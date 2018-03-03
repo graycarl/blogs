@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>Python Challenge - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li class="uk-active"><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/python-challenge.html" rel="bookmark"
+                title="Permalink to Python Challenge">Python Challenge</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-08-24T03:33:00+08:00">2012-08-24 03:33</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <p><a href="http://www.pythonchallenge.com/">pythonchallenge</a> 这个网站挺有意思，以后没事做做题。据说闯到18关以上就是高手了^_^。</p>
+<h2>第0题</h2>
+<p>这就很简单了</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+
+<span class="k">print</span> <span class="mi">2</span><span class="o">**</span><span class="mi">38</span>
+</pre></div>
+
+
+<p>所以就是http://www.pythonchallenge.com/pc/def/274877906944.html了。</p>
+<h2>第一题</h2>
+<p>看图片可以看出了将每个字母按ascii码的值加上2，翻译一遍。</p>
+<p>但是我还不熟悉python嘛，都不知道怎么来取每个字母的ascii码。难道这样就没办法了吗，反正没有性能要求，就先用数组来映射嘛。</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+
+<span class="n">a</span><span class="o">=</span><span class="s2">&quot;abcdefghijklmnopqrstuvwxyzab&quot;</span>
+
+<span class="n">source</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">g fmnc wms bgblr rpylqjyrc gr zw fylb. rfyrq ufyr amknsrcpq ypc dmp.</span>
+<span class="s2">bmgle gr gl zw fylb gq glcddgagclr ylb rfyr&#39;q ufw rfgq rcvr gq qm jmle.</span>
+<span class="s2">sqgle qrpgle.kyicrpylq() gq pcamkkclbcb.</span>
+<span class="s2">lmu ynnjw ml rfc spj.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">out</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">source</span><span class="p">)):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="n">p</span><span class="o">+</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span> <span class="o">+</span> <span class="n">source</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+<span class="k">print</span> <span class="n">out</span>
+</pre></div>
+
+
+<p>翻译出来如下</p>
+<div class="highlight"><pre><span></span>i hope you didnt translate it by hand.
+thats what computers are for.
+doing it in by hand is inefficient and that&#39;s why this text is so long.
+using string.maketrans() is recommended.
+now apply on the url.
+</pre></div>
+
+
+<p>照他说的，再把map这三个字母翻译一下，变成ocr。</p>
+<p>所以下个地址就是http://www.pythonchallenge.com/pc/def/ocr.html。</p>
+<h2>第二题</h2>
+<p>提示说秘密在页面源码中，打开该页面的源码，找到里面的一串很长的注释，发现里面大多数都是特殊字符，看来得从中找到全部的字母。把注释的内容先保存到文件，再用python一个个过滤。</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">string</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;pc2data&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">letters</span><span class="p">:</span>
+        <span class="k">print</span> <span class="n">c</span><span class="p">,</span>
+
+<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+
+<p>运行得到输出：</p>
+<div class="highlight"><pre><span></span>carl@ThinkPad-T500:~/tmp$ python pc2.py
+e q u a l i t y
+</pre></div>
+
+
+<p>所有，下面的页面是http://www.pythonchallenge.com/pc/def/equality.html.</p>
+<h2>第三题</h2>
+<p>提示说要找到所有被3个（只能是3个大写字母包围的小写字母），这当然得是正则表达式的事情了。但苦于我不会用这个re模块，就先死办法弄一个出来吧。先从页面注释里面找到数据，保存到文件。</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">string</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;pc3data&quot;</span><span class="p">)</span>
+
+<span class="n">status</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">char</span><span class="o">=</span><span class="s1">&#39;*&#39;</span>
+<span class="n">result</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">status</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">lowercase</span><span class="p">:</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="n">status</span>
+</pre></div>
+
+
+<p>然后运行，看结果</p>
+<div class="highlight"><pre><span></span>carl@ThinkPad-T500:~/tmp$ python pc3.py
+linkedlist
+</pre></div>
+
+
+<p>这样，下一个页面的地址就是http://www.pythonchallenge.com/pc/def/linkedlist.html</p>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

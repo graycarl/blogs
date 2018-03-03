@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>Bottle.py分析1 - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li class="uk-active"><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/bottle-py-analyse-1.html" rel="bookmark"
+                title="Permalink to Bottle.py分析1">Bottle.py分析1</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-08-24T03:52:00+08:00">2012-08-24 03:52</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <h2>前言</h2>
+<p>想下一份工作尝试一下python的web开发，正好趁着这个找工作的间隙时间自己充充电，打算用python的一个web开发框架做一个自己的博客。</p>
+<p>选定了使用一个精简的web框架bottle来做开发。其他的一个更成熟的框架比如django等以前也大概了解过，为什么选择这个精简框架呢？主要是想重点学习一下web开发的原理和相关基本知识。这个框架只有3000+行python代码，是一个单独文件，且对除了python标准库之外没有其他依赖。这样，里面的各个关键点应该就可以没有过多的封装很清晰的展现出来。即使把这个框架整个读一篇应该也不是很难吧。</p>
+<h2>整体概览</h2>
+<p>直接来分析代码不合适，还是从基本使用开始吧，就以官方的第一个例子来做例子。</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bottle</span> <span class="kn">import</span> <span class="n">route</span><span class="p">,</span> <span class="n">run</span>
+
+<span class="nd">@route</span><span class="p">(</span><span class="s1">&#39;/hello/:name&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;World&#39;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39;Hello </span><span class="si">%s</span><span class="s1">!&#39;</span> <span class="o">%</span> <span class="n">name</span>
+
+<span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)</span>
+</pre></div>
+
+
+<p>上面是官方的实例代码，也就是使用bottle来做web开发的一个最简单的demo。代码很简单，第一行从bottle模块中导入<code>route</code>和<code>run</code>两个量。<code>route</code>是一个python的装饰器（也就是一个callable对象），<code>run</code>也是一个callable对象。</p>
+<p>代码的意思也不难理解，将<code>index</code>这个函数绑定为<code>/hello/</code>这个路径（url）的处理函数，即<code>http://localhost/hello/carl</code>这个地址的处理函数。函数将路径的最后一个量作为name变量传递给<code>index</code>处理函数，该函数将返回处理得到的结果，也就是一段html。这样，这段html就会在浏览器中显示出来。</p>
+<p>在这里我们会提出以下几个问题。
+1. 这里的index函数式怎么绑定到这个路径的呢？
+2. 代码里面我们只看到定义该函数时使用了route这个装饰器，route里面到底做了什么呢？
+3. run这个函数是怎么回事，它的参数里面只有监听的地址和端口，但是它到底运行了什么呢，它和route装饰器是怎么联系到一起的呢？</p>
+<h2>run和route怎么联系的</h2>
+<p>先看这个最奇怪的问题是怎么回事。在bottle的文档里面还给了这个demo的另一种写法，如下：</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bottle</span> <span class="kn">import</span> <span class="n">Bottle</span><span class="p">,</span> <span class="n">run</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Bottle</span><span class="p">()</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/hello/:name&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;World&#39;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39;Hello </span><span class="si">%s</span><span class="s1">!&#39;</span> <span class="o">%</span> <span class="n">name</span>
+
+<span class="n">run</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)</span>
+</pre></div>
+
+
+<p>哈，这样就看出来联系了吧。其实第一个demo里面的route是一个默认app的route，run里面运行的app就是这个默认app。那么他们到底是怎么实现的呢。看bottle.py代码</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">server</span><span class="o">=</span><span class="s1">&#39;wsgiref&#39;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">,</span>
+        <span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">reloader</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">plugins</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+
+    <span class="o">...</span><span class="err">此处省略</span><span class="o">...</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_debug</span><span class="p">(</span><span class="n">debug</span><span class="p">)</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">app</span> <span class="ow">or</span> <span class="n">default_app</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="n">app</span> <span class="o">=</span> <span class="n">load_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Application is not callable: </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">app</span><span class="p">)</span>
+
+        <span class="o">...</span><span class="err">此处省略</span><span class="o">...</span>
+
+        <span class="k">if</span> <span class="n">reloader</span><span class="p">:</span>
+            <span class="n">lockfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;BOTTLE_LOCKFILE&#39;</span><span class="p">)</span>
+            <span class="n">bgcheck</span> <span class="o">=</span> <span class="n">FileCheckerThread</span><span class="p">(</span><span class="n">lockfile</span><span class="p">,</span> <span class="n">interval</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">bgcheck</span><span class="p">:</span>
+                <span class="n">server</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">bgcheck</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s1">&#39;reload&#39;</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">server</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+    <span class="o">...</span><span class="err">此处省略</span><span class="o">...</span>
+</pre></div>
+
+
+<p>看到这个<code>app = app or default_app()</code>了吗，看来当run的参数没有给定app的时候就是运行的<code>default_app()</code>的返回值。再看这个<code>default_app</code>是啥。</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AppStack</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A stack-like list. Calling it returns the head of the stack. &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return the current default application. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Add a new :class:`Bottle` instance to the stack &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Bottle</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">Bottle</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+<span class="o">...</span><span class="err">此处省略</span><span class="o">...</span>
+<span class="c1"># Initialize app stack (create first empty Bottle app)</span>
+<span class="c1"># BC: 0.6.4 and needed for run()</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">default_app</span> <span class="o">=</span> <span class="n">AppStack</span><span class="p">()</span>
+<span class="n">app</span><span class="o">.</span><span class="n">push</span><span class="p">()</span>
+</pre></div>
+
+
+<p><code>AppStack</code>是一个存放Bottle实例的list，同时它的实例又是一个callable对象，每次调用都会返回list最后一个Bottle的实例。这样，我们就可以知道，当前状态下<code>default_app()</code>返回的就是执行<code>app.push()</code>时创建的Bottle实例。</p>
+<p>好了，<code>run</code>运行的Bottle实例我们清楚了，可是它是怎么和<code>route</code>联系在一起的呢？再看<code>route</code>代码</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">make_default_app_wrapper</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Return a callable that relays calls to the current default app. &#39;&#39;&#39;</span>
+    <span class="nd">@functools.wraps</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">Bottle</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">ka</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">app</span><span class="p">(),</span> <span class="n">name</span><span class="p">)(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">ka</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="n">route</span>     <span class="o">=</span> <span class="n">make_default_app_wrapper</span><span class="p">(</span><span class="s1">&#39;route&#39;</span><span class="p">)</span>
+<span class="n">get</span>       <span class="o">=</span> <span class="n">make_default_app_wrapper</span><span class="p">(</span><span class="s1">&#39;get&#39;</span><span class="p">)</span>
+<span class="n">post</span>      <span class="o">=</span> <span class="n">make_default_app_wrapper</span><span class="p">(</span><span class="s1">&#39;post&#39;</span><span class="p">)</span>
+<span class="n">put</span>       <span class="o">=</span> <span class="n">make_default_app_wrapper</span><span class="p">(</span><span class="s1">&#39;put&#39;</span><span class="p">)</span>
+<span class="n">delete</span>    <span class="o">=</span> <span class="n">make_default_app_wrapper</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span><span class="p">)</span>
+<span class="n">error</span>     <span class="o">=</span> <span class="n">make_default_app_wrapper</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
+<span class="n">mount</span>     <span class="o">=</span> <span class="n">make_default_app_wrapper</span><span class="p">(</span><span class="s1">&#39;mount&#39;</span><span class="p">)</span>
+<span class="n">hook</span>      <span class="o">=</span> <span class="n">make_default_app_wrapper</span><span class="p">(</span><span class="s1">&#39;hook&#39;</span><span class="p">)</span>
+<span class="n">install</span>   <span class="o">=</span> <span class="n">make_default_app_wrapper</span><span class="p">(</span><span class="s1">&#39;install&#39;</span><span class="p">)</span>
+<span class="n">uninstall</span> <span class="o">=</span> <span class="n">make_default_app_wrapper</span><span class="p">(</span><span class="s1">&#39;uninstall&#39;</span><span class="p">)</span>
+<span class="n">url</span>       <span class="o">=</span> <span class="n">make_default_app_wrapper</span><span class="p">(</span><span class="s1">&#39;get_url&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>即使不知道<code>functools.wraps(getattr(Bottle, name))</code>是干什么的，我们也能够看出来，这个<code>route</code>其实就是把<code>app().route</code>包装了一下而已，<code>app()</code>也就是<code>default_app()</code>了。</p>
+<p>这样我们应该就很清楚了，其他第一种写法的demo和第二种写法的demo其实没啥区别，只不过第一种写法的demo用了default_app，这样就可以直接使用从bottle模块导出的route，可以少些几行代码而已。</p>
+<p>那么到底<code>functools.wraps</code>是干啥的呢，可以参见<a href="http://www.cnblogs.com/twelfthing/articles/2145656.html">这篇文章</a>。至少可以确定和我们理解的当前内容不相关。
+route做了什么</p>
+<p>猜测一下，既然<code>route</code>就是<code>app.route</code>（这里app指的是Bottle的一个实例），那么<code>route</code>这个装饰器应该是把这些被装饰的函数对象记录到<code>app</code>中的某个地方了，用来以后处理请求的时候查找出来调用。是不是呢，看代码</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Bottle</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="o">...</span><span class="err">此处省略</span><span class="o">...</span>
+    <span class="k">def</span> <span class="nf">route</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="err">¿两个参数可以是多个元素的列表。重点是用</span><span class="n">callback</span><span class="err">（也就是</span><span class="sb">`index`</span><span class="err">函数）创建了</span><span class="sb">`Route`</span><span class="err">实例，然后加入到</span><span class="sb">`self.add_route(route)`</span><span class="err">里面了。这个函数就暂时不跟进了，看字面就知道意思了。</span>
+</pre></div>
+
+
+<p>所以，这个<code>route</code>装饰器的作用和我们预想的差不多了。</p>
+<p>...未完待续</p>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

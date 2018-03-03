@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>Goagent在MacOS上的自动启动的实现 - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li class="uk-active"><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/how-macos-launch-the-daemon-on-startup.html" rel="bookmark"
+                title="Permalink to Goagent在MacOS上的自动启动的实现">Goagent在MacOS上的自动启动的实现</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2013-09-11T09:53:00+08:00">2013-09-11 09:53</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <p>主要是想知道MacOS上面的开机自启动的程序是如何实现的。</p>
+<p>Goagent提供了一个Python脚本来添加自启动的配置，脚本如下</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="k">def</span> <span class="nf">main_macos</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getuid</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s1">&#39;please use sudo run this script&#39;</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="n">PLIST</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="s1">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="s1">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
+<span class="s1">&lt;plist version=&quot;1.0&quot;&gt;</span>
+<span class="s1">&lt;dict&gt;</span>
+<span class="s1">    &lt;key&gt;GroupName&lt;/key&gt;</span>
+<span class="s1">    &lt;string&gt;wheel&lt;/string&gt;</span>
+<span class="s1">    &lt;key&gt;Label&lt;/key&gt;</span>
+<span class="s1">    &lt;string&gt;org.goagent.macos&lt;/string&gt;</span>
+<span class="s1">    &lt;key&gt;OnDemand&lt;/key&gt;</span>
+<span class="s1">    &lt;false/&gt;</span>
+<span class="s1">    &lt;key&gt;ProgramArguments&lt;/key&gt;</span>
+<span class="s1">    &lt;array&gt;</span>
+<span class="s1">        &lt;string&gt;/usr/bin/python&lt;/string&gt;</span>
+<span class="s1">        &lt;string&gt;</span><span class="si">%(dirname)s</span><span class="s1">/proxy.py&lt;/string&gt;</span>
+<span class="s1">    &lt;/array&gt;</span>
+<span class="s1">    &lt;key&gt;RunAtLoad&lt;/key&gt;</span>
+<span class="s1">    &lt;true/&gt;</span>
+<span class="s1">    &lt;key&gt;ServiceIPC&lt;/key&gt;</span>
+<span class="s1">    &lt;true/&gt;</span>
+<span class="s1">    &lt;key&gt;StandardErrorPath&lt;/key&gt;</span>
+<span class="s1">    &lt;string&gt;</span><span class="si">%(dirname)s</span><span class="s1">/proxy.log&lt;/string&gt;</span>
+<span class="s1">    &lt;key&gt;StandardOutPath&lt;/key&gt;</span>
+<span class="s1">    &lt;string&gt;</span><span class="si">%(dirname)s</span><span class="s1">/proxy.log&lt;/string&gt;</span>
+<span class="s1">    &lt;key&gt;UserName&lt;/key&gt;</span>
+<span class="s1">    &lt;string&gt;root&lt;/string&gt;</span>
+<span class="s1">    &lt;key&gt;WorkingDirectory&lt;/key&gt;</span>
+<span class="s1">    &lt;string&gt;</span><span class="si">%(dirname)s</span><span class="s1">&lt;/string&gt;</span>
+<span class="s1">    &lt;key&gt;StandardOutPath&lt;/key&gt;</span>
+<span class="s1">    &lt;string&gt;/var/log/goagent.log&lt;/string&gt;</span>
+<span class="s1">    &lt;key&gt;StandardErrorPath&lt;/key&gt;</span>
+<span class="s1">    &lt;string&gt;/var/log/goagent.log&lt;/string&gt;</span>
+<span class="s1">&lt;/dict&gt;</span>
+<span class="s1">&lt;/plist&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="nb">dict</span><span class="p">(</span><span class="n">dirname</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;/System/Library/LaunchDaemons/org.goagent.macos.plist&#39;</span>
+    <span class="k">print</span> <span class="s1">&#39;write plist to </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">filename</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+        <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">PLIST</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s1">&#39;write plist to </span><span class="si">%s</span><span class="s1"> done&#39;</span> <span class="o">%</span> <span class="n">filename</span>
+    <span class="k">print</span> <span class="s1">&#39;Adding CA.crt to system keychain, You may need to input your password...&#39;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;sudo security add-trusted-cert -d -r trustRoot -k &quot;/Library/Keychains/System.keychain&quot; &quot;</span><span class="si">%s</span><span class="s1">/CA.crt&quot;&#39;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s1">&#39;Adding CA.crt to system keychain Failed!&#39;</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s1">&#39;Adding CA.crt to system keychain Done&#39;</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">main_macos</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+   <span class="k">try</span><span class="p">:</span>
+       <span class="n">main</span><span class="p">()</span>
+   <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+       <span class="k">pass</span>
+</pre></div>
+
+
+<p>可以看出来，这个脚本做了两件事，添加自启动配置和添加CA证书。证书那个就先不关心了，就看下自启动都做了什么。</p>
+<p>其实就将一段xml配置写进了<code>/System/Library/LaunchDaemons/org.goagent.macos.plist</code>文件里面了，其他啥也没有。</p>
+<p>下面再看下这个文件的内容都有些啥。</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="cp">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
+<span class="nt">&lt;plist</span> <span class="na">version=</span><span class="s">&quot;1.0&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;dict&gt;</span>
+    <span class="nt">&lt;key&gt;</span>GroupName<span class="nt">&lt;/key&gt;</span> <span class="c">&lt;!-- 以下的配置都是按照key-value的顺序排列的，比如当前这个的key就是GroupName, 表示以什么Group身份运行该程序 --&gt;</span>
+    <span class="nt">&lt;string&gt;</span>wheel<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;key&gt;</span>Label<span class="nt">&lt;/key&gt;</span> <span class="c">&lt;!-- Label表示各个自启动程序的唯一标示 --&gt;</span>
+    <span class="nt">&lt;string&gt;</span>org.goagent.macos<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;key&gt;</span>OnDemand<span class="nt">&lt;/key&gt;</span>
+    <span class="nt">&lt;false/&gt;</span>
+    <span class="nt">&lt;key&gt;</span>ProgramArguments<span class="nt">&lt;/key&gt;</span> <span class="c">&lt;!-- 启动参数 --&gt;</span>
+    <span class="nt">&lt;array&gt;</span>
+        <span class="nt">&lt;string&gt;</span>/usr/bin/python<span class="nt">&lt;/string&gt;</span>
+        <span class="nt">&lt;string&gt;</span>%(dirname)s/proxy.py<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;/array&gt;</span>
+    <span class="nt">&lt;key&gt;</span>RunAtLoad<span class="nt">&lt;/key&gt;</span> <span class="c">&lt;!-- 开机启动--&gt;</span>
+    <span class="nt">&lt;true/&gt;</span>
+    <span class="nt">&lt;key&gt;</span>ServiceIPC<span class="nt">&lt;/key&gt;</span>
+    <span class="nt">&lt;true/&gt;</span>
+    <span class="nt">&lt;key&gt;</span>UserName<span class="nt">&lt;/key&gt;</span> <span class="c">&lt;!-- 以root来运行 --&gt;</span>
+    <span class="nt">&lt;string&gt;</span>root<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;key&gt;</span>WorkingDirectory<span class="nt">&lt;/key&gt;</span> <span class="c">&lt;!-- 工作目录 --&gt;</span>
+    <span class="nt">&lt;string&gt;</span>%(dirname)s<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;key&gt;</span>StandardOutPath<span class="nt">&lt;/key&gt;</span> <span class="c">&lt;!-- 重定向标准输出 --&gt;</span> 
+    <span class="nt">&lt;string&gt;</span>/var/log/goagent.log<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;key&gt;</span>StandardErrorPath<span class="nt">&lt;/key&gt;</span> <span class="c">&lt;!-- 重定向标准错误 --&gt;</span> 
+    <span class="nt">&lt;string&gt;</span>/var/log/goagent.log<span class="nt">&lt;/string&gt;</span>
+<span class="nt">&lt;/dict&gt;</span>
+<span class="nt">&lt;/plist&gt;</span>
+</pre></div>
+
+
+<p>现在服务已经可以在开机时候自动启动了。再参考一下官方文档，发现可以有一个命令来配合使用。</p>
+<div class="highlight"><pre><span></span>停止服务
+sudo launchctl unload $plist_filename
+启动服务
+sudo launchctl load $plist_filename
+</pre></div>
+
+
+<p>其他详细的配置介绍可以参见[官方文档][http://developer.apple.com/library/mac/#documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html].</p>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>纠结的Many-Many关联 - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li class="uk-active"><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/about-sqlalchemy-many-many-relationship.html" rel="bookmark"
+                title="Permalink to 纠结的Many-Many关联">纠结的Many-Many关联</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-01-23T21:00:00+08:00">2014-01-23 21:00</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <p>使用了<code>SQLAlchemy</code>挺长时间的了，之前在使用的过程中一直有一件事挺纠结的，SA到底会不会在commit的使用自动对比多对多关系的变更生成合适的SQL去更新数据库呢？</p>
+<p>现决定做具体实验，搞清楚。</p>
+<h2>数据定义</h2>
+<p>数据定义如下:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Right</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 权限表 &quot;&quot;&quot;</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;right&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;Right(name=</span><span class="si">%s</span><span class="s2">)&gt;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+
+<span class="n">user_right</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+    <span class="s2">&quot;user_right&quot;</span><span class="p">,</span> <span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;user.id&quot;</span><span class="p">,</span> <span class="n">ondelete</span><span class="o">=</span><span class="s2">&quot;CASCADE&quot;</span><span class="p">)),</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;right.name&quot;</span><span class="p">,</span> <span class="n">ondelete</span><span class="o">=</span><span class="s2">&quot;CASCADE&quot;</span><span class="p">))</span>
+<span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;user&quot;</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">age</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">rights</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="n">Right</span><span class="p">,</span> <span class="n">secondary</span><span class="o">=</span><span class="n">user_right</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;User(name=</span><span class="si">%s</span><span class="s2">)&gt;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+</pre></div>
+
+
+<h2>添加关联</h2>
+<p>当得到了<code>user</code>实例后，如果新增一个关联的<code>right</code>:</p>
+<div class="highlight"><pre><span></span><span class="n">user</span><span class="o">.</span><span class="n">rights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newright</span><span class="p">)</span>
+<span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</pre></div>
+
+
+<p>正常识别出了新增的关联并且生成了合适的<em>SQL</em>。</p>
+<h2>减少关联</h2>
+<p>如果减少一个关联:</p>
+<div class="highlight"><pre><span></span><span class="n">user</span><span class="o">.</span><span class="n">rights</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">someright</span><span class="p">)</span>
+<span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</pre></div>
+
+
+<p>正常识别出了新增的关联并且生成了合适的<em>SQL</em>。</p>
+<h2>重置关联</h2>
+<p>这种方式是最值得怀疑的，不再是修改关联，而是重置关联：</p>
+<div class="highlight"><pre><span></span><span class="n">user</span><span class="o">.</span><span class="n">rights</span> <span class="o">=</span> <span class="p">[</span><span class="n">someright1</span><span class="p">,</span> <span class="n">someright2</span><span class="p">]</span>
+<span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</pre></div>
+
+
+<p>结果是，一切正常运行。看来<em>SA</em>的确做的很到位了。</p>
+<h2>结论</h2>
+<p>以后可以不用纠结，直接把对比更新的复杂度丢给<em>SA</em>去处理就好了。</p>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

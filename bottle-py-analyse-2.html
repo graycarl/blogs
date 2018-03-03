@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>Bottle.py分析2 - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li class="uk-active"><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/bottle-py-analyse-2.html" rel="bookmark"
+                title="Permalink to Bottle.py分析2">Bottle.py分析2</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-08-24T04:00:00+08:00">2012-08-24 04:00</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <p>接上篇，前面分析了Bottle里面的<code>route</code>和<code>run</code>是怎么工作的，以及它们之间的联系；接下来，我们从<code>bottle.run</code>入手，分析它是如何运行起来的。</p>
+<h2>bottle.run</h2>
+<p>先把代码列出来：</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">server</span><span class="o">=</span><span class="s1">&#39;wsgiref&#39;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">,</span>
+        <span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">reloader</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">plugins</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="o">...</span><span class="err">此处省略</span><span class="o">...</span>
+    <span class="k">if</span> <span class="n">NORUN</span><span class="p">:</span> <span class="k">return</span>
+    <span class="k">if</span> <span class="n">reloader</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;BOTTLE_CHILD&#39;</span><span class="p">):</span>
+        <span class="o">...</span><span class="err">这里面是为了处理</span><span class="n">reload运行模式的</span><span class="err">，不用关心</span><span class="o">...</span>
+        <span class="o">...</span><span class="err">此处省略</span><span class="o">...</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_debug</span><span class="p">(</span><span class="n">debug</span><span class="p">)</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">app</span> <span class="ow">or</span> <span class="n">default_app</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="n">app</span> <span class="o">=</span> <span class="n">load_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Application is not callable: </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">app</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">plugin</span> <span class="ow">in</span> <span class="n">plugins</span> <span class="ow">or</span> <span class="p">[]:</span>
+            <span class="n">app</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">plugin</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">server</span> <span class="ow">in</span> <span class="n">server_names</span><span class="p">:</span>
+            <span class="n">server</span> <span class="o">=</span> <span class="n">server_names</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="n">server</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="n">server</span> <span class="o">=</span> <span class="n">server</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">ServerAdapter</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown or unsupported server: </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">server</span><span class="p">)</span>
+
+        <span class="n">server</span><span class="o">.</span><span class="n">quiet</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">quiet</span> <span class="ow">or</span> <span class="n">quiet</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">server</span><span class="o">.</span><span class="n">quiet</span><span class="p">:</span>
+            <span class="n">_stderr</span><span class="p">(</span><span class="s2">&quot;Bottle v</span><span class="si">%s</span><span class="s2"> server starting up (using </span><span class="si">%s</span><span class="s2">)...</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">__version__</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">server</span><span class="p">)))</span>
+            <span class="n">_stderr</span><span class="p">(</span><span class="s2">&quot;Listening on http://</span><span class="si">%s</span><span class="s2">:</span><span class="si">%d</span><span class="s2">/</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">server</span><span class="o">.</span><span class="n">port</span><span class="p">))</span>
+            <span class="n">_stderr</span><span class="p">(</span><span class="s2">&quot;Hit Ctrl-C to quit.</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">reloader</span><span class="p">:</span>
+            <span class="n">lockfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;BOTTLE_LOCKFILE&#39;</span><span class="p">)</span>
+            <span class="n">bgcheck</span> <span class="o">=</span> <span class="n">FileCheckerThread</span><span class="p">(</span><span class="n">lockfile</span><span class="p">,</span> <span class="n">interval</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">bgcheck</span><span class="p">:</span>
+                <span class="n">server</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">bgcheck</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s1">&#39;reload&#39;</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">server</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+    <span class="o">...</span><span class="err">以下是异常处理，省略</span><span class="o">...</span>
+</pre></div>
+
+
+<p>这里的代码主要就是这个try代码块，可以看出来分成下面这几个部分</p>
+<ul>
+<li>app预处理</li>
+<li>plugin加载<ul>
+<li>创建server</li>
+<li>运行server.run(app)</li>
+</ul>
+</li>
+</ul>
+<h2>app预处理</h2>
+<div class="highlight"><pre><span></span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span> <span class="ow">or</span> <span class="n">default_app</span><span class="p">()</span>
+<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">load_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Application is not callable: </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">app</span><span class="p">)</span>
+</pre></div>
+
+
+<p>意思很简单</p>
+<ul>
+<li>当用户没有在<code>bottle.run</code>中指定<code>app</code>参数时，就使用默认的Bottle实例；</li>
+<li>当用户指定<code>app</code>参数为一个实例时，就使用该实例；<ul>
+<li>当用户指定<code>app</code>参数为一个字符串时，加载该字符串对应的模块并赋值给app；</li>
+</ul>
+</li>
+</ul>
+<p>最后再确认<code>app</code>是一个可执行对象。（这是使用<code>wsgi</code>接口所必须的）</p>
+<h2>plugin加载</h2>
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">plugin</span> <span class="ow">in</span> <span class="n">plugins</span> <span class="ow">or</span> <span class="p">[]:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">plugin</span><span class="p">)</span>
+</pre></div>
+
+
+<p>用户可以在执行<code>run</code>时指定需要加载的plugins，关于plugin的工作原理会在后面分析；</p>
+<h2>初始化server</h2>
+<div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">server</span> <span class="ow">in</span> <span class="n">server_names</span><span class="p">:</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">server_names</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">server</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">ServerAdapter</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown or unsupported server: </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">server</span><span class="p">)</span>
+</pre></div>
+
+
+<p>同上，用户可以选择使用<code>默认值 or Class or 字符串</code>来指定使用的server。</p>
+<p>假定用户使用默认值，则最终会创建<code>WSGIRefServer</code>的实例。所有可用server都是<code>ServerAdapter</code>的子类，我们也可以通过继承<code>ServerAdapter</code>创建自定义的<code>Server</code>。</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ServerAdapter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">quiet</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">=</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</pre></div>
+
+
+<p>这个<code>Server</code>父类中主要定义了通用的构造函数，和一个等待子类去实现的<code>run</code>方法，再看下<code>WSGIRefServer</code>的实现。</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">WSGIRefServer</span><span class="p">(</span><span class="n">ServerAdapter</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+        <span class="kn">from</span> <span class="nn">wsgiref.simple_server</span> <span class="kn">import</span> <span class="n">make_server</span><span class="p">,</span> <span class="n">WSGIRequestHandler</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">quiet</span><span class="p">:</span>
+            <span class="k">class</span> <span class="nc">QuietHandler</span><span class="p">(</span><span class="n">WSGIRequestHandler</span><span class="p">):</span>
+                <span class="k">def</span> <span class="nf">log_request</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span> <span class="k">pass</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;handler_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QuietHandler</span>
+        <span class="n">srv</span> <span class="o">=</span> <span class="n">make_server</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
+        <span class="n">srv</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+</pre></div>
+
+
+<p><code>WSGIRefServer</code>实现了<code>run</code>函数。其主要就是从<code>wsgiref.simple_server</code>中导入<code>make_server</code>，执行并将<code>IP:PORT</code>信息和当前的<code>app</code>（即Bottle实例）传入，创建了“真正”的<code>Server</code>，然后执行<code>serve_forever</code>。</p>
+<p><code>wsgiref.simple_server</code>是Python标准库的一部分，看名字就知道，这应该是一个符合<code>WSGI</code>标准的Server。关于WSGI的介绍，放在后面的文章中。
+执行server.run</p>
+<p>最后的<code>server.run</code>没啥好说的了，程序会在<code>serve_forever</code>中工作起来。</p>
+<p>小结，
+看到这里，我们其实还是不知道程序是如何工作的，再往下看就不是Bottle的代码了，但还是得看，顺便介绍下WSGI，见下一篇。</p>
+<p>PS. 这篇好水，请见谅 !!</p>
+<p>......未完待续</p>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

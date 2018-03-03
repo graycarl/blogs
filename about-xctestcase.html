@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>关于XCTestCase - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li class="uk-active"><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/about-xctestcase.html" rel="bookmark"
+                title="Permalink to 关于XCTestCase">关于XCTestCase</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-02-23T18:12:00+08:00">2014-02-23 18:12</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <p>Xcode自带的测试框架貌似没有给出任何文档，一些问题只能自己测试来确定了。</p>
+<h2><code>setUp</code>和<code>tearDown</code>在什么时候被执行</h2>
+<p>经过测试发现，类方法的<code>setUp</code>会在本Case第一执行测试方法执行执行一次。而实例方法的<code>setUp</code>会在每个测试方法执行的之前执行。<code>tearDown</code>也是一样。</p>
+<div class="highlight"><pre><span></span><span class="p">+</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setUp</span>
+<span class="p">{</span>
+    <span class="c1">// called once</span>
+    <span class="p">[</span><span class="nb">super</span> <span class="n">setUp</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setUp</span>
+<span class="p">{</span>
+    <span class="c1">// called before every test functions</span>
+    <span class="p">[</span><span class="nb">super</span> <span class="n">setUp</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2>测试方法的执行顺序</h2>
+<p><strong>更新：貌似这是我的错觉，无法控制各个方法的执行顺序</strong></p>
+<p>如果我们想严格控制每个测试方法的执行顺序该怎么办呢？</p>
+<p>经过测试发现，测试方法的执行顺序类似于<code>Python</code>的单元测试，根据方法名来决定执行顺序。</p>
+<p>所以，我们可以这样定义方法名来定义执行顺序</p>
+<div class="highlight"><pre><span></span>- (void)test10SomeWord
+{
+    // some code
+}
+
+- (void)test11SomeWord
+{
+    // some code
+}
+
+- (void)test20SomeWord
+{
+    //some code
+}
+
+…..
+</pre></div>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

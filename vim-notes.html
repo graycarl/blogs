@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>Vim Notes - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li class="uk-active"><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/vim-notes.html" rel="bookmark"
+                title="Permalink to Vim Notes">Vim Notes</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-08-24T03:39:00+08:00">2012-08-24 03:39</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <h2>vimrc_example</h2>
+<p>在编写自己的~/.vimrc的时候，发现vim包自带的<code>vimrc_example.vim</code>文件里面已经帮我写好了很多常用配置。所以，第一步，就是将这个example包含到我们自己的vimrc中来。</p>
+<div class="highlight"><pre><span></span>source $VIMRUNTIME/vimrc_example.vim
+</pre></div>
+
+
+<h2>Tab及缩进宽度</h2>
+<p>vim默认的8个字符宽度实在看不习惯，改成4个字符的。</p>
+<div class="highlight"><pre><span></span>set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+</pre></div>
+
+
+<h2>关于配色</h2>
+<p>刚开始用vim的时候，在它自带的几种配色方案里面挑来挑去，最后选了<code>evening</code>，感觉还不错。</p>
+<div class="highlight"><pre><span></span>colo evening
+</pre></div>
+
+
+<p>后来无意中发现了<code>molokai</code>，觉得虽然颜色艳了点，整体还是挺好看的。于是就决定暂时用它了。</p>
+<p>在<a href="http://www.vim.org/scripts/script.php?script_id=2340">http://www.vim.org/scripts/script.php?script_id=2340</a>下载molokai.vim，放在~/.vim/colors里面，然后修改~/.vimrc。</p>
+<div class="highlight"><pre><span></span>set t_Co=256
+colo molokai
+</pre></div>
+
+
+<h2>关于备份文件</h2>
+<p>vim新手应该都碰到过，在我们使用vim编辑代码的时候，经常会在代码目录发现很多类似 xxx.c~ 的文件。这个文件其实是vim的备份文件，保存的是对应文件修改之前的内容（让你有一次后悔的机会）。虽然作用是好的，但是它总是会把本来干净的代码目录搞得一团糟，特别是又使用了某些代码版本管理工具的时候。</p>
+<p>其实我们只需要改变一下这些文件的生成目录就可以了</p>
+<div class="highlight"><pre><span></span>&quot; 如果有~/tmp目录则文件生成在改目录，否则文件生成在/tmp目录
+set backupdir=~/tmp,/tmp
+</pre></div>
+
+
+<h2>vim中查单词</h2>
+<p>有时候我们很希望在vim中看代码的时候，遇到一个不认识的英语单词可以直接一个快捷键给出翻译结果。很实用的功能，也很简单就能实现。</p>
+<h3>安装sdcv</h3>
+<p>首先需要安装sdcv(stardict-console-version)这个包，可以提供stardict的命令行版本。在终端里面运行包管理器安装sdcv这个包，这里以ubuntu为例</p>
+<div class="highlight"><pre><span></span>sudo apt-get install sdcv
+</pre></div>
+
+
+<p>什么？你的软件源里面找不到sdcv？自己编译一个呗，看<a href="http://sdcv.sourceforge.net">这里</a>。</p>
+<p>安装完了是不能直接使用的，因为没有字典文件。在sdcv的man手册里面看到，需要将字典文件放在<code>/usr/share/stardict/dic</code>中。字典文件在可以在<a href="http://irising.me/2011/07/9021/">这里</a>找到。</p>
+<p>字典文件弄好了之后就可以在shell中使用<code>sdcv</code>命令来查单词了。</p>
+<div class="highlight"><pre><span></span>carl@carl-VirtualBox:~$ sdcv hello
+Found 1 items, similar to hello.
+--&gt;朗道英汉字典5.0
+--&gt;hello
+
+*[hә&#39;lәu]
+interj. 喂, 嘿
+</pre></div>
+
+
+<h3>绑定到vim中</h3>
+<p>我们的目的是想在vim中可以直接查单词，所以就需要将sdcv绑定到vim中。</p>
+<p>vim中有一个可以设定的配置叫<code>keyworkprg</code>，默认是和man命令绑定。即在vim的普通模式下按<code>shift+k</code>就可以在man中查找光标所在单词对应的man手册。现在我们在~/.vimrc中添加如下行。</p>
+<div class="highlight"><pre><span></span>set keywordprg=sdcv
+</pre></div>
+
+
+<p>这样我们就将sdcv绑定到shift+k这个快捷键上了。将光标移动到某一单词上，按<code>shift+k</code>，看看效果吧^_^</p>
+<h2>全局搜索</h2>
+<p>想在vim中搜索当前目录及子目录的内容，使用vimgrep命令(可:help vimgrep 查看帮助)。</p>
+<h3>基本使用</h3>
+<div class="highlight"><pre><span></span>:vimgrep /&lt;关键词&gt;/j **/*.[ch]
+</pre></div>
+
+
+<p><code>**/*.[ch]</code>是表示搜索当前目录下任意深度的子目录中以c/h为后缀的文件。</p>
+<p>执行<code>:cope</code>查看结果。</p>
+<h3>映射快捷键</h3>
+<p>手动输入上面的命令太麻烦了，可将其绑定到快捷键。.vimrc中添加</p>
+<div class="highlight"><pre><span></span>nmap &lt;F10&gt; yiw:vimgrep /&lt;C-r&gt;0/j **/*.[ch] &lt;CR&gt;:cope&lt;CR&gt;
+vmap &lt;F10&gt; y:vimgrep /&lt;C-r&gt;0/j **/*.[ch] &lt;CR&gt;:cope&lt;CR&gt;
+</pre></div>
+
+
+<p>然后在normal模式或者visual模式下就可以直接按F10搜索光标下的单词了。</p>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

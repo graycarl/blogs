@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>PythonChallenge[12-13] - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li class="uk-active"><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/python-challenge-12-13.html" rel="bookmark"
+                title="Permalink to PythonChallenge[12-13]">PythonChallenge[12-13]</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-09-03T20:16:00+08:00">2012-09-03 20:16</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <h2>第十二题</h2>
+<p>打开页面，又是图片，上面一个人正在发扑克牌，没有啥其他信息了。</p>
+<p>以为又是图片处理，但是看了半天图片，也没有找到什么线索，只好又依靠Google了。</p>
+<p>在html中看见图片的名称为evil1.jpg，那么是不是还有evil2.jpg呢？打开<a href="http://www.pythonchallenge.com/pc/return/evil2.jpg">http://www.pythonchallenge.com/pc/return/evil2.jpg</a>，果然又是一张图片，上面说不是jpg，是gfx。在打开<a href="http://www.pythonchallenge.com/pc/return/evil2.gfx">http://www.pythonchallenge.com/pc/return/evil2.gfx</a>得到evil2.gfx文件。</p>
+<p>关于这个文件的用法，是根据那张扑克牌的图片得来的，扑克牌正在被分发成5组，这个文件也应该分发成5个文件。（能想到吗，反正我是想不到)</p>
+<div class="highlight"><pre><span></span><span class="c1"># work on python3</span>
+<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/tmp/evil2.gfx&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">):</span>
+    <span class="nb">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/tmp/out</span><span class="si">%d</span><span class="s2">.jpg&quot;</span><span class="o">%</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span>
+    <span class="nb">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">::</span><span class="mi">5</span><span class="p">])</span>
+    <span class="nb">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+
+<p>这样得到5张图片，打开有是5组字母</p>
+<blockquote>
+<p>dis pro port ional ity</p>
+</blockquote>
+<p>其中最后一组字母被划去，所以结果就是disproportional，即<a href="http://www.pythonchallenge.com/pc/return/disproportional.html">http://www.pythonchallenge.com/pc/return/disproportional.html</a>。</p>
+<h2>第十三题</h2>
+<p>这题我是在没辙了，只能完全依靠Google了。</p>
+<p>几个关键点
+1. 上一关中给出了evil的名字<a href="http://www.pythonchallenge.com/pc/return/evil4.jpg">http://www.pythonchallenge.com/pc/return/evil4.jpg</a>
+2. 本关页面中是一个电话，标题是call him，图片下写着phone that evil，显然就是让我们打电话给bert。
+3. 点击电话，出现一个xml的出错页面，地址是<a href="http://www.pythonchallenge.com/pc/phonebook.php">http://www.pythonchallenge.com/pc/phonebook.php</a>。</p>
+<div class="highlight"><pre><span></span>由这个页面应该能看出来这是一个xmlrpc服务，对于我这种没听过这种服务的人现在是没办法了。
+
+:::xml
+<span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+<span class="nt">&lt;methodResponse&gt;</span>
+<span class="nt">&lt;fault&gt;</span>
+<span class="nt">&lt;value&gt;</span>
+<span class="nt">&lt;struct&gt;&lt;member&gt;&lt;name&gt;</span>faultCode<span class="nt">&lt;/name&gt;</span>
+<span class="nt">&lt;value&gt;&lt;int&gt;</span>105<span class="nt">&lt;/int&gt;&lt;/value&gt;</span>
+<span class="nt">&lt;/member&gt;</span>
+<span class="nt">&lt;member&gt;</span>
+<span class="nt">&lt;name&gt;</span>faultString<span class="nt">&lt;/name&gt;</span>
+<span class="nt">&lt;value&gt;&lt;string&gt;</span>XML error: Invalid document end at line 1, column 1<span class="nt">&lt;/string&gt;&lt;/value&gt;</span>
+<span class="nt">&lt;/member&gt;</span>
+<span class="nt">&lt;/struct&gt;</span>
+<span class="nt">&lt;/value&gt;</span>
+<span class="nt">&lt;/fault&gt;</span>
+<span class="nt">&lt;/methodResponse&gt;</span>
+</pre></div>
+
+
+<p>现在思路清楚了，就是用这个xmlrpc服务查到bert的电话号码，这应该就是下一关的入口了。</p>
+<div class="highlight"><pre><span></span><span class="c1">#work on python3</span>
+<span class="kn">from</span> <span class="nn">xmlrpc</span> <span class="kn">import</span> <span class="n">client</span>
+
+<span class="n">server</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">Server</span><span class="p">(</span><span class="s2">&quot;http://www.pythonchallenge.com/pc/phonebook.php&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">server</span><span class="o">.</span><span class="n">phone</span><span class="p">(</span><span class="s2">&quot;Bert&quot;</span><span class="p">))</span>
+</pre></div>
+
+
+<p>运行，得到结果<strong>555-ITALY</strong>，对555和ITALY分别尝试，ITALY的页面告诉我们要用小写。所以，下一关就是<a href="http://www.pythonchallenge.com/pc/return/italy.html">http://www.pythonchallenge.com/pc/return/italy.html</a>。</p>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>关于NSNumber - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li class="uk-active"><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/nsnumber-in-objective-c.html" rel="bookmark"
+                title="Permalink to 关于NSNumber">关于NSNumber</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-02-19T14:05:00+08:00">2014-02-19 14:05</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <p>由于半路杀进来，一直对OC对C基本数据类型的封装感到困惑，使用的时候也很心虚。仔细看了一遍官方文档，终于理清了。</p>
+<p>这类类型有三个：<code>NSNumber</code>、<code>NSDecimalNumber</code>、<code>NSNull</code>。其中<code>NSNull</code>是一个单例，可以直接使用<code>==</code>来比较。</p>
+<p>下面着重说一下<code>NSNumber</code>。</p>
+<h2>结构</h2>
+<p><code>NSNumber</code>中保存的是实际数据的指针和类型，实际数据可以是各种类型，如(int, float, bool, struct, …)。</p>
+<p>把实际数据取出来用</p>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">nsNumber</span> <span class="n">intValue</span><span class="p">]</span>
+</pre></div>
+
+
+<p>取数据的时候会做默认的类型转换。</p>
+<h2>比较</h2>
+<p><code>NSNumber</code>中有</p>
+<div class="highlight"><pre><span></span>- (BOOL)isEqualToNumber:(NSNumber *)aNumber
+</pre></div>
+
+
+<p>该函数使用C中的比较方式来比较大小。</p>
+<p>而对于<code>isEqual</code>，看代码就知道了：</p>
+<div class="highlight"><pre><span></span><span class="p">-(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nf">isEqual:</span><span class="n">other</span> <span class="p">{</span>
+   <span class="k">if</span><span class="p">(</span><span class="nb">self</span><span class="o">==</span><span class="n">other</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">YES</span><span class="p">;</span>
+
+   <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">[</span><span class="n">other</span> <span class="nl">isKindOfClass</span><span class="p">:</span><span class="n">objc_lookUpClass</span><span class="p">(</span><span class="s">&quot;NSNumber&quot;</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="nb">NO</span><span class="p">;</span>
+
+   <span class="k">return</span> <span class="p">[</span><span class="nb">self</span> <span class="nl">isEqualToNumber</span><span class="p">:</span><span class="n">other</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

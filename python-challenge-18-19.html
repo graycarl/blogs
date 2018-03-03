@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>PythonChallenge[18-19] - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li class="uk-active"><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/python-challenge-18-19.html" rel="bookmark"
+                title="Permalink to PythonChallenge[18-19]">PythonChallenge[18-19]</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2012-09-06T22:02:00+08:00">2012-09-06 22:02</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <h2>第十八题</h2>
+<p>这题太难，提示都是网上找到的，哎，看来智商的确不够啊。</p>
+<p>一开始是两张图片，几乎完全一样，只有亮度不同。标题是<strong>can you tell the diffrence</strong>，源码中有<strong>it is more obvious that you might think</strong>，不同的就是亮度嘛，所以下一步就是访问<a href="http://www.pythonchallenge.com/pc/return/brightness.html">http://www.pythonchallenge.com/pc/return/brightness.html</a>。</p>
+<div class="highlight"><pre><span></span>......
+    <span class="p">&lt;</span><span class="nt">font</span> <span class="na">color</span><span class="o">=</span><span class="s">&quot;gold&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;balloons.jpg&quot;</span> <span class="na">border</span><span class="o">=</span><span class="s">&quot;0&quot;</span><span class="p">/&gt;</span>
+<span class="c">&lt;!-- it is more obvious that what you might think --&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<p>打开还是一样的页面，源码中的注释变了。</p>
+<div class="highlight"><pre><span></span>......
+    <span class="p">&lt;</span><span class="nt">font</span> <span class="na">color</span><span class="o">=</span><span class="s">&quot;gold&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;balloons.jpg&quot;</span> <span class="na">border</span><span class="o">=</span><span class="s">&quot;0&quot;</span><span class="p">/&gt;</span>
+<span class="c">&lt;!-- maybe consider deltas.gz --&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<p>那就在打开<a href="http://www.pythonchallenge.com/pc/return/deltas.gz">http://www.pythonchallenge.com/pc/return/deltas.gz</a>，这样得到一个deltas.gz文件。里面的内容比较有规律</p>
+<blockquote><pre>
+e0 e0 5a 34 0e 5d 40 88 17 27 22 86 e7 88 88 88 88 2f   e0 e0 5a 34 0e 5d 40 88 17 27 22 86 e7 88 88 88 88 2f
+00 0d 9d a3 2c 51 25 94 6a 18 00 1e ae e5 66 89 c5 1a   00 0d 9d a3 2c 51 25 94 6a 18 00 1e ae e5 66 89 c5 1a
+4b 0f 1f 2f 51 c4 c7 c0 c4 4b 10 11 11 11 f1 01 75 73   4b 0f 1f 2f 51 c4 c7 c0 c4 4b 10 11 11 11 f1 01 75 73
+8e 72 42 d3 14 99 82 da 96 3a 49 4a 59 82 14 8c 15 16   8e 72 42 d3 14 99 82 da 96 3a 49 4a 59 82 14 8c 15 16
+b1 86 8e 88 e1 39 22 22 22 e2 96 8f 4e 5b 61 50 a0 ca   b1 86 8e 88 e1 39 22 22 22 e2 96 8f 4e 5b 61 50 a0 ca
+90 e7 28 0c 2c 00 87 6e 8d 95 86 e9 d0 b6 68 5a 34 f1   90 e7 28 0c 2c 00 87 6e 8d 95 86 e9 d0 b6 68 5a 34 f1
+42 45 c4 f0 1c 11 11 11 71 7b 48 91 0d 68 34 c2 24 45   42 45 c4 f0 1c 11 11 11 71 7b 48 91 0d 68 34 c2 24 45
+......
+</pre></blockquote>
+
+<p>一开始左右两边的数据一样，后来有些行一样，有些行不一行，而这题的主题的diffrence，所以我们可以对这两组内容做diff。</p>
+<p>思路是这样的，做出diff结果，把两边一致的数据拉出来写入一个文件，把左边比右边多的数据写入第二个文件，把右边比左边多的数据再写入一个文件。最后会得到三张图片。</p>
+<div class="highlight"><pre><span></span><span class="c1">#work on python2</span>
+<span class="kn">import</span> <span class="nn">Image</span>
+<span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">import</span> <span class="nn">difflib</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">GzipFile</span><span class="p">(</span><span class="s2">&quot;deltas.gz&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+<span class="n">left</span> <span class="o">=</span> <span class="p">[];</span> <span class="n">right</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+    <span class="n">left</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[:</span><span class="mi">53</span><span class="p">])</span>
+    <span class="n">right</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">56</span><span class="p">:])</span>
+
+<span class="n">diff</span> <span class="o">=</span> <span class="n">difflib</span><span class="o">.</span><span class="n">ndiff</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+<span class="n">left</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span> <span class="n">right</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span> <span class="n">common</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">diff</span><span class="p">:</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">[</span><span class="nb">chr</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+    <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">):</span>
+        <span class="n">common</span> <span class="o">+=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">row</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">):</span>
+        <span class="n">left</span> <span class="o">+=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">row</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">):</span>
+        <span class="n">right</span> <span class="o">+=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+<span class="nb">open</span><span class="p">(</span><span class="s2">&quot;left.png&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">left</span><span class="p">)</span>
+<span class="nb">open</span><span class="p">(</span><span class="s2">&quot;right.png&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">right</span><span class="p">)</span>
+<span class="nb">open</span><span class="p">(</span><span class="s2">&quot;common.png&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">common</span><span class="p">)</span>
+</pre></div>
+
+
+<p>得到的图片的内容分别是<strong>../hex/bin.html</strong>, <strong>butter</strong>, <strong>fly</strong>。</p>
+<p>这样，下一关就是<a href="http://www.pythonchallenge.com/pc/hex/bin.html">http://www.pythonchallenge.com/pc/hex/bin.html</a>，用户名butter，密码fly。</p>
+<h2>第十九题</h2>
+<p>打开是一幅地图的图片，标题是<strong>please</strong>，没有其他信息。</p>
+<p>html源码里面有一段很长的注释，看内容应该是一封带附件的邮件。</p>
+<div class="highlight"><pre><span></span><span class="n">From</span><span class="o">:</span> <span class="n">leopold</span><span class="o">.</span><span class="na">moz</span><span class="err">@</span><span class="n">pythonchallenge</span><span class="o">.</span><span class="na">com</span>
+<span class="n">Subject</span><span class="o">:</span> <span class="n">what</span> <span class="k">do</span> <span class="n">you</span> <span class="n">mean</span> <span class="n">by</span> <span class="s2">&quot;open the attachment?&quot;</span>
+<span class="n">Mime</span><span class="o">-</span><span class="n">version</span><span class="o">:</span> <span class="mf">1.0</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">type</span><span class="o">:</span> <span class="n">Multipart</span><span class="o">/</span><span class="n">mixed</span><span class="o">;</span> <span class="n">boundary</span><span class="o">=</span><span class="s2">&quot;===============1295515792==&quot;</span>
+
+<span class="n">It</span> <span class="k">is</span> <span class="n">so</span> <span class="n">much</span> <span class="n">easier</span> <span class="k">for</span> <span class="n">you</span><span class="o">,</span> <span class="n">youngsters</span><span class="o">.</span>
+<span class="n">Maybe</span> <span class="n">my</span> <span class="n">computer</span> <span class="k">is</span> <span class="n">out</span> <span class="n">of</span> <span class="n">order</span><span class="o">.</span>
+<span class="n">I</span> <span class="n">have</span> <span class="n">a</span> <span class="n">real</span> <span class="n">work</span> <span class="n">to</span> <span class="k">do</span> <span class="n">and</span> <span class="n">I</span> <span class="n">must</span> <span class="n">know</span> <span class="n">what</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">inside</span><span class="o">!</span>
+
+<span class="o">--===============</span><span class="mi">1295515792</span><span class="o">==</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">type</span><span class="o">:</span> <span class="n">audio</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">wav</span><span class="o">;</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;indian.wav&quot;</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">transfer</span><span class="o">-</span><span class="n">encoding</span><span class="o">:</span> <span class="n">base64</span>
+
+<span class="n">UklGRvyzAQBXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YdizAQBABkAMQAtAAEADQAJA</span>
+<span class="n">BEAEQAJAAkAGQAVABUAEQApAC0AJQAhAD0APQANADUAFQAVAD0AEQA5ADUAGQAlAAj8PQAVABkAE</span>
+<span class="o">......</span>
+</pre></div>
+
+
+<p>下面显然就是要把附件恢复了，看看是什么。</p>
+<div class="highlight"><pre><span></span><span class="c1">#work on python3</span>
+
+<span class="kn">import</span> <span class="nn">email</span><span class="o">,</span> <span class="nn">base64</span>
+
+<span class="n">mail</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">message_from_file</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/tmp/tmpmail&quot;</span><span class="p">))</span>
+<span class="n">sub</span> <span class="o">=</span> <span class="n">mail</span><span class="o">.</span><span class="n">get_payload</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/tmp/&quot;</span><span class="o">+</span><span class="n">sub</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(),</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">sub</span><span class="o">.</span><span class="n">get_payload</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">()))</span>
+</pre></div>
+
+
+<p>得到一个<em>indian.wav</em>文件，但是听了下内容，就一句<strong>Sorry!</strong>。</p>
+<p>打开<a href="http://www.pythonchallenge.com/pc/hex/sorry.html">http://www.pythonchallenge.com/pc/hex/sorry.html</a>，出现一句话</p>
+<blockquote>
+<p>what are you apologizing for?</p>
+</blockquote>
+<p>对什么感到抱歉？我对我的智商感到抱歉！好吧，又没有思路了。</p>
+<p>......Googleing</p>
+<p>说是看到图片颜色被反转了，应该想到把声音文件的字节反转（我是想不到）。</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">wave</span><span class="o">,</span> <span class="nn">array</span>
+<span class="n">winput</span> <span class="o">=</span> <span class="n">wave</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;/tmp/indian.wav&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+<span class="n">woutput</span> <span class="o">=</span> <span class="n">wave</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;/tmp/revert.wav&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span>
+
+<span class="n">woutput</span><span class="o">.</span><span class="n">setparams</span><span class="p">(</span><span class="n">winput</span><span class="o">.</span><span class="n">getparams</span><span class="p">())</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">winput</span><span class="o">.</span><span class="n">readframes</span><span class="p">(</span><span class="n">winput</span><span class="o">.</span><span class="n">getnframes</span><span class="p">()))</span>
+<span class="n">data</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
+<span class="n">woutput</span><span class="o">.</span><span class="n">writeframes</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">tostring</span><span class="p">())</span>
+
+<span class="n">winput</span><span class="o">.</span><span class="n">close</span><span class="p">();</span> <span class="n">woutput</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+
+<p>最后弄出来<em>revert.wav</em>，听一下，<strong>you are the idiot</strong>，居然还是唱出来的。</p>
+<p>下一关应该就是<a href="http://www.pythonchallenge.com/pc/hex/idiot.html">http://www.pythonchallenge.com/pc/hex/idiot.html</a>了，进去之后又是一张图片，不过已经把下关链接给出来了。</p>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

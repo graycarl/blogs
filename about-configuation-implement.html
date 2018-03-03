@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>关于项目配置文件的实现 - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li class="uk-active"><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/about-configuation-implement.html" rel="bookmark"
+                title="Permalink to 关于项目配置文件的实现">关于项目配置文件的实现</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2014-01-26T11:00:00+08:00">2014-01-26 11:00</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <p>之前写代码的时候还有一个纠结点就是如何分开项目在<strong>单元测试</strong>、<strong>DEBUG</strong>及<strong>线上环境</strong>的配置文件。尝试了各种方法，考虑了具体运行环境的配置不应该被包含到源码仓库，最终选定了<code>~/.config</code>的形式。</p>
+<h2>读取指定路径的配置</h2>
+<div class="highlight"><pre><span></span>def _get_module_from_file(filename):
+    filename = os.path.abspath(filename)
+    d = imp.new_module(&#39;config&#39;)
+    d.__file__ = filename
+    try:
+        with open(filename) as config_file:
+            exec(compile(config_file.read(), filename, &#39;exec&#39;), d.__dict__)
+    except IOError as e:
+        e.strerror = &#39;Unable to load configuration file (%s)&#39; % e.strerror
+        raise
+    return d
+</pre></div>
+
+
+<h2>获取<code>HOME</code>下文件路径</h2>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">init_config</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="err">“</span><span class="o">~/.</span><span class="n">config</span><span class="err">”</span><span class="p">))</span>
+</pre></div>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>
