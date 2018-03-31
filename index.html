@@ -43,6 +43,30 @@
 <div class="post-list">
     <article class="uk-article">
         <h1 class="uk-article-title">
+            <a href="/sqlalchemy-without-foreignkey.html" rel="bookmark" title="Permalink to 当 SqlAlchemy 没有了外键">当 SqlAlchemy 没有了外键</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2016-12-27T04:00:00+08:00">2016-12-27 04:00</abbr></p>
+        <p class="uk-article-content"> <p>目前团队习惯于不在数据库中使用外键（ForeignKey），大概是出于性能以及对脏数据的容忍度的考虑吧。这本来没什么，但是由于我们使用 SqlAlchemy 作为 ORM，就带来了一个问题：如何在不使用外键的情况下使用 SqlAlchemy 中的各种高级特性呢（如：relationship，单表继承，join表继承等）？</p>
+<p>首先需要明确的是，上面提到的高级特性其实对外键并没有什么直接的依赖关系的，只不过如果存在外键定义的话，很多特性参数可以根据外键的定义自动配置好。</p>
+<p>仔细查阅了 SqlAlchemy 的文档，终于整理好了各种场景下的使用方法。</p>
+<p>后续的示例代码假设都已经执行了如下片段:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sqlalchemy</span> <span class="kn">as</span> <span class="nn">sa</span>
+<span class="kn">import</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">as</span> <span class="nn">orm</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="kn">import</span> <span class="n">declarative_base</span>
+
+<span class="n">Base</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
+</pre></div>
+
+
+<h2>One-to-Many Relationship</h2>
+<p>首先看标准的带外键的表达如下:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Parent</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;parent …</span></pre></div> </p>
+        <p><a class="uk-button read-on" href="/sqlalchemy-without-foreignkey.html">Read On <i class="uk-icon-arrow-right"></i></a></p>
+        <hr class="uk-article-divider">
+    </article>
+    <article class="uk-article">
+        <h1 class="uk-article-title">
             <a href="/alembic-all-column-with-nullable-false.html" rel="bookmark" title="Permalink to Alembic 添加不能为空的列">Alembic 添加不能为空的列</a>
         </h1>
         <p class="uk-article-meta">Hongbo He · <abbr title="2014-08-14T18:01:00+08:00">2014-08-14 18:01</abbr></p>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+        <title>当 SqlAlchemy 没有了外键 - I am HHB</title>
+        <meta charset="utf-8" />
+
+        <!-- UIKIT -->
+        <link href="http://cdn.bootcss.com/uikit/2.0.0/css/uikit.min.css" rel="stylesheet">
+        <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/uikit/2.0.0/js/uikit.min.js"></script>
+        <!-- MyCSS -->
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/hhb-uikit.less">
+        <link rel="stylesheet/less" type="text/css" href="/theme/css/code.css">
+        <script src="http://cdn.bootcss.com/less.js/1.6.0/less.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Nova+Script|Racing+Sans+One" rel="stylesheet" type="text/css">
+        <!-- FEEDS -->
+</head>
+
+<body>
+    <header class="hhb-banner">
+        <hgroup>
+            <h1 class="uk-heading-large"><a href="/">I am HHB</a></h1>
+            <p>月亮哪去了</p>
+        </hgroup>
+    </header>
+    <nav class="uk-navbar hhb-navbar">
+        <ul class="uk-navbar-nav">
+            <li class="uk-active"><a href="/category/articles.html">Articles</a></li>
+            <li><a href="/category/life.html">Life</a></li>
+            <li><a href="/category/notes.html">Notes</a></li>
+        </ul>
+        <!--
+        <div class="uk-navbar-content uk-navbar-flip">
+            <form class="uk-form uk-margin-remove uk-display-inline-block" action="">
+                <input type="text" placeholder="Search" />
+            </form>
+        </div>
+        -->
+    </nav>
+
+    <div class="hhb-content">
+<article class="uk-article">
+    <header>
+        <h1 class="uk-article-title">
+            <a class="hidden" href="/sqlalchemy-without-foreignkey.html" rel="bookmark"
+                title="Permalink to 当 SqlAlchemy 没有了外键">当 SqlAlchemy 没有了外键</a>
+        </h1>
+        <p class="uk-article-meta">Hongbo He · <abbr title="2016-12-27T04:00:00+08:00">2016-12-27 04:00</abbr></p>
+        
+    </header>
+    <div class="entry-content">
+        <p>目前团队习惯于不在数据库中使用外键（ForeignKey），大概是出于性能以及对脏数据的容忍度的考虑吧。这本来没什么，但是由于我们使用 SqlAlchemy 作为 ORM，就带来了一个问题：如何在不使用外键的情况下使用 SqlAlchemy 中的各种高级特性呢（如：relationship，单表继承，join表继承等）？</p>
+<p>首先需要明确的是，上面提到的高级特性其实对外键并没有什么直接的依赖关系的，只不过如果存在外键定义的话，很多特性参数可以根据外键的定义自动配置好。</p>
+<p>仔细查阅了 SqlAlchemy 的文档，终于整理好了各种场景下的使用方法。</p>
+<p>后续的示例代码假设都已经执行了如下片段:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sqlalchemy</span> <span class="kn">as</span> <span class="nn">sa</span>
+<span class="kn">import</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">as</span> <span class="nn">orm</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="kn">import</span> <span class="n">declarative_base</span>
+
+<span class="n">Base</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
+</pre></div>
+
+
+<h2>One-to-Many Relationship</h2>
+<p>首先看标准的带外键的表达如下:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Parent</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;parent&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">children</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;Child&#39;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s1">&#39;parent&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;child&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">parent_id</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;parent.id&#39;</span><span class="p">))</span>
+</pre></div>
+
+
+<p>我们只需要标注出关联的目标，具体如何关联等信息 ORM 会根据外键帮我们自动配置好。</p>
+<p>而如果不用外键的话，所有的关联关系都需要明确指定，代码就会复杂一些了：</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Parent</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;parent&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">children</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+        <span class="s1">&#39;Child&#39;</span><span class="p">,</span>
+        <span class="n">primaryjoin</span><span class="o">=</span><span class="s1">&#39;Parent.id == Child.parent_id&#39;</span><span class="p">,</span>
+        <span class="n">foreign_keys</span><span class="o">=</span><span class="s1">&#39;Child.parent_id&#39;</span><span class="p">,</span>
+        <span class="n">backref</span><span class="o">=</span><span class="s1">&#39;parent&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;child&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">parent_id</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;parent.id&#39;</span><span class="p">))</span>
+</pre></div>
+
+
+<p>如上，需要明确指定 <code>primary join</code> 和 <code>foriegn_keys</code> 这两个参数。</p>
+<h2>One-to-One Relationship</h2>
+<p>各个只是在一对多关联的基础上添加一个 <code>uselist=False</code> 的参数，没啥好说的。</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Parent</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;parent&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+        <span class="s1">&#39;Child&#39;</span><span class="p">,</span>
+        <span class="n">primaryjoin</span><span class="o">=</span><span class="s1">&#39;Parent.id == Child.parent_id&#39;</span><span class="p">,</span>
+        <span class="n">foreign_keys</span><span class="o">=</span><span class="s1">&#39;Child.parent_id&#39;</span><span class="p">,</span>
+        <span class="n">uselist</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+        <span class="n">backref</span><span class="o">=</span><span class="s1">&#39;parent&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;child&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">parent_id</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;parent.id&#39;</span><span class="p">))</span>
+</pre></div>
+
+
+<h2>Many-to-Many Relationship</h2>
+<p>同样，先看使用 ForeignKey 的版本：</p>
+<div class="highlight"><pre><span></span><span class="n">association_table</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Table</span><span class="p">(</span><span class="s1">&#39;association&#39;</span><span class="p">,</span> <span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+    <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s1">&#39;left_id&#39;</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;left.id&#39;</span><span class="p">)),</span>
+    <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s1">&#39;right_id&#39;</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;right.id&#39;</span><span class="p">))</span>
+<span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Parent</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;left&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">children</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+        <span class="s2">&quot;Child&quot;</span><span class="p">,</span>
+        <span class="n">secondary</span><span class="o">=</span><span class="n">association_table</span><span class="p">,</span>
+        <span class="n">backref</span><span class="o">=</span><span class="s1">&#39;parents&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;right&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+
+<p>不用 ForeignKey 的版本:</p>
+<div class="highlight"><pre><span></span><span class="n">association_table</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Table</span><span class="p">(</span><span class="s1">&#39;association&#39;</span><span class="p">,</span> <span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+    <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s1">&#39;left_id&#39;</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;left.id&#39;</span><span class="p">)),</span>
+    <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s1">&#39;right_id&#39;</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;right.id&#39;</span><span class="p">))</span>
+<span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Parent</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;left&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">children</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span>
+        <span class="s2">&quot;Child&quot;</span><span class="p">,</span>
+        <span class="n">secondary</span><span class="o">=</span><span class="n">association_table</span><span class="p">,</span>
+        <span class="n">primaryjoin</span><span class="o">=</span><span class="s1">&#39;left.id == association.left_id&#39;</span><span class="p">,</span>
+        <span class="n">secondaryjoin</span><span class="o">=</span><span class="s1">&#39;right.id == association.right_id&#39;</span><span class="p">,</span>
+        <span class="n">backref</span><span class="o">=</span><span class="s1">&#39;parents&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;right&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+
+<h2>Single Table Inheritance</h2>
+<p>单表继承不需要用到外键，所以可以直接使用：</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;people&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">discriminator</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">))</span>
+    <span class="n">__mapper_args__</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;polymorphic_on&#39;</span><span class="p">:</span> <span class="n">discriminator</span><span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">Engineer</span><span class="p">(</span><span class="n">Person</span><span class="p">):</span>
+    <span class="n">__mapper_args__</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;polymorphic_identity&#39;</span><span class="p">:</span> <span class="s1">&#39;engineer&#39;</span><span class="p">}</span>
+    <span class="n">primary_language</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">))</span>
+</pre></div>
+
+
+<h2>Joined Table Inheritance</h2>
+<p>外键版本如下：</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;people&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">discriminator</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">))</span>
+    <span class="n">__mapper_args__</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;polymorphic_on&#39;</span><span class="p">:</span> <span class="n">discriminator</span><span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">Engineer</span><span class="p">(</span><span class="n">Person</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;engineers&#39;</span>
+    <span class="n">__mapper_args__</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;polymorphic_identity&#39;</span><span class="p">:</span> <span class="s1">&#39;engineer&#39;</span><span class="p">}</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;people.id&#39;</span><span class="p">),</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">primary_language</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">))</span>
+</pre></div>
+
+
+<p>去外键版本如下：</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;people&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">discriminator</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">))</span>
+    <span class="n">__mapper_args__</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;polymorphic_on&#39;</span><span class="p">:</span> <span class="n">discriminator</span><span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">Engineer</span><span class="p">(</span><span class="n">Person</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;engineers&#39;</span>
+
+    <span class="n">_id</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">__mapper_args__</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;polymorphic_identity&#39;</span><span class="p">:</span> <span class="s1">&#39;engineer&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;inherit_condition&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">_id</span> <span class="o">==</span> <span class="n">Person</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+        <span class="s1">&#39;inherit_foreign_keys&#39;</span><span class="p">:</span> <span class="n">_id</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">column_property</span><span class="p">(</span><span class="n">_id</span><span class="p">,</span> <span class="n">Person</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">_id</span>
+
+    <span class="n">primary_language</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">))</span>
+</pre></div>
+
+
+<p>这里有两个重点，分别是如何表达继承关联，以及如何将两个表的 id 列映射到一个字段上。</p>
+<p>在 <code>__mapper_args__</code> 中我们手动指定了 <code>inherit_condition</code> 和 <code>inherit_foreign_keys</code> 这两个参数来表达和父表的关系。</p>
+<p>用 <code>orm.column_property</code> 可以将多个 column 映射到同一个字段上，这里将子表的 id 和父表的 id 都映射到了 id 这个字段上了，并在结束时，清理掉了多余的 <code>_id</code> 这个引用。</p>
+<p>其实这里为什么需要将两个 id 列映射到用一个字段上我也不是很清楚，这么做只是为了完整的还原使用外键版本的结果。</p>
+<h2>小结</h2>
+<p>所以说，为啥不用外键呢？</p>
+    </div>
+</section>
+    </div>
+    <hr/>
+    <footer>
+    <p>
+    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+    which takes great advantage of <a href="http://python.org">Python</a>.
+    </p>
+    </footer>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>
