@@ -15,7 +15,6 @@ tags: [bottle, python-challenge]
 
 直接来分析代码不合适，还是从基本使用开始吧，就以官方的第一个例子来做例子。
 
-    :::python
     from bottle import route, run
 
     @route('/hello/:name')
@@ -37,7 +36,6 @@ tags: [bottle, python-challenge]
 
 先看这个最奇怪的问题是怎么回事。在bottle的文档里面还给了这个demo的另一种写法，如下：
 
-    :::python
     from bottle import Bottle, run
 
     app = Bottle()
@@ -50,7 +48,6 @@ tags: [bottle, python-challenge]
 
 哈，这样就看出来联系了吧。其实第一个demo里面的route是一个默认app的route，run里面运行的app就是这个默认app。那么他们到底是怎么实现的呢。看bottle.py代码
 
-    :::python
     def run(app=None, server='wsgiref', host='127.0.0.1', port=8080,
             interval=1, reloader=False, quiet=False, plugins=None,
             debug=False, **kargs):
@@ -80,7 +77,6 @@ tags: [bottle, python-challenge]
 
 看到这个`app = app or default_app()`了吗，看来当run的参数没有给定app的时候就是运行的`default_app()`的返回值。再看这个`default_app`是啥。
 
-    :::python
     class AppStack(list):
         """ A stack-like list. Calling it returns the head of the stack. """
 
@@ -104,7 +100,6 @@ tags: [bottle, python-challenge]
 
 好了，`run`运行的Bottle实例我们清楚了，可是它是怎么和`route`联系在一起的呢？再看`route`代码
 
-    :::python
     def make_default_app_wrapper(name):
         ''' Return a callable that relays calls to the current default app. '''
         @functools.wraps(getattr(Bottle, name))
@@ -133,10 +128,12 @@ route做了什么
 
 猜测一下，既然`route`就是`app.route`（这里app指的是Bottle的一个实例），那么`route`这个装饰器应该是把这些被装饰的函数对象记录到`app`中的某个地方了，用来以后处理请求的时候查找出来调用。是不是呢，看代码
 
-    :::python
     class Bottle(object):
         ...此处省略...
-        def route(self, p¿两个参数可以是多个元素的列表。重点是用callback（也就是`index`函数）创建了`Route`实例，然后加入到`self.add_route(route)`里面了。这个函数就暂时不跟进了，看字面就知道意思了。
+        def route(self, xxxx):
+            <missing content>
+        
+两个参数可以是多个元素的列表。重点是用callback（也就是`index`函数）创建了`Route`实例，然后加入到`self.add_route(route)`里面了。这个函数就暂时不跟进了，看字面就知道意思了。
 
 所以，这个`route`装饰器的作用和我们预想的差不多了。
 
