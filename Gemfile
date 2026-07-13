@@ -8,6 +8,10 @@ gem "minima", "~> 2.5"
 # 保持 GitHub Flavored Markdown 解析行为一致
 gem "kramdown-parser-gfm"
 
+# Ruby 3.4+ / 4.x 将部分标准库改为默认不安装，需显式声明
+gem "csv"
+gem "base64"
+
 group :jekyll_plugins do
   gem "jekyll-feed", "~> 0.17"
   gem "jekyll-seo-tag", "~> 2.8"
