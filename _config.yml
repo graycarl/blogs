@@ -53,6 +53,7 @@ plugins:
 exclude:
   - Gemfile
   - Gemfile.lock
+  - AGENTS.md
   - node_modules
   - vendor/bundle/
   - vendor/cache/
