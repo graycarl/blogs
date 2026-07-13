@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 # 使用 Jekyll 4.x，由 GitHub Actions 构建部署
 # 不再依赖 github-pages gem，从而可以使用新版 Jekyll 和更多插件
-gem "jekyll", "~> 4.3.4"
+gem "jekyll", "~> 4.4.1"
 gem "minima", "~> 2.5"
 
 # 保持 GitHub Flavored Markdown 解析行为一致
