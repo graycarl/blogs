@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "AI 帮我更新了博客的基础设施"
-date: 2026-07-13 22:45
+date: 2026-07-14 06:06
 tags: [blog, jekyll, github-actions, ai]
 ---
 
