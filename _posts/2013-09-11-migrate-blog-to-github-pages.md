@@ -2,6 +2,7 @@
 layout: post
 title: 博客迁移
 date: 2013-09-11 22:03
+tags: [blog, github-pages, migration]
 ---
 
 之前因为各种原因想要迁移博客，但是又由于各种原因，把原博客下线了之后一直没有处理，直到现在。

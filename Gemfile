@@ -1,30 +1,26 @@
 source "https://rubygems.org"
 
-# Hello! This is where you manage which Jekyll version is used to run.
-# When you want to use a different version, change it below, save the
-# file and run `bundle install`. Run Jekyll with `bundle exec`, like so:
-#
-#     bundle exec jekyll serve
-#
-# This will help ensure the proper Jekyll version is running.
-# Happy Jekylling!
-# gem "jekyll", "~> 3.8.2"
+# 使用 Jekyll 4.x，由 GitHub Actions 构建部署
+# 不再依赖 github-pages gem，从而可以使用新版 Jekyll 和更多插件
+gem "jekyll", "~> 4.3.4"
+gem "minima", "~> 2.5"
 
-# This is the default theme for new Jekyll sites. You may change this to anything you like.
-gem "minima", "~> 2.0"
+# 保持 GitHub Flavored Markdown 解析行为一致
+gem "kramdown-parser-gfm"
 
-# If you want to use GitHub Pages, remove the "gem "jekyll"" above and
-# uncomment the line below. To upgrade, run `bundle update github-pages`.
-gem "github-pages", group: :jekyll_plugins
-
-# If you have any plugins, put them here!
 group :jekyll_plugins do
-  gem "jekyll-feed", "~> 0.6"
+  gem "jekyll-feed", "~> 0.17"
+  gem "jekyll-seo-tag", "~> 2.8"
+  gem "jekyll-sitemap", "~> 1.4"
 end
 
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
+# 测试/质量检查依赖（部署时通过 BUNDLE_WITHOUT=test 跳过）
+group :test do
+  gem "html-proofer", "~> 5.0", require: false
+end
+
+# Windows 不包含 zoneinfo 文件，所以需额外安装
 gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
-# Performance-booster for watching directories on Windows
-gem "wdm", "~> 0.1.0" if Gem.win_platform?
-
+# Windows 平台监听目录的依赖
+gem "wdm", "~> 0.1.1" if Gem.win_platform?

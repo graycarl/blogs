@@ -11,32 +11,51 @@
 # Site settings
 # These are used to personalize your new site. If you look in the HTML files,
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
-# You can create any custom variable you would like, and they will be accessible
+# You can create any custom variable you would like to, and they will be accessible
 # in the templates via {{ site.myvariable }}.
+
+# 语言与基本信息
+lang: zh-CN
 title: 大灰狼.BLOG
 email: me@graycarl.me
-description: >- # this means to ignore newlines until "baseurl:"
-  I'm a pythoner. This is my personal tech blog.
+description: "Python 程序员的技术博客，记录 Web 开发、数据库、工具链与读书笔记。"
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://graycarl.me" # the base hostname & protocol for your site
 timezone: Asia/Shanghai
+
+# 作者信息（用于 jekyll-seo-tag 与 RSS）
+author:
+  name: 何鸿波
+  email: me@graycarl.me
+  twitter: hhbcarl
+  github: graycarl
+
+# 社交账号（minima 主题页脚使用）
 twitter_username: hhbcarl
-github_username:  graycarl
+github_username: graycarl
 
 # Build settings
 markdown: kramdown
 theme: minima
+
 plugins:
   - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Minima 主题设置（2.5.x 版本暂不支持皮肤切换）
+# minima:
+#   skin: classic
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
 # to override the default setting.
-# exclude:
-#   - Gemfile
-#   - Gemfile.lock
-#   - node_modules
-#   - vendor/bundle/
-#   - vendor/cache/
-#   - vendor/gems/
-#   - vendor/ruby/
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - .pi/

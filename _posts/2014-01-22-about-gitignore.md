@@ -2,7 +2,7 @@
 layout: post
 title: 关于Gitignore的规则
 date: 2014-01-22 11:00
-tags: git, gitignore
+tags: [git, gitignore]
 ---
 
 

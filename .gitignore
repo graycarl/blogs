@@ -1,3 +1,21 @@
-_site
-.sass-cache
+# Jekyll 构建输出
+_site/
+.sass-cache/
+.jekyll-cache/
 .jekyll-metadata
+
+# Bundler / Ruby
+vendor/
+.bundle/
+
+# macOS
+.DS_Store
+
+# 编辑器 / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# pi 系统目录
+.pi/
