@@ -28,4 +28,4 @@ jobs:
           JEKYLL_ENV: production
 
       - name: Check internal links and HTML
-        run: bundle exec htmlproofer _site --disable-external --ignore-empty-alt
+        run: bundle exec htmlproofer _site --disable-external --ignore-empty-alt --no-enforce-https

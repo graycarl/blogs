@@ -18,6 +18,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      BUNDLE_WITHOUT: test
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,8 +29,6 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
-        env:
-          BUNDLE_WITHOUT: test
 
       - name: Setup Pages
         id: pages
