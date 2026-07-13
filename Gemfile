@@ -20,7 +20,7 @@ group :test do
 end
 
 # Windows 不包含 zoneinfo 文件，所以需额外安装
-gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem "tzinfo-data", platforms: [:windows, :jruby]
 
 # Windows 平台监听目录的依赖
 gem "wdm", "~> 0.1.1" if Gem.win_platform?
