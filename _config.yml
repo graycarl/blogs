@@ -38,6 +38,45 @@ github_username: graycarl
 markdown: kramdown
 theme: minima
 
+# Sass 警告控制（Ruby 4 + Dart Sass 下，minima 2.5 会触发 import/color deprecation）
+sass:
+  quiet_deps: true
+  silence_deprecations:
+    - import
+    - global-builtin
+    - color-functions
+
+# 顶部导航菜单（minima）
+header_pages:
+  - blog.md
+  - essays.md
+  - archive.md
+  - tags.md
+  - about.md
+
+# 按目录自动分类：
+# - _posts/blog/**  -> categories: [blog]
+# - _posts/essay/** -> categories: [essay]
+# 其他 _posts 下文章默认仍归类到 blog
+defaults:
+  - scope:
+      path: "_posts/blog"
+      type: "posts"
+    values:
+      categories: [blog]
+
+  - scope:
+      path: "_posts/essay"
+      type: "posts"
+    values:
+      categories: [essay]
+
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      categories: [blog]
+
 plugins:
   - jekyll-feed
   - jekyll-seo-tag

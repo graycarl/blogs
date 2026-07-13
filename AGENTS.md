@@ -7,7 +7,7 @@
 - 仓库：`https://github.com/graycarl/blogs`
 - 站点：`https://graycarl.me/`
 - 构建方式：GitHub Actions（非 GitHub Pages 内置构建）
-- Ruby 版本：`.ruby-version` 中固定为 `3.3.0`
+- Ruby 版本：`.ruby-version` 中固定为 `4.0.5`
 
 ## 目录结构
 
@@ -30,7 +30,7 @@
 ## 本地开发
 
 ```bash
-# 确保 Ruby 版本与 .ruby-version 一致（3.3.0）
+# 确保 Ruby 版本与 .ruby-version 一致（4.0.5）
 bundle install
 bundle exec jekyll serve
 
@@ -49,6 +49,7 @@ bundle exec jekyll serve
   tags: [tag1, tag2]
   ---
   ```
+- `date` 字段请使用当前准确时间，不要沿用模板中的占位时间（例如 `2026-07-13 12:00`）。
 - `tags` 必须是 YAML 数组格式，不要写成 `tags: a, b`
 - 图片等静态资源建议放在 `fs/` 目录
 
