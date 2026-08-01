@@ -20,7 +20,7 @@ end
 
 # 测试/质量检查依赖（部署时通过 BUNDLE_WITHOUT=test 跳过）
 group :test do
-  gem "html-proofer", "~> 5.0", require: false
+  gem "html-proofer", "~> 5.2", require: false
 end
 
 # Windows 不包含 zoneinfo 文件，所以需额外安装
