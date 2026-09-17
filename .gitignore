@@ -17,8 +17,9 @@ vendor/
 *.swp
 *.swo
 
-# pi 系统目录
-.pi/
+# pi 系统目录（仅放行 prompt templates，其余如 todos/ 仍忽略）
+.pi/*
+!.pi/prompts/
 
 # local 目录
 local/
