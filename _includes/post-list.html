@@ -1,0 +1,39 @@
+{% comment %}
+文章列表组件（首页 / 博客 / 随笔 / 归档共用）。
+参数：
+  include.posts          文章集合（必填）
+  include.group_by_year  传 true 时按年份分组
+  include.empty_text     无文章时的提示文案
+样式见 assets/main.scss 中的 .post-index 系列。
+{% endcomment %}
+{%- assign posts = include.posts -%}
+{%- if posts and posts.size > 0 -%}
+  {%- if include.group_by_year -%}
+    {%- assign year = '' -%}
+    {%- for post in posts -%}
+      {%- assign y = post.date | date: '%Y' -%}
+      {%- if y != year -%}
+        {%- assign year = y -%}
+        {%- unless forloop.first %}</ul>{% endunless -%}
+<h2 class="post-index-year">{{ y }}</h2>
+<ul class="post-index">
+      {%- endif %}
+      <li>
+        <a class="post-index-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+        <time class="post-index-date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y-%m-%d' }}</time>
+      </li>
+      {%- if forloop.last %}</ul>{% endif -%}
+    {%- endfor -%}
+  {%- else -%}
+<ul class="post-index">
+    {%- for post in posts %}
+      <li>
+        <a class="post-index-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+        <time class="post-index-date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y-%m-%d' }}</time>
+      </li>
+    {%- endfor %}
+</ul>
+  {%- endif -%}
+{%- else -%}
+<p>{{ include.empty_text | default: "还没有文章。" }}</p>
+{%- endif -%}

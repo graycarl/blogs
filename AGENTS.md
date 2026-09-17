@@ -18,7 +18,9 @@
 │   ├── blog/                # 博客分类（categories: [blog]）
 │   └── essay/               # 随笔分类（categories: [essay]）
 ├── _includes/footer.html    # 覆盖 minima 页脚（兼容 site.author 为字符串/哈希）
+├── _includes/post-list.html # 文章列表组件（首页/博客/随笔/归档共用，支持按年份分组）
 ├── _layouts/home.html       # 覆盖首页布局（只列出 blog 分类文章）
+├── assets/main.scss         # 覆盖 minima 样式入口（导入 minima 后追加自定义样式）
 ├── fs/                      # 图片等静态资源
 ├── blog.md                  # 「博客」栏目页（/blog/）
 ├── essays.md                # 「随笔」栏目页（/essays/）
