@@ -19,3 +19,6 @@ vendor/
 
 # pi 系统目录
 .pi/
+
+# local 目录
+local/
