@@ -25,7 +25,6 @@
 ├── blog.md                  # 「博客」栏目页（/blog/）
 ├── essays.md                # 「随笔」栏目页（/essays/）
 ├── archive.md               # 年份归档页（/archive/）
-├── tags.md                  # 标签聚合页（/tags/）
 ├── about.md                 # 关于我（/about/）
 ├── index.md                 # 首页
 ├── 404.html                 # 404 页面

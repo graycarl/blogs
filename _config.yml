@@ -51,7 +51,6 @@ header_pages:
   - blog.md
   - essays.md
   - archive.md
-  - tags.md
   - about.md
 
 # 按目录自动分类：
