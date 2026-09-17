@@ -45,28 +45,59 @@ bundle exec jekyll serve
 # 访问 http://localhost:4000
 ```
 
-## 写作规范
+## 写作与发布流程（Blog / Essay）
 
-- 文章放到 `_posts/blog/`（默认）或 `_posts/essay/`（随笔/感想），文件名必须形如 `YYYY-MM-DD-title.md`
-- 分类由 `_config.yml` 的 `defaults` 按目录自动注入（`_posts/blog/**` → `blog`，`_posts/essay/**` → `essay`），**不要**在 front matter 里手写 `categories`
-- Front matter 示例：
-  ```yaml
-  ---
-  layout: post
-  title: 文章标题
-  date: 2026-07-13 12:00
-  tags: [tag1, tag2]
-  ---
-  ```
-- `date` 字段请使用当前准确时间（Asia/Shanghai），不要沿用模板中的占位时间（例如 `2026-07-13 12:00`）。
-- `tags` 必须是 YAML 数组格式，不要写成 `tags: a, b`
+本节是写作、阅读、发布文章的**唯一权威入口**（原 `~/.pi/agent/skills/blog` skill 的内容已全部合并到此文件，该 skill 已删除）。
+
+### 触发场景
+
+- 「写篇博客 / 随笔 / Blog / Essay，关于 xxx」→ 走写作流程
+- 「列出所有文章」/「我最近写了什么」→ 走阅读流程的「列出」
+- 「读一下 / 打开 / 查看某篇文章」→ 走阅读流程的「读取」
+
+### 写作流程
+
+1. **判断分类**
+   - 用户明确说「随笔 / essay / 感想」→ 存到 `_posts/essay/`
+   - 否则默认存到 `_posts/blog/`
+   - 分类由 `_config.yml` 的 `defaults` 按目录自动注入（`_posts/blog/**` → `blog`，`_posts/essay/**` → `essay`），**不要**在 front matter 里手写 `categories`
+2. **生成英文 slug**：把标题翻译成简洁、URL 友好的英文，全部小写，空格和标点替换为 `-`，去掉多余 `-`
+   - 例：`AI 帮我升级博客基础设施` → `ai-helps-update-blog-infrastructure`
+3. **确定文件名**：`_posts/{blog|essay}/YYYY-MM-DD-{slug}.md`
+   - 例：`_posts/essay/2026-09-17-time-to-push-myself.md`
+4. **生成 front matter**：`title` 保留原始语言，正文中**不要**再重复标题
+   ```yaml
+   ---
+   layout: post
+   title: "文章标题"
+   date: 2026-09-17 23:10
+   tags: [tag1, tag2, tag3]
+   ---
+   ```
+   - `date` 用 `TZ=Asia/Shanghai date "+%Y-%m-%d %H:%M"` 取当前准确时间，**不要**沿用模板/示例里的占位时间（如 `2026-07-13 12:00`）
+   - `tags` 必须是 YAML 数组格式，按内容自动提取 3-5 个相关标签，**不要**写成 `tags: a, b, c`
+5. **撰写正文**：完整、连贯的 Markdown，内容准确、精炼、有条理，避免无意义的情绪化表达
+6. **预览并确认**：向用户展示文件完整路径、front matter、正文前 200 字摘要、拟用的 commit message，并询问是否确认发布
+7. **提交并推送（仅在用户确认后执行）**
+   ```bash
+   git add _posts/{blog,essay}/YYYY-MM-DD-{slug}.md
+   git commit -m "feat(essay): Add {slug}"   # 或 feat(blog): Add {slug}
+   git push
+   ```
+   - 提交信息固定英文格式：`feat(blog): Add {slug}` 或 `feat(essay): Add {slug}`
+   - **推送前必须取得用户确认**，不要未经确认直接 `git push`
+   - 用户要求修改 → 回到第 5/6 步；用户放弃 → 不要创建文件，或删除已创建但未提交的文件
+
+### 阅读流程
+
+- **列出文章**：`ls -1 _posts/blog _posts/essay`，展示日期 + 标题/关键词
+- **按关键词定位**：`rg -i "keyword" _posts --files-with-matches`；命中多篇时列出候选让用户选择
+- **读取文章**：读取 `_posts/{blog,essay}/YYYY-MM-DD-title.md`，展示全文，必要时总结要点
+
+### 静态资源
+
 - 图片等静态资源建议放在 `fs/` 目录，引用路径为 `/fs/{filename}`
-
-## 发布流程
-
-- 提交信息使用英文，固定格式：`feat(blog): Add {slug}` 或 `feat(essay): Add {slug}`
-- 推送前需用户确认，不要未经确认直接 `git push`
-- 详细的写作/阅读/发布流程见 blog skill（`~/.pi/agent/skills/blog/SKILL.md`）
+- 图片文件名建议带日期前缀：`17-08-03-xxx.png`
 
 ## 部署
 
