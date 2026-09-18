@@ -34,6 +34,7 @@ argument-hint: "[草稿文件名]"
   - 根据标题生成简洁的英文 slug（全小写、`-` 连接）
   - 文件名 `_posts/blog/YYYY-MM-DD-{slug}.md`
   - front matter 中 `date` 用 `TZ=Asia/Shanghai date "+%Y-%m-%d %H:%M"` 取当前时间，`tags` 为 3-5 个元素的 YAML 数组（中文标签可用）
+  - 如果文档引用了图片，把图片拷贝到 `fs/` 目录下，并在文中用 `/fs/{filename}` 引用（文件名建议带日期前缀，如 `17-08-03-xxx.png`）
   - 提交信息：`feat(blog): Add {slug}`
 - 写完文件后，向用户展示：文件完整路径、front matter、正文前 200 字摘要、拟用的 commit message，**经用户确认后**再执行 `git add` / `git commit` / `git push`。
 - 用户要求修改 → 改完重新展示确认；用户放弃 → 删除已创建但未提交的文件。
