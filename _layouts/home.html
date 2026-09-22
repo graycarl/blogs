@@ -11,9 +11,9 @@ layout: default
 
   {%- assign blog_posts = site.categories.blog -%}
   {%- if blog_posts.size > 0 -%}
-    <h2 class="post-list-heading">{{ page.list_title | default: "Posts" }}</h2>
+    <h2 class="post-list-heading">{{ page.list_title | default: "最新文章" }}</h2>
     {% include post-list.html posts=blog_posts %}
-    <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | relative_url }}">via RSS</a></p>
+    <p class="rss-subscribe"><a href="{{ "/feed.xml" | relative_url }}">订阅 RSS</a></p>
   {%- endif -%}
 
 </div>

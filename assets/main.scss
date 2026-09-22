@@ -2,7 +2,47 @@
 # 站点自定义样式入口（覆盖 minima 自带的 assets/main.scss）
 ---
 
+// ---------------------------------------------------------------
+// 配色：砖红/暖纸系（覆盖 minima 变量必须在 @import 之前）
+// ---------------------------------------------------------------
+$brand-color:      #c2410c;
+$text-color:       #37352f;
+$background-color: #faf9f6;
+$grey-color:       #8a8578;
+
+$base-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+$base-line-height: 1.8;
+$content-width:    820px;
+
 @import "minima";
+
+// ---------------------------------------------------------------
+// 全局排版
+// ---------------------------------------------------------------
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba($brand-color, 0.15);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.post-content {
+  p { margin-bottom: 1.2em; }
+  h2 { margin-top: $spacing-unit * 1.8; }
+  h3 { margin-top: $spacing-unit * 1.4; }
+}
+
+.post-title {
+  letter-spacing: -0.5px;
+}
 
 // ---------------------------------------------------------------
 // 文章列表（首页 / 博客 / 随笔 / 归档共用，见 _includes/post-list.html）
@@ -23,7 +63,7 @@
     transition: background-color 0.15s ease-in-out;
 
     &:hover {
-      background-color: rgba($brand-color, 0.06);
+      background-color: rgba($brand-color, 0.05);
     }
   }
 }
@@ -31,10 +71,12 @@
 .post-index-link {
   flex: 1 1 auto;
   min-width: 0;
+  color: $text-color;
   text-decoration: none;
 
   &:hover {
-    text-decoration: underline;
+    color: $brand-color;
+    text-decoration: none;
   }
 }
 
@@ -51,4 +93,206 @@
   margin-bottom: $spacing-unit * 0.25;
   font-size: $base-font-size * 1.3;
   color: $grey-color-dark;
+}
+
+// ---------------------------------------------------------------
+// 代码块 / 引用
+// ---------------------------------------------------------------
+
+pre, code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+code {
+  background-color: #f5f3ee;
+  border: 1px solid #e8e4db;
+  border-radius: 4px;
+}
+
+pre {
+  background-color: #f5f3ee;
+  border: 1px solid #e8e4db;
+  border-radius: 8px;
+
+  code {
+    background: transparent;
+    border: none;
+  }
+}
+
+// 覆盖 minima 语法高亮默认的淡紫色 (#eef) 背景
+// （rouge 生成的结构为 div.highlighter-rouge > div.highlight > pre.highlight）
+div.highlight,
+.highlighter-rouge .highlight {
+  background: #f5f3ee;
+  border-radius: 8px;
+}
+
+// 柔化 rouge 默认配色中与暖底冲突的 token
+.highlight {
+  .err { background-color: transparent; }  // Error token 自带刺眼红底，去掉
+  .c, .cm, .c1, .cs { color: #8a8578; }    // 注释随暖调灰
+}
+
+blockquote {
+  color: $grey-color;
+  font-style: normal;
+  border-left: 3px solid rgba($brand-color, 0.45);
+  letter-spacing: 0;
+}
+
+// ---------------------------------------------------------------
+// 页脚 / 杂项
+// ---------------------------------------------------------------
+
+.site-footer {
+  color: $grey-color;
+
+  .footer-heading {
+    font-size: $base-font-size * 1.1;
+  }
+
+  a {
+    color: $grey-color-dark;
+  }
+}
+
+.rss-subscribe {
+  font-size: $small-font-size;
+  color: $grey-color;
+
+  a {
+    color: $grey-color;
+  }
+}
+
+// ---------------------------------------------------------------
+// 暗色模式（跟随系统）
+// minima 2.5 不支持皮肤切换，这里用媒体查询整体反转暖纸配色
+// ---------------------------------------------------------------
+
+@media (prefers-color-scheme: dark) {
+  $dark-bg:       #1c1b19;
+  $dark-text:     #d6d2cb;
+  $dark-brand:    #e0805a;
+  $dark-grey:     #8a8578;
+  $dark-border:   #37342f;
+  $dark-code-bg:  #262421;
+
+  body {
+    background-color: $dark-bg;
+    color: $dark-text;
+  }
+
+  ::selection {
+    background: rgba($dark-brand, 0.3);
+  }
+
+  a {
+    color: $dark-brand;
+
+    &:visited {
+      color: darken($dark-brand, 12%);
+    }
+  }
+
+  // 头部 / 底部
+  .site-header {
+    border-top-color: $dark-border;
+    border-bottom-color: $dark-border;
+  }
+
+  .site-title,
+  .site-title:visited,
+  .site-nav .page-link {
+    color: $dark-text;
+  }
+
+  .site-nav {
+    background-color: $dark-bg;
+    border-color: $dark-border;
+  }
+
+  .site-footer {
+    border-top-color: $dark-border;
+    color: $dark-grey;
+
+    a {
+      color: $dark-text;
+    }
+  }
+
+  // 文章列表
+  .post-index li {
+    border-bottom-color: $dark-border;
+
+    &:hover {
+      background-color: rgba($dark-brand, 0.1);
+    }
+  }
+
+  .post-index-link {
+    color: $dark-text;
+
+    &:hover {
+      color: $dark-brand;
+    }
+  }
+
+  .post-index-date,
+  .post-meta {
+    color: $dark-grey;
+  }
+
+  .post-index-year {
+    color: $dark-text;
+  }
+
+  // 代码块 / 引用
+  code {
+    background-color: $dark-code-bg;
+    border-color: $dark-border;
+  }
+
+  pre {
+    background-color: $dark-code-bg;
+    border-color: $dark-border;
+  }
+
+  div.highlight,
+  .highlighter-rouge .highlight {
+    background: $dark-code-bg;
+  }
+
+  blockquote {
+    color: $dark-grey;
+    border-left-color: rgba($dark-brand, 0.55);
+  }
+
+  // 表格
+  table {
+    color: $dark-text;
+
+    th, td {
+      border-color: $dark-border;
+    }
+
+    tr:nth-child(even) {
+      background-color: $dark-code-bg;
+    }
+  }
+
+  // rouge 语法高亮 token 反转（默认配色在深色底上不可读）
+  .highlight {
+    .c, .cm, .c1, .cs, .cp      { color: $dark-grey; font-style: italic; font-weight: normal; }
+    .k, .kc, .kd, .kn, .kp, .kr, .kt { color: $dark-brand; font-weight: normal; }
+    .s, .sb, .sc, .sd, .s2, .se, .sh, .si, .sx, .s1 { color: #b5bd8a; }
+    .m, .mf, .mh, .mi, .mo      { color: #d19a66; }
+    .na, .nc, .no, .nv, .vc, .vg, .vi { color: $dark-text; font-weight: normal; }
+    .nf                         { color: #d8a657; font-weight: normal; }
+    .nb, .bp                    { color: #89b4a8; }
+    .nt                         { color: $dark-brand; }
+    .o, .ow                     { color: $dark-text; font-weight: normal; }
+    .err                        { color: #e06c75; background-color: transparent; }
+  }
 }
