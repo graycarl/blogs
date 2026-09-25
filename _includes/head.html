@@ -1,0 +1,27 @@
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {%- seo -%}
+  <meta name="theme-color" content="#faf9f6">
+  {%- comment -%}
+    主题初始化：必须在样式表之前同步执行，避免刷新时亮/暗闪烁（FOUC）。
+    只有用户手动选过 light/dark 时才写入 data-theme，否则保持「跟随系统」。
+  {%- endcomment -%}
+  <script>
+    (function () {
+      try {
+        var mode = localStorage.getItem('theme');
+        if (mode === 'light' || mode === 'dark') {
+          document.documentElement.setAttribute('data-theme', mode);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="{{ "/assets/main.css" | relative_url }}">
+  <script defer src="{{ "/assets/js/theme-toggle.js" | relative_url }}"></script>
+  {%- feed_meta -%}
+  {%- if jekyll.environment == 'production' and site.google_analytics -%}
+    {%- include google-analytics.html -%}
+  {%- endif -%}
+</head>

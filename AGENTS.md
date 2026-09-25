@@ -18,9 +18,12 @@
 │   ├── blog/                # 博客分类（categories: [blog]）
 │   └── essay/               # 随笔分类（categories: [essay]）
 ├── _includes/footer.html    # 覆盖 minima 页脚（兼容 site.author 为字符串/哈希）
+├── _includes/header.html    # 覆盖 minima 头部（导航 + 主题切换按钮）
+├── _includes/head.html      # 覆盖 minima head（theme-color + 主题初始化内联脚本，防 FOUC）
 ├── _includes/post-list.html # 文章列表组件（首页/博客/随笔/归档共用，支持按年份分组）
 ├── _layouts/home.html       # 覆盖首页布局（只列出 blog 分类文章）
 ├── assets/main.scss         # 覆盖 minima 样式入口（导入 minima 后追加自定义样式）
+├── assets/js/theme-toggle.js # 亮/暗主题切换（自动→亮色→暗色 三态循环，localStorage 持久化）
 ├── fs/                      # 图片等静态资源
 ├── blog.md                  # 「博客」栏目页（/blog/）
 ├── essays.md                # 「随笔」栏目页（/essays/）
@@ -126,6 +129,16 @@ bundle exec jekyll serve
 - 如需手动升级：修改 `Gemfile` 版本约束，然后 `bundle update` 并提交新的 `Gemfile.lock`
 - `Gemfile.lock` 必须提交到仓库
 
+## 亮/暗主题
+
+- 默认**跟随系统**（`prefers-color-scheme`），页头导航末尾的按钮可在 **自动 → 亮色 → 暗色 → 自动** 三态间循环
+- 状态仅存于 `localStorage.theme`（`auto` / `light` / `dark`），无服务端参与，也无需 `_config.yml` 配置
+- 实现拆成三处，改样式时注意保持同步：
+  1. `_includes/head.html`：`<html>` 上同步写入 `data-theme`（在样式表之前，避免刷新闪烁）+ 加载 `theme-toggle.js`
+  2. `assets/main.scss`：`@mixin dark-theme` 一次编写，`html[data-theme="dark"]`（手动暗色）与 `@media (prefers-color-scheme: dark) html:not([data-theme="light"])`（跟随系统）两处引入；另含 `.theme-toggle` 图标/按钮样式
+  3. `assets/js/theme-toggle.js`：三态循环、`meta[name=theme-color]` 同步、系统偏好变化监听
+- 新增暗色样式时请写进 `@mixin dark-theme`，不要在别处硬写 `@media (prefers-color-scheme: dark)`，否则手动切换会失效
+
 ## 常见注意事项
 
 1. **不要重新引入 `github-pages` gem**：当前使用独立 Jekyll 4.x + GitHub Actions，切换回 `github-pages` gem 会破坏部署。
@@ -133,4 +146,4 @@ bundle exec jekyll serve
 3. **新增 Jekyll 插件**：需要同时加入 `Gemfile` 的 `:jekyll_plugins` 组和 `_config.yml` 的 `plugins` 列表。
 4. **Sass 弃用告警**：Ruby 4 + Dart Sass 下 minima 2.5 会触发 import/color 相关 deprecation，已在 `_config.yml` 用 `sass.silence_deprecations` 静默，升级主题前不要随意删除。
 5. **`_config.yml` 的 `exclude`**：已排除 `Gemfile`、`Gemfile.lock`、`AGENTS.md`、`.pi/`、`vendor/` 等，新增非站点文件时注意同步。
-6. **主题限制**：当前 minima 2.5 不支持原生暗色模式/站内搜索，如需这些功能需换主题或自定义实现。
+6. **主题限制**：minima 2.5 没有原生暗色模式/站内搜索。暗色模式已由本项目自行实现（见「亮/暗主题」），站内搜索仍需换主题或额外方案。

@@ -20,6 +20,10 @@ $content-width:    820px;
 // 全局排版
 // ---------------------------------------------------------------
 
+:root {
+  color-scheme: light;
+}
+
 body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -167,11 +171,16 @@ blockquote {
 }
 
 // ---------------------------------------------------------------
-// 暗色模式（跟随系统）
-// minima 2.5 不支持皮肤切换，这里用媒体查询整体反转暖纸配色
+// 暗色模式
+// 默认跟随系统；<html data-theme="..."> 可手动覆盖（见 assets/js/theme-toggle.js）：
+//   无 data-theme       -> 跟随系统
+//   data-theme="light"  -> 强制亮色
+//   data-theme="dark"   -> 强制暗色
 // ---------------------------------------------------------------
 
-@media (prefers-color-scheme: dark) {
+@mixin dark-theme {
+  color-scheme: dark;
+
   $dark-bg:       #1c1b19;
   $dark-text:     #d6d2cb;
   $dark-brand:    #e0805a;
@@ -295,4 +304,91 @@ blockquote {
     .o, .ow                     { color: $dark-text; font-weight: normal; }
     .err                        { color: #e06c75; background-color: transparent; }
   }
+
+  // 主题切换按钮
+  .theme-toggle {
+    color: $dark-text;
+    border-color: $dark-border;
+
+    &:hover,
+    &:focus-visible {
+      color: $dark-brand;
+      border-color: $dark-brand;
+    }
+  }
+}
+
+// 手动选择暗色
+html[data-theme="dark"] {
+  @include dark-theme;
+}
+
+// 跟随系统（用户手动选了亮色时不受系统偏好影响）
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    @include dark-theme;
+  }
+}
+
+// ---------------------------------------------------------------
+// 主题切换按钮（自动 / 亮色 / 暗色 三态循环）
+// ---------------------------------------------------------------
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  vertical-align: middle;
+  padding: 5px 10px;
+  font: inherit;
+  font-size: $small-font-size;
+  line-height: 1;
+  color: $grey-color-dark;
+  background: transparent;
+  border: 1px solid $grey-color-light;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+
+  &:hover,
+  &:focus-visible {
+    color: $brand-color;
+    border-color: $brand-color;
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba($brand-color, 0.35);
+    outline-offset: 2px;
+  }
+
+  // 三个图标只显示当前模式对应的那个（无 data-theme 即「自动」）
+  .theme-icon {
+    display: none;
+
+    svg {
+      display: block;
+      width: 13px;
+      height: 13px;
+      fill: currentColor;
+    }
+  }
+
+  .theme-icon-auto {
+    display: inline-flex;
+  }
+
+  @include media-query($on-palm) {
+    margin-left: 20px;
+    border-color: transparent;
+  }
+}
+
+html[data-theme="light"] .theme-toggle {
+  .theme-icon-auto { display: none; }
+  .theme-icon-light { display: inline-flex; }
+}
+
+html[data-theme="dark"] .theme-toggle {
+  .theme-icon-auto { display: none; }
+  .theme-icon-dark { display: inline-flex; }
 }
