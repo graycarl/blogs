@@ -11,15 +11,20 @@ vendor/
 # macOS
 .DS_Store
 
+# Python
+__pycache__/
+*.pyc
+
 # 编辑器 / IDE
 .idea/
 .vscode/
 *.swp
 *.swo
 
-# pi 系统目录（仅放行 prompt templates，其余如 todos/ 仍忽略）
+# pi 系统目录（仅放行 prompt templates 与 scripts，其余如 todos/ 仍忽略）
 .pi/*
 !.pi/prompts/
+!.pi/scripts/
 
 # local 目录
 local/
