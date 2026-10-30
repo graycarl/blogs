@@ -161,6 +161,28 @@ blockquote {
   }
 }
 
+// 页脚底部的小书入口（刻意做得很轻，只是给知道的人一个门）
+.footer-book {
+  margin: 0;
+  padding-top: $spacing-unit * 0.5;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  line-height: 1.6;
+
+  a {
+    color: $grey-color;
+    text-decoration: none;
+    border-bottom: 1px dotted transparent;
+    transition: color 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+      color: $brand-color;
+      border-bottom-color: currentColor;
+    }
+  }
+}
+
 .rss-subscribe {
   font-size: $small-font-size;
   color: $grey-color;
@@ -228,6 +250,14 @@ blockquote {
 
     a {
       color: $dark-text;
+    }
+
+    .footer-book a {
+      color: $dark-grey;
+
+      &:hover {
+        color: $dark-brand;
+      }
     }
   }
 
