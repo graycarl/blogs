@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>图书馆大冒险 · 何筱语 秦蓁瑧（三年级三班）</title>
+<title>图书馆大冒险 · 何筱语 秦蓁瑧（三年级二班）</title>
 <style>
 :root{
   --paper:#fdfaf3; --paper2:#f7f0e3; --paper3:#efe6d4;
@@ -534,10 +534,11 @@ const STORY = [
     blocks:[
       {t:'可是这排书架上的书太多啦！一本一本翻过去，大家的腿都酸了。李胖胖捂着咕咕叫的肚子，一屁股坐在地上：'},
       {say:'李胖胖', t:'我好饿呀……我想回家吃蛋糕……'},
-      {say:'夏可可', t:'要不……明天再找吧？'},
-      {t:'就在大家快要泄气的时候，蓝博士直起腰：'},
-      {say:'蓝博士', t:'别呀！我们都走到这儿了！再坚持一下下，好不好？'},
-      {say:'夏可可', t:'对！就差一点点了！继续找！'}
+      {say:'蓝博士', t:'要不……明天再找吧？'},
+      {t:'就在大家快要泄气的时候，夏可可忽然站直身子，把地图举得高高的：'},
+      {say:'夏可可', t:'别呀！我们都走到这儿了！再坚持一下下，好不好？'},
+      {t:'夏爱爱也蹦上书堆，毛茸茸的大尾巴一甩：'},
+      {say:'夏爱爱', t:'对！就差一点点了！继续找！'}
     ]},
   { n:12, img:'p12', ar:1.6043, cap:'一页一页，翻到自己写的那一页', glow:true, glowSplit:4,
     blocks:[
@@ -664,7 +665,7 @@ const f = () => String(++folio);
 SPREADS.push([
   `<div class="page titlepage">
      <p class="big">图书馆大冒险</p>
-     <p class="by">故事与绘图<br><b style="font-size:13.5px;letter-spacing:.2em">${AUTHOR}</b><br>三年级三班</p>
+     <p class="by">故事与绘图<br><b style="font-size:13.5px;letter-spacing:.2em">${AUTHOR}</b><br>三年级二班</p>
      <div class="folio-line"></div>
    </div>`,
   `<div class="page verse">
@@ -721,7 +722,7 @@ faces.push({ html:`<div class="page cover-art">
     <div class="cover-txt">
       <div class="kicker">★ 一本可以翻页的绘本 ★</div>
       <h1>图书馆大冒险</h1>
-      <div class="sub">故事与绘图 · ${AUTHOR} · 三年级三班</div>
+      <div class="sub">故事与绘图 · ${AUTHOR} · 三年级二班</div>
     </div>
     <div class="hint">点击右侧翻页 · 或左右滑动</div>
   </div>`, side:'right' });
@@ -730,7 +731,7 @@ faces.push({ html:`<div class="page back-art">
     <img class="cover-img" src="assets/backcover.jpg" alt="封底：桌上那本合起来的书" draggable="false">
     <div class="bc-txt">
       <div class="q">翻开书页，去探险吧！<br>开动脑筋，不怕困难。</div>
-      <div class="fin">图书馆大冒险 · ${AUTHOR}<br>三年级三班</div>
+      <div class="fin">图书馆大冒险 · ${AUTHOR}<br>三年级二班</div>
     </div>
   </div>`, side:'left' });
 
@@ -1066,7 +1067,7 @@ function spreadSpeech(){
     }).join(' ');
   };
   let t = pick(right) || pick(left);
-  if (!t && cur === 0) t = '图书馆大冒险。故事与绘图，何筱语，秦蓁瑧，三年级三班。';
+  if (!t && cur === 0) t = '图书馆大冒险。故事与绘图，何筱语，秦蓁瑧，三年级二班。';
   return t;
 }
 
