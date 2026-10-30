@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>图书馆大冒险 · 何筱语 秦蓁瑧（三年级三班）</title>
+<style>
+:root{
+  --paper:#fdfaf3; --paper2:#f7f0e3; --paper3:#efe6d4;
+  --ink:#4a3b32; --ink2:#7c6a5b; --ink3:#a4927f;
+  --line:#e0d3bd; --accent:#b5651d; --gold:#c08a2e; --gold-lt:#f2d489;
+  --shadow:0 18px 44px rgba(92,68,44,.20);
+  --kaiti:"Kaiti SC","STKaiti","KaiTi","Songti SC","SimSun",serif;
+  --song:"Songti SC","STSong","SimSun",serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  margin:0; font-family:var(--kaiti); color:var(--ink);
+  background:
+    radial-gradient(120% 80% at 50% -10%, #fbf6ec 0%, #f0e6d5 45%, #e6d9c3 100%),
+    #eee3d0;
+  background-attachment:fixed;
+  overflow:hidden;
+}
+body::before{ /* 纸纹噪点 */
+  content:""; position:fixed; inset:0; pointer-events:none; opacity:.5; z-index:0;
+  background-image:
+    radial-gradient(rgba(140,110,80,.10) .6px, transparent .7px),
+    radial-gradient(rgba(255,255,255,.65) .6px, transparent .7px);
+  background-size:5px 5px, 7px 7px;
+  background-position:0 0, 3px 4px;
+}
+
+/* ============ 舞台 ============ */
+.stage{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:1}
+.book{
+  --spread-ar: 2.62;
+  width:min(94vw, calc(74vh * var(--spread-ar)));
+  aspect-ratio:var(--spread-ar) / 1; height:auto;
+  position:relative; perspective:2600px; perspective-origin:50% 42%;
+  transform-style:preserve-3d;
+  filter:drop-shadow(0 26px 40px rgba(80,58,38,.22));
+}
+.book::before{ /* 书脊与兜底 */
+  content:""; position:absolute; inset:0; border-radius:4px;
+  background:linear-gradient(90deg,#e9dfcb,#f7f1e4 46%,#efe5d2 50%,#f7f1e4 54%,#e9dfcb);
+  box-shadow:inset 0 0 0 1px rgba(160,135,100,.25);
+  transition:opacity .5s ease;
+}
+/* 合上时，左半边不该有纸 */
+.book.closed::before,.book.ended::before{opacity:0}
+.book.closed .spine,.book.ended .spine{opacity:0}
+.book.closed{filter:drop-shadow(0 26px 40px rgba(80,58,38,.30)); transform:translateX(-25%)}
+.book.ended{filter:drop-shadow(0 26px 40px rgba(80,58,38,.30)); transform:translateX(25%)}
+.book{transition:transform .6s ease}
+.spine{
+  position:absolute; top:0; bottom:0; left:50%; width:26px; margin-left:-13px;
+  background:linear-gradient(90deg, rgba(120,90,60,0), rgba(120,90,60,.20) 42%, rgba(120,90,60,.30) 50%, rgba(120,90,60,.20) 58%, rgba(120,90,60,0));
+  z-index:60; pointer-events:none;
+}
+.sheet{
+  position:absolute; top:0; left:50%; width:50%; height:100%;
+  transform-origin:left center; transform-style:preserve-3d;
+  transition:transform .92s cubic-bezier(.34,.06,.28,1);
+  will-change:transform;
+}
+.sheet.flipped{transform:rotateY(-180deg)}
+.face{
+  position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+  overflow:hidden; background:var(--paper);
+  border-radius:2px;
+  box-shadow:inset 0 0 0 1px rgba(170,145,110,.18);
+}
+.face.back{transform:rotateY(180deg)}
+.face::after{ /* 翻页阴影 */
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:0;
+  transition:opacity .3s ease;
+}
+.sheet.front-shadow .face.front::after{opacity:1;background:linear-gradient(90deg,rgba(60,40,20,.30),rgba(60,40,20,0) 42%)}
+.sheet.back-shadow  .face.back::after{opacity:1;background:linear-gradient(270deg,rgba(60,40,20,.28),rgba(60,40,20,0) 40%)}
+.face.left{box-shadow:inset 12px 0 22px -14px rgba(90,66,40,.35), inset 0 0 0 1px rgba(170,145,110,.18)}
+.face.right{box-shadow:inset -12px 0 22px -14px rgba(90,66,40,.35), inset 0 0 0 1px rgba(170,145,110,.18)}
+
+/* ============ 通用页 ============ */
+.page{position:absolute; inset:0; padding:5.6% 7% 7.6%; display:flex; flex-direction:column; background:var(--paper)}
+.page.art{padding:0; display:block; background:linear-gradient(160deg,#fdfaf4,#f6ecdb)}
+.pnum{position:absolute; bottom:2.4%; left:0; right:0; text-align:center; font-size:11px; letter-spacing:.18em; color:var(--ink3); font-family:var(--song)}
+.folio-line{position:absolute; left:50%; transform:translateX(-50%); bottom:6.5%; width:34px; height:1px; background:var(--line)}
+
+/* 插画页 */
+.art-frame{
+  position:absolute; left:3.8%; right:3.8%; top:5.2%; bottom:9.6%;
+  display:flex; align-items:center; justify-content:center;
+}
+.mat{
+  background:#fffdf8; padding:11px; border-radius:2px;
+  box-shadow:0 10px 22px rgba(96,70,44,.22), 0 0 0 1px rgba(185,160,120,.38);
+  transform:rotate(-.45deg);
+}
+.art-frame .win{
+  position:relative; overflow:hidden; border-radius:1px;
+  background:#efe6d4;
+}
+.art-frame img{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;
+  transform:scale(1.07); transform-origin:center;
+  transition:transform .5s ease;
+}
+.art-frame .cap{
+  position:absolute; left:0; right:0; bottom:-1px; height:0;
+}
+.art-caption{
+  position:absolute; left:8%; right:8%; bottom:3.4%;
+  font-size:clamp(10px,1.02vw,12.5px); color:var(--ink3); text-align:center;
+  letter-spacing:.05em; font-family:var(--song);
+}
+.art-frame.tap img{animation:wiggle .5s ease}
+@keyframes wiggle{0%,100%{transform:scale(1.07) rotate(0)}30%{transform:scale(1.095) rotate(-.7deg)}70%{transform:scale(1.095) rotate(.7deg)}}
+
+/* 文字页 */
+.eyebrow{font-family:var(--song); font-size:11px; letter-spacing:.34em; color:var(--ink3); margin:0 0 1.1em}
+.story-body{flex:1; overflow:hidden; display:flex; flex-direction:column; justify-content:center; gap:.72em; font-size:var(--fs,16px)}
+.story-body p{margin:0; line-height:1.95; text-indent:2em; font-size:1em; color:var(--ink)}
+.story-body > p:first-of-type{text-indent:0}
+.story-body > p:first-child::first-letter{
+  float:left; font-size:2.5em; line-height:.9; padding:.06em .12em 0 0; color:var(--accent); font-family:var(--song);
+}
+.story-body.no-drop > p:first-child::first-letter{
+  float:none; font-size:1em; line-height:inherit; padding:0; color:inherit; font-family:inherit;
+}
+.say{
+  margin:.1em 0; padding:.62em .9em; border-radius:12px; background:#fff; position:relative;
+  font-size:1em; line-height:1.9; text-indent:0;
+  box-shadow:0 2px 8px rgba(120,92,60,.10), inset 0 0 0 1px rgba(180,155,120,.22);
+}
+.say::before{
+  content:""; position:absolute; left:14px; top:-6px; width:12px; height:12px;
+  background:inherit; transform:rotate(45deg); box-shadow:-1px -1px 0 rgba(180,155,120,.22) inset;
+}
+.say .who{
+  display:inline-block; font-family:var(--song); font-size:.74em; letter-spacing:.08em;
+  padding:.14em .55em; border-radius:999px; margin-right:.5em; color:#fff; background:var(--c,#8a7a68);
+  vertical-align:.08em;
+}
+.say .txt{text-indent:0}
+
+/* 章节页 */
+.chapter{
+  background:
+    radial-gradient(80% 60% at 20% 20%, rgba(255,255,255,.7), transparent 60%),
+    linear-gradient(150deg,#f7efdf,#eee1c9);
+  align-items:center; justify-content:center; text-align:center;
+}
+.chapter .kicker{font-family:var(--song); letter-spacing:.4em; font-size:11px; color:var(--ink3)}
+.chapter h2{
+  margin:.5em 0 .35em; font-size:clamp(22px,2.7vw,36px); letter-spacing:.08em; font-weight:500;
+  color:var(--ink);
+}
+.chapter .rule{width:74px; height:1px; background:var(--ink3); opacity:.6; margin:.2em auto 1em}
+.chapter p{margin:0; color:var(--ink2); font-size:13.5px; letter-spacing:.16em; line-height:2}
+.chapter .seal{
+  margin-top:2.2em; width:66px; height:66px; border-radius:50%;
+  border:1px solid rgba(181,101,29,.45); color:var(--accent); display:flex; align-items:center; justify-content:center;
+  font-size:12px; letter-spacing:.2em; transform:rotate(-8deg); opacity:.85;
+}
+
+/* 封面（整幅插画 + 叠字） */
+.cover-art{position:absolute; inset:0; padding:0; overflow:hidden; background:#e9dcc4}
+.cover-art .cover-img{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;
+}
+.cover-art .scrim{
+  position:absolute; inset:0; pointer-events:none;
+  background:
+    linear-gradient(180deg, rgba(252,246,233,.90) 0%, rgba(252,246,233,.72) 20%, rgba(252,246,233,.28) 38%, rgba(252,246,233,0) 52%),
+    linear-gradient(0deg, rgba(70,48,28,.30) 0%, rgba(70,48,28,0) 22%);
+}
+.cover-art .cover-txt{
+  position:absolute; left:7%; right:7%; top:6.5%; text-align:center; z-index:2;
+}
+.cover-art .kicker{
+  font-family:var(--song); font-size:10px; letter-spacing:.42em; color:#9a7a4a; margin-bottom:1.1em;
+}
+.cover-art h1{
+  margin:0; font-size:clamp(24px,2.5vw,38px); letter-spacing:.3em; text-indent:.3em;
+  font-weight:500; color:#443428; line-height:1.25;
+  text-shadow:0 1px 0 rgba(255,252,244,.95), 0 0 18px rgba(255,248,232,.9);
+}
+.cover-art .sub{
+  margin-top:1em; font-family:var(--song); font-size:11px; letter-spacing:.2em;
+  color:#6d5a45; text-shadow:0 1px 0 rgba(255,252,244,.9);
+}
+.cover-art .hint{
+  position:absolute; left:50%; transform:translateX(-50%); bottom:5%; z-index:2; white-space:nowrap;
+  font-family:var(--song); font-size:10.5px; letter-spacing:.22em; color:#5b4429;
+  padding:.55em 1.15em; border-radius:99px;
+  background:rgba(252,246,233,.80); backdrop-filter:blur(3px);
+  box-shadow:0 2px 10px rgba(70,48,28,.20), 0 0 0 1px rgba(255,255,255,.55) inset;
+  animation:hintPulse 3.4s ease-in-out infinite;
+}
+@keyframes hintPulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* 书名页 / 卷首语 */
+.titlepage{align-items:center; justify-content:center; text-align:center; background:var(--paper)}
+.titlepage .big{font-size:clamp(20px,2.3vw,30px); letter-spacing:.2em; margin:0 0 .8em}
+.titlepage .by{font-family:var(--song); font-size:12px; color:var(--ink2); letter-spacing:.16em; line-height:1.9}
+.verse{background:linear-gradient(160deg,#fdfaf3,#f6ecda); align-items:center; justify-content:center; text-align:center}
+.verse h3{margin:0 0 1.4em; font-size:1.02em; letter-spacing:.36em; color:var(--ink2); font-weight:400; font-family:var(--song)}
+.verse .lines{font-size:clamp(14px,1.35vw,18px); line-height:2.5; letter-spacing:.1em; color:#4f3f34}
+.verse .tail{margin-top:2em; font-family:var(--song); font-size:11px; color:var(--ink3); letter-spacing:.3em}
+
+/* 人物档案 */
+.charcard{justify-content:center}
+.cc-body{flex:1; display:flex; flex-direction:column; justify-content:center; overflow:hidden; font-size:var(--fs,13.5px)}
+.charcard .nm{font-size:1.9em; letter-spacing:.14em; margin:0 0 .1em; line-height:1.3}
+.charcard .nm small{font-family:var(--song); font-size:.5em; letter-spacing:.24em; color:var(--ink3); margin-left:.8em}
+.charcard .tagline{color:var(--accent); font-size:.94em; letter-spacing:.1em; margin:0 0 1em}
+.dl{margin:0 0 .9em; border-top:1px solid var(--line)}
+.dl .row{display:flex; gap:.8em; padding:.5em .1em; border-bottom:1px solid var(--line); font-size:1em}
+.dl .k{flex:0 0 4.9em; color:var(--ink3); font-family:var(--song); letter-spacing:.06em; font-size:.86em; padding-top:.22em; white-space:nowrap}
+.dl .v{color:var(--ink); line-height:1.7; flex:1}
+.charcard .desc{color:var(--ink2); font-size:1em; line-height:1.95; margin:0}
+.thumb{
+  margin-top:.9em; display:flex; gap:.8em; align-items:center; padding:.5em; border:1px dashed rgba(160,130,95,.45); border-radius:6px;
+}
+.thumb img{width:64px; height:46px; object-fit:cover; border-radius:3px; box-shadow:0 2px 6px rgba(90,66,40,.2); flex:none}
+.thumb span{font-family:var(--song); font-size:.82em; color:var(--ink3); letter-spacing:.06em; line-height:1.6}
+.grp{display:flex; flex-direction:column; gap:0; overflow:hidden}
+.grow{padding:.46em .1em; border-bottom:1px solid var(--line)}
+.grow:last-child{border-bottom:0}
+.ghead{display:flex; align-items:baseline; gap:.6em; margin-bottom:.12em}
+.gname{font-size:1.04em; color:var(--c); letter-spacing:.06em}
+.grole{font-family:var(--song); font-size:.76em; color:var(--ink3); letter-spacing:.03em}
+.grow p{margin:0; font-size:.94em; line-height:1.72; color:var(--ink2)}
+
+/* 解密卡 */
+.mapcard{
+  position:relative; width:100%; max-width:452px; flex:none; height:168px; margin:.1em auto .85em;
+  background:
+    repeating-linear-gradient(0deg, rgba(190,160,120,.16) 0 1px, transparent 1px 22px),
+    linear-gradient(160deg,#fdf6e4,#f3e6c9);
+  border:1px solid rgba(170,140,100,.45); border-radius:4px;
+  overflow:hidden; touch-action:none; user-select:none;
+}
+.maptext{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scaleX(-1);
+  font-size:clamp(14px,1.15vw,16.5px); letter-spacing:.28em; color:#8a5a2b; white-space:nowrap;
+  font-weight:500;
+}
+.mapcard.solved .maptext{color:var(--gold); text-shadow:0 0 12px rgba(200,150,60,.55)}
+.mirror{
+  position:absolute; width:108px; height:108px; border-radius:50%; overflow:hidden;
+  left:6%; top:8%; cursor:grab; touch-action:none;
+  box-shadow:0 6px 16px rgba(70,50,30,.35), inset 0 0 0 3px #cfd6dd, inset 0 0 0 5px #eef3f7;
+  background:#fbf4e3;
+  transition:box-shadow .3s ease, width .38s cubic-bezier(.2,.8,.3,1), height .38s cubic-bezier(.2,.8,.3,1);
+}
+.mirror::after{
+  content:""; position:absolute; inset:0; border-radius:50%; pointer-events:none;
+  background:linear-gradient(150deg, rgba(255,255,255,.55), rgba(255,255,255,0) 48%);
+}
+.mirror:active{cursor:grabbing}
+.mirror .copy{position:absolute; left:0; top:0; width:var(--cw,300px); height:var(--ch,160px)}
+.mirror .copy .maptext{transform:translate(-50%,-50%); color:#7a4d05}
+.map-hint{
+  position:absolute; left:0; right:0; bottom:6px; text-align:center;
+  font-family:var(--song); font-size:11px; letter-spacing:.1em; color:#a2896a;
+}
+.mapcard.solved .map-hint{color:var(--gold); font-weight:600}
+.mapcard.solved .mirror{cursor:default}
+
+/* 金光页 */
+.glow-layer{
+  position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity 1s ease;
+  background:
+    radial-gradient(50% 40% at 50% 46%, rgba(255,236,180,.85), rgba(255,214,120,.30) 45%, rgba(255,214,120,0) 72%);
+}
+.spread-active .glow-layer{opacity:1; animation:breathe 4.5s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.55}50%{opacity:1}}
+.goldwords{
+  position:absolute; left:9%; right:9%; bottom:26%; text-align:center;
+  font-size:clamp(17px,2.1vw,26px); letter-spacing:.14em; color:#7a4d05;
+  text-shadow:0 1px 0 rgba(255,255,255,.9), 0 0 18px rgba(220,170,60,.85);
+}
+.finale{
+  flex:none; position:relative; text-align:center; padding:.55em 0 .15em; margin-top:.3em;
+  font-size:clamp(13px,1.45vw,18px); letter-spacing:.11em; color:#8a5a10;
+  text-shadow:0 1px 0 rgba(255,255,255,.95), 0 0 14px rgba(214,168,70,.75);
+}
+.finale::before{
+  content:""; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:118%; height:150%; z-index:-1; pointer-events:none;
+  background:radial-gradient(50% 50% at 50% 50%, rgba(255,225,145,.75), rgba(255,225,145,0) 72%);
+}
+.finale span{display:inline-block; animation:shimmer 3.2s ease-in-out infinite}
+@keyframes shimmer{0%,100%{opacity:.82;filter:brightness(1)}50%{opacity:1;filter:brightness(1.25)}}
+
+@keyframes hintPulse{0%,100%{opacity:.35}50%{opacity:.95}}
+
+/* 封底 */
+.back-art{position:absolute; inset:0; padding:0; overflow:hidden; background:#e9dcc4}
+.back-art .cover-img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block}
+.back-art .bc-txt{
+  position:absolute; left:12%; right:12%; top:26%; text-align:center; z-index:2;
+}
+.back-art .q{
+  font-size:clamp(14px,1.35vw,18px); letter-spacing:.18em; line-height:2.3; color:#4a3823;
+  text-shadow:0 1px 0 rgba(255,252,244,.85);
+}
+.back-art .fin{
+  margin-top:1.9em; font-family:var(--song); font-size:10.5px; letter-spacing:.26em; color:#7a6449;
+  text-shadow:0 1px 0 rgba(255,252,244,.8);
+}
+
+/* ============ 工具条 ============ */
+.ui{position:fixed; z-index:400; font-family:var(--song)}
+.nav{
+  position:fixed; top:50%; transform:translateY(-50%); z-index:400;
+  width:46px; height:46px; border-radius:50%; border:1px solid rgba(150,120,85,.35);
+  background:rgba(253,250,243,.82); color:var(--ink2); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; font-size:20px; line-height:1;
+  backdrop-filter:blur(6px); transition:.2s; opacity:0;
+}
+.nav:hover{background:#fff; color:var(--accent); box-shadow:0 6px 18px rgba(90,66,40,.18)}
+.nav.prev{left:max(18px,3vw)} .nav.next{right:max(18px,3vw)}
+.nav.show{opacity:1}
+.bar{
+  position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom)); transform:translateX(-50%);
+  display:flex; align-items:center; gap:6px; z-index:400;
+  background:rgba(253,250,243,.88); border:1px solid rgba(150,120,85,.28); border-radius:999px;
+  padding:7px 10px; backdrop-filter:blur(8px); box-shadow:0 8px 22px rgba(90,66,40,.14);
+}
+.bar button{
+  border:0; background:transparent; color:var(--ink2); font-family:var(--song);
+  font-size:12px; letter-spacing:.06em; padding:5px 9px; border-radius:999px; cursor:pointer;
+  display:flex; align-items:center; gap:4px; transition:.18s;
+}
+.bar button:hover{background:rgba(181,101,29,.10); color:var(--accent)}
+.bar button.on{background:rgba(181,101,29,.16); color:#8f4f12; font-weight:600}
+.bar .sep{width:1px; height:16px; background:rgba(150,120,85,.3); margin:0 3px}
+.bar .count{font-size:11px; letter-spacing:.12em; color:var(--ink3); min-width:64px; text-align:center; font-variant-numeric:tabular-nums}
+.progress{position:fixed; left:0; top:0; height:2px; background:linear-gradient(90deg,#c08a2e,#b5651d); z-index:500; transition:width .5s ease; opacity:.75}
+
+/* 目录 */
+.toc{
+  position:fixed; inset:0; z-index:600; display:none; place-items:center;
+  background:rgba(60,44,30,.42); backdrop-filter:blur(3px); padding:24px;
+}
+.toc.open{display:grid}
+.toc .panel{
+  width:min(660px,94vw); max-height:82vh; overflow:auto; background:var(--paper);
+  border-radius:10px; padding:26px 26px 20px; box-shadow:0 30px 70px rgba(50,34,20,.4);
+  border:1px solid rgba(180,150,110,.4);
+}
+.toc h4{margin:0 0 .2em; font-size:17px; letter-spacing:.2em; font-weight:500}
+.toc .hint{font-family:var(--song); font-size:11px; color:var(--ink3); letter-spacing:.1em; margin:0 0 1.2em}
+.toc ul{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:2px 14px}
+.toc li button{
+  width:100%; text-align:left; border:0; background:transparent; cursor:pointer;
+  font-family:var(--kaiti); font-size:13.5px; color:var(--ink); padding:7px 6px; border-radius:6px;
+  display:flex; gap:.6em; align-items:baseline;
+}
+.toc li button:hover{background:rgba(181,101,29,.10); color:var(--accent)}
+.toc li button .no{font-family:var(--song); font-size:10.5px; color:var(--ink3); min-width:2.6em}
+.toc .close{margin-top:1em; width:100%; border:1px solid rgba(150,120,85,.35); background:#fff; border-radius:8px; padding:9px; font-family:var(--song); font-size:12px; color:var(--ink2); cursor:pointer; letter-spacing:.2em}
+
+/* ============ 移动端 ============ */
+.mobile{display:none}
+@media (max-width: 900px){
+  .book,.nav{display:none}
+  .mobile{display:block; position:fixed; inset:0; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; z-index:2}
+  .m-track{display:flex; height:100%}
+  .m-page{
+    flex:0 0 100%; height:100%; scroll-snap-align:center; overflow-y:auto; position:relative;
+    padding:max(18px,4vw) max(16px,5vw) 96px;
+    background:var(--paper);
+  }
+  .m-page .page{
+    position:relative; inset:auto; height:auto; min-height:0; overflow:visible;
+    padding:0; display:block; background:transparent;
+  }
+  .m-page .page.art{padding:0; background:transparent; display:flex; flex-direction:column; justify-content:center; min-height:56vh}
+  .m-page .art-frame{position:relative; inset:auto; left:auto; right:auto; top:auto; bottom:auto; display:block}
+  .m-page .mat{padding:8px; display:block}
+  .m-page .win{width:100%!important; height:auto!important; aspect-ratio:var(--ar,1.6)}
+  .m-page .art-caption{position:relative; left:auto; right:auto; bottom:auto; margin-top:.8em}
+  .m-page .glow-layer{position:absolute; inset:0}
+  .m-page .pnum{position:relative; bottom:auto; left:auto; right:auto; margin-top:1.4em}
+  .m-page .folio-line{display:none}
+  .m-page .eyebrow{margin-bottom:.9em}
+  .m-page .story-body{overflow:visible; display:block; font-size:15px}
+  .m-page .story-body p, .m-page .say{font-size:15px; line-height:1.95}
+  .m-page .story-body p + p, .m-page .story-body .say, .m-page .story-body p + .say{margin-top:.7em}
+  .m-page .cc-body{overflow:visible; display:block; font-size:13.5px}
+  .m-page .cc-body .nm{font-size:22px}
+  .m-page .mapcard{height:150px; max-height:150px}
+  .m-page .mapcard .mirror{width:76px; height:76px}
+  .m-page .page.chapter{padding:2.4em 0; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:56vh; border-radius:4px}
+  .m-page .seal{margin:2em auto 0}
+  .m-page .page.cover-art,.m-page .page.back-art{
+    position:relative; inset:auto; overflow:visible; padding:0; display:block; background:transparent;
+  }
+  .m-page .cover-art .cover-img,.m-page .back-art .cover-img{
+    position:relative; inset:auto; width:100%; height:auto; display:block; border-radius:5px;
+    box-shadow:0 10px 26px rgba(90,66,40,.22);
+  }
+  .m-page .cover-art .scrim{display:none}
+  .m-page .cover-art .cover-txt,.m-page .back-art .bc-txt{
+    position:relative; left:auto; right:auto; top:auto; margin-top:1.5em; text-align:center;
+  }
+  .m-page .cover-art h1{font-size:26px}
+  .m-page .cover-art .foot{
+    position:relative; left:auto; right:auto; bottom:auto; margin-top:1.3em; color:#7a6244; text-shadow:none;
+  }
+  .m-page .cover-art .foot .stars{color:var(--gold)}
+  .m-page .cover-art .hint{
+    position:relative; left:auto; right:auto; bottom:auto; transform:none; display:inline-block;
+    margin-top:.9em; color:var(--ink3); text-shadow:none; white-space:normal;
+    background:transparent; box-shadow:none; backdrop-filter:none; animation:none; opacity:1;
+  }
+  .m-page .page.titlepage,.m-page .page.verse{
+    padding:2.4em 0; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh;
+  }
+  .bar{bottom:calc(10px + env(safe-area-inset-bottom))}
+  .bar button .lbl{display:none}
+  .bar .count{min-width:52px}
+}
+@media (prefers-reduced-motion: reduce){
+  .sheet{transition-duration:.01ms}
+}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="stage">
+  <div class="book" id="book"><div class="spine"></div></div>
+</div>
+
+<div class="mobile" id="mobile"><div class="m-track" id="mtrack"></div></div>
+
+<button class="nav prev" id="navPrev" aria-label="上一页">‹</button>
+<button class="nav next" id="navNext" aria-label="下一页">›</button>
+
+<div class="bar" role="toolbar" aria-label="阅读控制">
+  <button id="btnToc" aria-label="目录">☰<span class="lbl">目录</span></button>
+  <div class="sep"></div>
+  <button id="btnPrev" aria-label="上一页">‹</button>
+  <span class="count" id="count">封面</span>
+  <button id="btnNext" aria-label="下一页">›</button>
+  <div class="sep"></div>
+  <button id="btnSpeak" aria-label="朗读开关">🔈<span class="lbl">朗读</span></button>
+  <button id="btnAuto" aria-label="自动讲述">▶<span class="lbl">自动</span></button>
+</div>
+
+<div class="toc" id="toc">
+  <div class="panel">
+    <h4>目录</h4>
+    <p class="hint">点任一条，直接翻到那一页</p>
+    <ul id="tocList"></ul>
+    <button class="close" id="tocClose">合 上</button>
+  </div>
+</div>
+
+<script>
+/* ================= 内容数据 ================= */
+const SPEAKER_COLOR = {
+  '月亮老师':'#6b4b9e','蓝博士':'#2f5d8a','夏可可':'#b03a6a','李胖胖':'#b9701f',
+  '王校长':'#4a4a6a','夏爱爱':'#a24a8a','小飞象':'#3a6ab0','张阿姨':'#6a7a4a'
+};
+const AUTHOR = '何筱语　秦蓁瑧';
+
+const STORY = [
+  { n:1, img:'p01', ar:1.6043, cap:'下课铃一响，月亮老师举起了地图',
+    blocks:[
+      {t:'下课铃一响，月亮老师笑眯眯站在讲台上，手里捏着一张画满奇怪花纹的地图。她把地图晃了晃，神秘地说：'},
+      {say:'月亮老师', t:'告诉大家一个秘密——咱们图书馆里，藏着一份特别的宝藏！不过呀，得开动小脑筋，才能找出来。哪个小组有胆量去把它找出来呀？'}
+    ]},
+  { n:2, img:'p02', ar:1.6043, cap:'教室里一下子炸开了锅',
+    blocks:[
+      {t:'一下子，教室里炸开了锅。蓝博士第一个举起手，跑上讲台：'},
+      {say:'蓝博士', t:'月亮老师，我们组想参加！'},
+      {t:'月亮老师笑着把地图递给他。李胖胖、夏可可和蓝博士三个好朋友赶紧凑在一起，眼睛闪闪发亮。'},
+      {say:'李胖胖', t:'哇！图书馆里居然藏着宝藏？！'},
+      {t:'夏可可晃了晃小辫子，使劲点头。她身边的小神兽夏爱爱也跟着叫了两声，毛茸茸的大尾巴摇来摇去。'},
+      {say:'蓝博士', t:'那我们成立寻宝小队！大家齐心协力！'}
+    ]},
+  { n:3, img:'p03', ar:1.6043, cap:'寻宝小队出发啦',
+    blocks:[
+      {t:'寻宝小队出发啦！去图书馆的路上，李胖胖忽然压低声音：'},
+      {say:'李胖胖', t:'嘘——我听说王校长常在图书馆巡逻，咱们进去可千万别吵。'},
+      {t:'夏可可和蓝博士赶紧点头。'}
+    ]},
+  { n:4, img:'p04', ar:1.6043, cap:'一进门，一股淡淡的书香扑过来',
+    blocks:[
+      {t:'图书馆到啦！一进门，一股淡淡的书香扑过来。小伙伴们踮着脚、捂着嘴，轻手轻脚走进去，找了个没人的小角落，才敢把地图掏出来。'}
+    ]},
+  { n:5, img:'p05', ar:1.6043, cap:'角落里光线暗暗的，地图怎么也看不懂', magic:'map',
+    blocks:[
+      {t:'角落的光线暗暗的，地图上的花纹歪歪扭扭，怎么看都看不懂。夏可可小声说：'},
+      {say:'夏可可', t:'夏爱爱，手电筒！'},
+      {t:'夏爱爱立刻从魔法小口袋里叼出一支手电筒，一束亮光照在地图上。蓝博士盯着看了半天，突然一拍脑门：'},
+      {say:'蓝博士', t:'哎？这些符号怎么全是反的？会不会是个镜像谜题？'},
+      {t:'夏爱爱又掏出一面小圆镜。大家把地图凑到镜子前一照——'}
+    ]},
+  { n:6, img:'p06', ar:1.6043, cap:'噔噔噔，冲上二楼',
+    blocks:[
+      {say:'夏可可', t:'解开啦！解开啦！'},
+      {t:'小伙伴们高兴得差点儿叫出声，又赶紧捂住嘴。夏爱爱甩着大尾巴蹦得老高。大家压低声音，却忍不住加快脚步，噔噔噔冲上二楼。'}
+    ]},
+  { n:7, img:'p07', ar:1.6043, cap:'一排排高高的书架，长得看不见头',
+    blocks:[
+      {t:'一到二楼，哇——一排排高高的书架站在眼前，长得看不见头。夏可可踮着脚四处看。李胖胖歪着脑袋小声嘀咕：'},
+      {say:'李胖胖', t:'这么多书架，看得我眼都花了……'},
+      {t:'蓝博士低着头，一边走一边对照地图上的小标记。'}
+    ]},
+  { n:8, img:'p08', ar:1.6043, cap:'走几步，停一下，对着地图找一找',
+    blocks:[
+      {t:'他们穿过长长的书架过道，走几步，停一下，对着地图找一找。一点一点，靠近了地图上画着小标记的那排历史书架。'}
+    ]},
+  { n:9, img:'p09', ar:1.6043, cap:'哇！就是这排书架！',
+    blocks:[
+      {t:'寻宝小队停下脚步。这里，正是地图标注的藏宝角落。大家屏住呼吸，睁大眼睛，心怦怦直跳：'},
+      {say:'夏可可', t:'宝藏，会是哪一本呢？'}
+    ]},
+  { n:10, img:'p10', ar:1.3345, cap:'大家站好，涨红着脸，一五一十地说',
+    blocks:[
+      {t:'这时候，王校长快步走来，神情有点严肃。他身边跟着小神兽小飞象，呼扇着大耳朵，一口叼住了正蹦跶的夏爱爱。哎呀——原来刚才大家噔噔噔跑上楼，动静太大，把校长引来啦！'},
+      {t:'大家赶紧站好，涨红着脸，一五一十地把月亮老师布置的寻宝任务告诉校长。校长听完笑了：'},
+      {say:'王校长', t:'哈哈，原来是月亮老师早跟我说过的那个活动呀。那你们接着找吧，不过——千万千万，保持安静哦！'}
+    ]},
+  { n:11, img:'p11', ar:1.6043, cap:'肚子咕咕叫的时候，还要不要找下去？',
+    blocks:[
+      {t:'可是这排书架上的书太多啦！一本一本翻过去，大家的腿都酸了。李胖胖捂着咕咕叫的肚子，一屁股坐在地上：'},
+      {say:'李胖胖', t:'我好饿呀……我想回家吃蛋糕……'},
+      {say:'夏可可', t:'要不……明天再找吧？'},
+      {t:'就在大家快要泄气的时候，蓝博士直起腰：'},
+      {say:'蓝博士', t:'别呀！我们都走到这儿了！再坚持一下下，好不好？'},
+      {say:'夏可可', t:'对！就差一点点了！继续找！'}
+    ]},
+  { n:12, img:'p12', ar:1.6043, cap:'一页一页，翻到自己写的那一页', glow:true, glowSplit:4,
+    blocks:[
+      {t:'就在这时——夏可可从最上层抽出一本厚厚的日记。咦，它怎么在发光？'},
+      {t:'大家围拢过来。这是一本会发光的魔法日记！翻开第一页，上面记着古时候的事：甲骨文、丝绸之路……再往后翻，「东方红一号」飞上了天，还有现在最厉害的人工智能！'},
+      {t:'一页一页翻下去，他们惊讶地叫出声——日记里，竟然写着今天！写着他们怎么拿着地图上楼、怎么被校长逮住、怎么在肚子咕咕叫的时候还在坚持！'},
+      {t:'而日记的最后几页，是雪白雪白的新纸，上面闪着金灿灿的几个大字——'},
+      {t:'大家你看看我，我看看你，都笑了。'},
+      {t:'原来最好的宝藏，不是金银财宝，也不是现成的答案——是那个遇到困难也没放弃、一直坚持找下去的自己。以后的故事，要靠他们一笔一画，亲手写出来啦！'}
+    ]}
+];
+
+const CHARS = [
+  { img:'char-keke', ar:1.2723, cap:'夏可可 · 人物设定',
+    name:'夏可可', tag:'寻宝小队的「点子大王」',
+    rows:[['性　别','女'],['年　龄','9 岁'],['身　份','三年级小学生'],['性格特点','好奇心旺盛，脑洞大，热爱探索。']],
+    desc:'扎着两条长辫子，眼睛一眨就是一个奇怪的想法。遇到看不懂的地图，她第一个想到的也是「换个办法试试」。小神兽夏爱爱一直跟在她身边，它那条毛茸茸的大尾巴摇起来，比什么都高兴。',
+    extra:{img:'char-keke2', cap:'同一个角色，还有另外一版画稿'} },
+
+  { img:'char-lanboshi', ar:1.6043, cap:'蓝博士 · 人物设定',
+    name:'蓝博士', tag:'寻宝小队的「队长兼讲解员」',
+    rows:[['性　别','男'],['年　龄','9 岁'],['职　业','班长'],['性格特点','善于思考，平时最爱画画、发明东西。']],
+    desc:'戴一顶小帽子，口袋里总揣着纸和笔。别人看到一团乱线，他看到的是谜题。全班都快要泄气的时候，是他直起腰说：再坚持一下下，好不好？' },
+
+  { img:'char-principal', ar:1.6043, cap:'王校长 · 人物设定',
+    name:'王校长', tag:'图书馆的守护人',
+    rows:[['性　别','女'],['年　龄','42 岁'],['职　业','小学校长'],['性格特点','外表严肃，用心守护图书馆，内心温暖。']],
+    desc:'一头发亮的蓝发，走路很快，耳朵很灵——所以最先听见楼上「噔噔噔」的脚步声。可她听完孩子们的话，只摆摆手说：那你们接着找吧，不过千万保持安静哦。' },
+
+  { img:'char-group', ar:1.6043, cap:'小神兽、家人与老师 · 人物设定',
+    name:'他们也都在一起', tag:'小神兽、家人与老师',
+    rows:[],
+    desc:'',
+    group:[
+      {name:'夏爱爱', c:'#a24a8a', role:'夏可可的小神兽', text:'魔法小口袋里什么都有：手电筒、小圆镜，还有给李胖胖的糖。'},
+      {name:'小飞象', c:'#3a6ab0', role:'王校长的小神兽', text:'耳朵像两把大扇子，一口就能叼住正蹦跶的小神兽。'},
+      {name:'李胖胖', c:'#b9701f', role:'三年级小学生 · 9 岁 · 男', text:'特别爱吃，随身携带零食。走得最累，也最想回家。'},
+      {name:'月亮老师', c:'#6b4b9e', role:'老师 · 27 岁 · 女', text:'温柔、耐心，鼓励同学们多看书、勇敢探索。那张地图就是她画的。'},
+      {name:'张阿姨', c:'#6a7a4a', role:'图书馆工作人员 · 30 岁 · 女', text:'温柔，最喜欢让同学们多看书，一本书都不许卷角。'}
+    ] }
+];
+
+/* ================= 页（face）与跨页（spread） ================= */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function artPage(p){
+  const glow = p.glow ? '<div class="glow-layer"></div>' : '';
+  return `<div class="page art" data-glow="${p.glow?1:0}">
+    <div class="art-frame" data-tap="1">
+      <div class="mat"><div class="win" data-ar="${p.ar}" style="--ar:${p.ar}"><img src="assets/${p.img}.jpg" alt="${esc(p.cap)}" draggable="false"></div></div>
+    </div>
+    ${glow}
+    <div class="art-caption">${esc(p.cap)}</div>
+  </div>`;
+}
+
+function textPage(p, folio){
+  const body = p.blocks.map(b => b.say
+    ? `<div class="say" style="--c:${SPEAKER_COLOR[b.say]||'#8a7a68'}"><span class="who">${esc(b.say)}</span><span class="txt">${esc(b.t)}</span></div>`
+    : `<p>${esc(b.t)}</p>`).join('');
+  const firstTxt = (p.blocks[0] && p.blocks[0].t) || '';
+  const noDrop = /^[一二三四五六七八九十\u3000\s]/.test(firstTxt) ? ' no-drop' : '';
+  const finaleHtml = '<div class="finale"><span>未来的日子，由你来写！</span></div>';
+  let bodyHtml = body;
+  if (p.glow && p.glowSplit != null){
+    const render = b => b.say
+      ? `<div class="say" style="--c:${SPEAKER_COLOR[b.say]||'#8a7a68'}"><span class="who">${esc(b.say)}</span><span class="txt">${esc(b.t)}</span></div>`
+      : `<p>${esc(b.t)}</p>`;
+    bodyHtml = p.blocks.slice(0, p.glowSplit).map(render).join('')
+             + finaleHtml
+             + p.blocks.slice(p.glowSplit).map(render).join('');
+  }
+  const magic = p.magic === 'map' ? `
+    <div class="mapcard" id="mapcard">
+      <div class="maptext">二楼 · 历史角</div>
+      <div class="mirror" id="mirror" role="slider" aria-label="拖动小圆镜照地图"><div class="copy" id="mirrorCopy"><div class="maptext">二楼 · 历史角</div></div></div>
+      <div class="map-hint" id="mapHint">拖动小圆镜，照一照地图上反着的字</div>
+    </div>` : '';
+  return `<div class="page">
+    <p class="eyebrow">第 ${p.n} 页</p>
+    ${magic}
+    <div class="story-body${noDrop}" data-fit data-max="23">${bodyHtml}</div>
+    <div class="pnum">${folio}</div>
+  </div>`;
+}
+
+function charArt(c){ return artPage({img:c.img, ar:c.ar, cap:c.cap, n:''}); }
+
+function charText(c, folio){
+  if (c.group){
+    const items = c.group.map(g => `
+      <div class="grow" style="--c:${g.c}">
+        <div class="ghead"><span class="gname">${esc(g.name)}</span><span class="grole">${esc(g.role)}</span></div>
+        <p>${esc(g.text)}</p>
+      </div>`).join('');
+    return `<div class="page charcard">
+      <p class="eyebrow">人物介绍</p>
+      <div class="cc-body" data-fit data-base="13" data-max="15">
+        <h3 class="nm">${esc(c.name)}</h3>
+        <p class="tagline">${esc(c.tag)}</p>
+        <div class="grp">${items}</div>
+      </div>
+      <div class="pnum">${folio}</div></div>`;
+  }
+  const rows = c.rows.map(r => `<div class="row"><span class="k">${esc(r[0])}</span><span class="v">${esc(r[1])}</span></div>`).join('');
+  const thumb = c.extra ? `<div class="thumb"><img src="assets/${c.extra.img}.jpg" alt=""><span>${esc(c.extra.cap)}</span></div>` : '';
+  return `<div class="page charcard">
+    <p class="eyebrow">人物介绍</p>
+    <div class="cc-body" data-fit data-base="13.5" data-max="15.5">
+      <h3 class="nm">${esc(c.name)}<small>CHARACTER</small></h3>
+      <p class="tagline">${esc(c.tag)}</p>
+      <div class="dl">${rows}</div>
+      <p class="desc">${esc(c.desc)}</p>
+      ${thumb}
+    </div>
+    <div class="pnum">${folio}</div></div>`;
+}
+
+/* 跨页列表：每项 = [左页HTML, 右页HTML] */
+const SPREADS = [];
+let folio = 2;
+const f = () => String(++folio);
+
+SPREADS.push([
+  `<div class="page titlepage">
+     <p class="big">图书馆大冒险</p>
+     <p class="by">故事与绘图<br><b style="font-size:13.5px;letter-spacing:.2em">${AUTHOR}</b><br>三年级三班</p>
+     <div class="folio-line"></div>
+   </div>`,
+  `<div class="page verse">
+     <h3>卷首小寄语</h3>
+     <div class="lines">翻开书页，去探险吧！<br>开动脑筋，不怕困难。<br>古今故事，星光闪闪，<br>精彩未来，由我开篇！</div>
+     <div class="tail">—— 献给所有不肯放弃的小小寻宝人</div>
+   </div>`
+]);
+
+SPREADS.push([
+  `<div class="page chapter">
+     <div class="kicker">第一章 · 人物</div>
+     <h2>认识一下<br>寻宝小队吧！</h2>
+     <div class="rule"></div>
+     <p>六个人，两只小神兽<br>一张画满花纹的地图</p>
+     <div class="seal">人 物</div>
+   </div>`,
+  `<div class="page chapter" style="background:linear-gradient(150deg,#f4ead6,#ece0c6)">
+     <p style="margin:0;color:var(--ink2);font-size:13px;line-height:2.4;letter-spacing:.1em">
+       他们画在纸上，<br>也走在这本书里。<br><br>
+       左边的图，是他们自己画的；<br>右边的字，是他们自己写的。
+     </p>
+     <div class="seal" style="margin-top:2.6em">小 队</div>
+   </div>`
+]);
+
+CHARS.forEach(c => SPREADS.push([charArt(c), charText(c, f())]));
+
+SPREADS.push([
+  `<div class="page chapter">
+     <div class="kicker">第二章 · 故事</div>
+     <h2>寻宝小队<br>出发！</h2>
+     <div class="rule"></div>
+     <p>从下课铃响起的那一刻<br>一直到金色的最后一页</p>
+     <div class="seal">故 事</div>
+   </div>`,
+  `<div class="page chapter" style="background:linear-gradient(150deg,#f4ead6,#ece0c6)">
+     <p style="margin:0;color:var(--ink2);font-size:13px;line-height:2.4;letter-spacing:.1em">
+       小心地翻，轻轻地走，<br>图书馆里要安静。<br><br>
+       对了——<br>遇到看不懂的符号，<br>记得把镜子凑上去。
+     </p>
+     <div class="seal" style="margin-top:2.6em">出 发</div>
+   </div>`
+]);
+
+const STORY_START = SPREADS.length;
+STORY.forEach(p => SPREADS.push([artPage(p), textPage(p, f())]));
+
+/* ================= 构建书 ================= */
+const faces = [];
+faces.push({ html:`<div class="page cover-art">
+    <img class="cover-img" src="assets/cover.jpg" alt="封面：图书馆里那本会发光的书" draggable="false">
+    <div class="scrim"></div>
+    <div class="cover-txt">
+      <div class="kicker">★ 一本可以翻页的绘本 ★</div>
+      <h1>图书馆大冒险</h1>
+      <div class="sub">故事与绘图 · ${AUTHOR} · 三年级三班</div>
+    </div>
+    <div class="hint">点击右侧翻页 · 或左右滑动</div>
+  </div>`, side:'right' });
+SPREADS.forEach(s => { faces.push({html:s[0], side:'left'}); faces.push({html:s[1], side:'right'}); });
+faces.push({ html:`<div class="page back-art">
+    <img class="cover-img" src="assets/backcover.jpg" alt="封底：桌上那本合起来的书" draggable="false">
+    <div class="bc-txt">
+      <div class="q">翻开书页，去探险吧！<br>开动脑筋，不怕困难。</div>
+      <div class="fin">图书馆大冒险 · ${AUTHOR}<br>三年级三班</div>
+    </div>
+  </div>`, side:'left' });
+
+const SHEETS = faces.length / 2;
+const book = document.getElementById('book');
+
+for (let k = 0; k < SHEETS; k++){
+  const sh = document.createElement('div');
+  sh.className = 'sheet'; sh.dataset.k = k;
+  const fr = faces[2*k], bk = faces[2*k+1];
+  const dF = document.createElement('div'); dF.className = 'face front right'; dF.innerHTML = fr.html;
+  const dB = document.createElement('div'); dB.className = 'face back left'; dB.innerHTML = bk.html;
+  sh.appendChild(dF); sh.appendChild(dB);
+  book.appendChild(sh);
+}
+const sheets = [...book.querySelectorAll('.sheet')];
+
+let cur = 0;           // 已翻过的纸数
+let animating = false;
+
+function layout(){
+  sheets.forEach((sh,k) => {
+    const flipped = k < cur;
+    sh.style.zIndex = flipped ? (k+1) : (SHEETS - k);
+    sh.style.visibility = (k === cur || k === cur-1 || flipped && k === cur-1) ? 'visible' : 'visible';
+  });
+  const sp = document.querySelectorAll('.sheet');
+  // 只有临近的几张需要显示（性能与文字可读性）
+  sheets.forEach((sh,k) => {
+    const near = (k <= cur + 1) && (k >= cur - 8);
+    sh.style.display = near ? '' : 'none';
+  });
+  updateChrome();
+  fitAll();
+  syncMobile();
+}
+
+function flipNext(){
+  if (animating || cur >= SHEETS) return;
+  const sh = sheets[cur];
+  animating = true;
+  sh.classList.add('front-shadow');
+  sh.style.zIndex = SHEETS + 20;
+  requestAnimationFrame(() => { sh.classList.add('flipped'); });
+  pageTurn();
+  cur++;
+  setTimeout(() => {
+    sh.classList.remove('front-shadow');
+    animating = false;
+    layout();
+    onSpreadChange();
+  }, 930);
+  updateChrome();
+}
+
+function flipPrev(){
+  if (animating || cur <= 0) return;
+  cur--;
+  const sh = sheets[cur];
+  animating = true;
+  sh.classList.add('back-shadow');
+  sh.style.zIndex = SHEETS + 20;
+  requestAnimationFrame(() => { sh.classList.remove('flipped'); });
+  pageTurn();
+  setTimeout(() => {
+    sh.classList.remove('back-shadow');
+    animating = false;
+    layout();
+    onSpreadChange();
+  }, 930);
+  updateChrome();
+}
+
+function goToSpread(target, animate){
+  target = Math.max(0, Math.min(SHEETS, target));
+  if (target === cur) return;
+  const dist = Math.abs(target - cur);
+  if (!animate || dist > 2){
+    cur = target;
+    sheets.forEach((sh,k) => sh.classList.toggle('flipped', k < cur));
+    pageTurn();
+    layout();
+    onSpreadChange();
+    return;
+  }
+  target > cur ? flipNext() : flipPrev();
+  if (dist > 1) setTimeout(() => goToSpread(target, true), 260);
+}
+
+/* ================= 界面状态 ================= */
+const count = document.getElementById('count');
+const progress = document.getElementById('progress');
+const navPrev = document.getElementById('navPrev');
+const navNext = document.getElementById('navNext');
+
+function updateChrome(){
+  if (window.innerWidth <= 900 && mtrack && mtrack.children.length){
+    const n = mtrack.children.length;
+    count.textContent = mIndex === 0 ? '封面'
+      : (mIndex >= n - 1 ? '封底' : `${mIndex + 1} / ${n - 2}`);
+    progress.style.width = ((mIndex + 1) / n * 100) + '%';
+    return;
+  }
+  const total = SHEETS;
+  book.classList.toggle('closed', cur === 0);
+  book.classList.toggle('ended', cur >= SHEETS);
+  if (cur === 0) count.textContent = '封面';
+  else if (cur >= total) count.textContent = '封底';
+  else count.textContent = `${cur} / ${total - 1}`;
+  progress.style.width = (cur / total * 100) + '%';
+  navPrev.classList.toggle('show', cur > 0);
+  navNext.classList.toggle('show', cur < total);
+}
+
+function currentSpreadEls(){
+  // 当前可见的文字页（用于朗读/自适应字号）
+  const left = sheets[cur-1]?.querySelector('.face.back');
+  const right = sheets[cur]?.querySelector('.face.front');
+  return {left, right};
+}
+
+function onSpreadChange(){
+  const {left, right} = currentSpreadEls();
+  document.querySelectorAll('.spread-active').forEach(e => e.classList.remove('spread-active'));
+  [left, right].forEach(e => e && e.querySelector('[data-glow="1"]') && e.querySelector('.page').classList.add('spread-active'));
+  if (cur === STORY_START + 5){ initMirror(); }   // 第 5 页：小圆镜谜题
+  if (speakOn) speakCurrent();
+}
+
+/* ================= 字号自适应 + 插画窗比例 ================= */
+function fitArt(){
+  document.querySelectorAll('.art-frame').forEach(fr => {
+    const win = fr.querySelector('.win');
+    if (!win || !fr.offsetParent) return;
+    const ar = parseFloat(win.dataset.ar) || 1.6;
+    const cs = getComputedStyle(fr);
+    const mat = fr.querySelector('.mat');
+    const ms = mat ? getComputedStyle(mat) : null;
+    const mx = ms ? (parseFloat(ms.paddingLeft) + parseFloat(ms.paddingRight)) : 0;
+    const my = ms ? (parseFloat(ms.paddingTop) + parseFloat(ms.paddingBottom)) : 0;
+    const W = fr.clientWidth - mx;
+    const H = fr.clientHeight - my;
+    if (W <= 0 || H <= 0) return;
+    let w = W, h = W / ar;
+    if (h > H){ h = H; w = H * ar; }
+    win.style.width = Math.floor(w) + 'px';
+    win.style.height = Math.floor(h) + 'px';
+  });
+}
+function contentH(el){
+  if (!el.children.length) return 0;
+  const r = el.getBoundingClientRect();
+  const last = el.children[el.children.length - 1].getBoundingClientRect();
+  return last.bottom - r.top;
+}
+function fitAll(){
+  fitArt();
+  document.querySelectorAll('[data-fit]').forEach(el => {
+    if (!el.offsetParent) return;
+    const base = parseFloat(el.dataset.base) || 16;
+    const max = parseFloat(el.dataset.max) || base * 1.5;
+    let fs = base;
+    const set = () => el.style.setProperty('--fs', fs.toFixed(1) + 'px');
+    set();
+    let guard = 120;
+    while (contentH(el) > el.clientHeight + 1 && fs > 9 && guard-- > 0){ fs -= 0.4; set(); }
+    guard = 70;
+    const slack = el.clientHeight - contentH(el);
+    const cap = slack > el.clientHeight * 0.45 ? Math.min(max + 3, max * 1.14) : max;
+    while (contentH(el) < el.clientHeight * 0.95 && fs < cap && guard-- > 0){ fs += 0.4; set(); }
+    if (contentH(el) > el.clientHeight + 1){ fs -= 0.4; set(); }
+  });
+}
+window.addEventListener('resize', () => { fitAll(); sizeMirrorCopy(); if (cur === STORY_START + 5) initMirror(); });
+
+/* ================= 音量与合成音效 ================= */
+let ac = null, muted = false;
+function actx(){
+  if (!ac){
+    try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ }
+  }
+  if (ac && ac.state === 'suspended') ac.resume();
+  return ac;
+}
+function pageTurn(){
+  if (muted) return;
+  const a = actx(); if (!a) return;
+  const dur = 0.26;
+  const buf = a.createBuffer(1, a.sampleRate * dur, a.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < d.length; i++){
+    const t = i / d.length;
+    d[i] = (Math.random()*2-1) * (1 - t) * (t < .06 ? t/.06 : 1);
+  }
+  const src = a.createBufferSource(); src.buffer = buf;
+  const bp = a.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1500; bp.Q.value = .7;
+  const g = a.createGain();
+  g.gain.setValueAtTime(0.0001, a.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.16, a.currentTime + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + dur);
+  src.connect(bp); bp.connect(g); g.connect(a.destination);
+  src.start();
+}
+function tone(freqs, dur, type='sine', vol=0.12){
+  if (muted) return;
+  const a = actx(); if (!a) return;
+  freqs.forEach((fr, i) => {
+    const o = a.createOscillator(); o.type = type; o.frequency.value = fr;
+    const g = a.createGain();
+    const t0 = a.currentTime + i * 0.06;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); g.connect(a.destination);
+    o.start(t0); o.stop(t0 + dur + .05);
+  });
+}
+const ding = () => tone([1046, 1568, 2093], .55, 'sine', .10);
+const boing = () => tone([420, 660, 360], .16, 'triangle', .09);
+
+/* 点击插画：小神兽蹦一下 */
+document.addEventListener('click', e => {
+  const fr = e.target.closest('.art-frame');
+  if (!fr) return;
+  fr.classList.remove('tap'); void fr.offsetWidth; fr.classList.add('tap');
+  boing();
+});
+
+/* ================= 小圆镜解谜 ================= */
+function sizeMirrorCopy(card){
+  card = card || document.getElementById('mapcard');
+  if (!card) return;
+  const copy = card.querySelector('.copy');
+  if (!copy || !card.clientWidth) return;
+  copy.style.width = card.clientWidth + 'px';
+  copy.style.height = card.clientHeight + 'px';
+}
+function initMirror(card){
+  card = card || document.getElementById('mapcard');
+  if (!card) return;
+  const mirror = card.querySelector('.mirror');
+  const copy = card.querySelector('.copy');
+  const hint = card.querySelector('.map-hint');
+  if (!mirror || !copy) return;
+  if (!card.clientWidth || !card.clientHeight) return;   // 还没布局，等下次
+  sizeMirrorCopy(card);
+
+  const check = (x, y) => {
+    if (card.classList.contains('solved')) return;
+    const cx = x + mirror.offsetWidth / 2, cy = y + mirror.offsetHeight / 2;
+    const tx = card.clientWidth / 2, ty = card.clientHeight / 2 - card.clientHeight * 0.02;
+    if (Math.hypot(cx - tx, cy - ty) < Math.min(card.clientWidth, card.clientHeight) * 0.26){
+      card.classList.add('solved');
+      // 镜子放大，把整行反字一次照全
+      const big = Math.min(card.clientHeight * 0.92, 152);
+      mirror.style.width = big + 'px';
+      mirror.style.height = big + 'px';
+      card._place((card.clientWidth - big) / 2, (card.clientHeight - big) / 2);
+      if (hint) hint.textContent = '哈！反字全变成了正字：二楼 · 历史角！';
+      ding();
+    }
+  };
+  card._place = (x, y) => {
+    const maxX = card.clientWidth - mirror.offsetWidth;
+    const maxY = card.clientHeight - mirror.offsetHeight;
+    x = Math.max(0, Math.min(maxX, x));
+    y = Math.max(0, Math.min(maxY, y));
+    mirror.style.left = x + 'px';
+    mirror.style.top = y + 'px';
+    copy.style.left = (-x) + 'px';
+    copy.style.top = (-y) + 'px';
+    check(x, y);
+  };
+
+  if (!card._mirrorBound){
+    card._mirrorBound = true;
+    let dragging = false, ox = 0, oy = 0, moved = 0;
+    const toCenter = () => {
+      card._place(card.clientWidth / 2 - mirror.offsetWidth / 2, card.clientHeight / 2 - mirror.offsetHeight / 2);
+    };
+    mirror.addEventListener('pointerdown', e => {
+      dragging = true; moved = 0;
+      const r = mirror.getBoundingClientRect();
+      ox = e.clientX - r.left; oy = e.clientY - r.top;
+      try { mirror.setPointerCapture(e.pointerId); } catch (_) {}
+      mirror.style.transition = 'none';
+      e.preventDefault();
+    });
+    mirror.addEventListener('pointermove', e => {
+      if (!dragging || !card._place || card.classList.contains('solved')) return;
+      const r = card.getBoundingClientRect();
+      moved += 1 + Math.abs(e.clientX - (r.left + ox + parseFloat(mirror.style.left || 0)));
+      card._place(e.clientX - r.left - ox, e.clientY - r.top - oy);
+    });
+    const stop = () => {
+      if (dragging && moved < 8) toCenter();   // 点一下也能照
+      dragging = false; mirror.style.transition = '';
+    };
+    mirror.addEventListener('pointerup', stop);
+    mirror.addEventListener('pointercancel', stop);
+    mirror.addEventListener('click', () => {
+      if (!card.classList.contains('solved')) toCenter();
+    });
+  }
+  // 每次进入本页都校准，保证与尺寸同步
+  if (!card.classList.contains('solved')) card._place(card.clientWidth * 0.04, card.clientHeight * 0.14);
+}
+
+/* ================= 朗读 / 自动讲述 ================= */
+let speakOn = false, autoMode = false, autoTimer = null, utter = null;
+const synth = window.speechSynthesis || null;
+
+function spreadSpeech(){
+  if (window.innerWidth <= 900 && mtrack && mtrack.children[mIndex]){
+    const pg = mtrack.children[mIndex];
+    const body = pg.querySelector('.story-body') || pg.querySelector('.page');
+    const t = body ? [...body.querySelectorAll('p, .say')].map(n => {
+      const who = n.querySelector('.who');
+      const txt = n.querySelector('.txt') ? n.querySelector('.txt').textContent : n.textContent;
+      return (who ? who.textContent + '：' : '') + txt.replace(/\s+/g, ' ').trim();
+    }).join(' ') : '';
+    if (t) return t;
+  }
+  const {left, right} = currentSpreadEls();
+  const pick = el => {
+    if (!el) return '';
+    const body = el.querySelector('.story-body') || el.querySelector('.page');
+    if (!body) return '';
+    return [...body.querySelectorAll('p, .say')].map(n => {
+      const who = n.querySelector('.who');
+      const txt = n.querySelector('.txt') ? n.querySelector('.txt').textContent : n.textContent;
+      return (who ? who.textContent + '：' : '') + txt.replace(/\s+/g,' ').trim();
+    }).join(' ');
+  };
+  let t = pick(right) || pick(left);
+  if (!t && cur === 0) t = '图书馆大冒险。故事与绘图，何筱语，秦蓁瑧，三年级三班。';
+  return t;
+}
+
+function stopSpeak(){
+  if (synth) synth.cancel();
+  utter = null;
+  clearTimeout(autoTimer);
+}
+
+function speakCurrent(){
+  if (!synth) return;
+  stopSpeak();
+  const text = spreadSpeech();
+  if (!text) return;
+  utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'zh-CN'; utter.rate = 0.96; utter.pitch = 1.03;
+  const zh = (synth.getVoices() || []).find(v => /zh[-_]?CN|Chinese|普通话|Tingting|婷婷|Meijia/i.test(v.lang + v.name));
+  if (zh) utter.voice = zh;
+  utter.onend = () => {
+    if (!autoMode) return;
+    autoTimer = setTimeout(() => {
+      if (cur >= SHEETS) { autoMode = false; document.getElementById('btnAuto').classList.remove('on'); return; }
+      flipNext();
+    }, 1100);
+  };
+  synth.speak(utter);
+}
+
+const btnSpeak = document.getElementById('btnSpeak');
+const btnAuto = document.getElementById('btnAuto');
+btnSpeak.onclick = () => {
+  speakOn = !speakOn;
+  btnSpeak.classList.toggle('on', speakOn);
+  btnSpeak.firstChild.textContent = speakOn ? '🔊' : '🔈';
+  if (speakOn) speakCurrent(); else { stopSpeak(); if (autoMode){ autoMode = false; btnAuto.classList.remove('on'); } }
+};
+btnAuto.onclick = () => {
+  autoMode = !autoMode;
+  btnAuto.classList.toggle('on', autoMode);
+  if (autoMode){
+    if (!speakOn){ speakOn = true; btnSpeak.classList.add('on'); btnSpeak.firstChild.textContent = '🔊'; }
+    speakCurrent();
+  } else { stopSpeak(); }
+};
+
+/* ================= 交互 ================= */
+function next(){ if (cur >= SHEETS) return; autoMode && stopSpeak(); flipNext(); }
+function prev(){ if (cur <= 0) return; autoMode && stopSpeak(); flipPrev(); }
+
+document.getElementById('btnNext').onclick = next;
+document.getElementById('btnPrev').onclick = prev;
+navNext.onclick = next;
+navPrev.onclick = prev;
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' '){ e.preventDefault(); next(); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prev(); }
+  else if (e.key === 'Home'){ goToSpread(0, true); }
+  else if (e.key === 'End'){ goToSpread(SHEETS, true); }
+  else if (e.key === 't' || e.key === 'T'){ toggleToc(); }
+});
+
+/* 点击左右半页翻页 */
+book.addEventListener('click', e => {
+  if (e.target.closest('.mapcard')) return;
+  if (e.target.closest('.art-frame')) return;
+  const r = book.getBoundingClientRect();
+  const x = e.clientX - r.left;
+  if (x < r.width * 0.5) prev(); else next();
+});
+
+/* 触摸滑动（桌面） */
+let tx = 0, ty = 0;
+book.addEventListener('touchstart', e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, {passive:true});
+book.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  const dy = e.changedTouches[0].clientY - ty;
+  if (Math.abs(dx) > 46 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : prev(); }
+}, {passive:true});
+
+/* ================= 目录 ================= */
+const TOC_ITEMS = [];
+TOC_ITEMS.push({sp:1, no:'序', title:'书名页 · 卷首小寄语'});
+TOC_ITEMS.push({sp:2, no:'一', title:'第一章 · 认识一下寻宝小队吧'});
+CHARS.forEach((c,i) => TOC_ITEMS.push({sp:3+i, no:'　', title:'　'+c.name}));
+TOC_ITEMS.push({sp:7, no:'二', title:'第二章 · 寻宝小队出发！'});
+STORY.forEach(p => TOC_ITEMS.push({sp:7+p.n, no:String(p.n), title:'第 '+p.n+' 页 · '+(p.cap||'')}));
+
+const toc = document.getElementById('toc');
+const tocList = document.getElementById('tocList');
+tocList.innerHTML = TOC_ITEMS.map(it =>
+  `<li><button data-sp="${it.sp}"><span class="no">${it.no}</span>${esc(it.title)}</button></li>`).join('');
+tocList.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  toggleToc(false);
+  const sp = +b.dataset.sp;
+  if (window.innerWidth <= 900){
+    mobile.scrollTo({ left: (2 * sp - 1) * mobile.clientWidth, behavior: 'smooth' });
+  } else {
+    goToSpread(sp, true);
+  }
+});
+function toggleToc(force){
+  const open = force === undefined ? !toc.classList.contains('open') : force;
+  toc.classList.toggle('open', open);
+}
+document.getElementById('btnToc').onclick = () => toggleToc();
+document.getElementById('tocClose').onclick = () => toggleToc(false);
+toc.addEventListener('click', e => { if (e.target === toc) toggleToc(false); });
+
+/* ================= 移动端 ================= */
+const mobile = document.getElementById('mobile');
+const mtrack = document.getElementById('mtrack');
+const mobileFaces = [];
+mobileFaces.push(faces[0]);
+SPREADS.forEach(s => { mobileFaces.push({html:s[0]}); mobileFaces.push({html:s[1]}); });
+mobileFaces.push(faces[faces.length-1]);
+mtrack.innerHTML = mobileFaces.map(f => `<div class="m-page">${f.html}</div>`).join('');
+
+let mIndex = 0;
+function syncMobile(){
+  if (window.innerWidth > 900) return;
+  const target = cur;
+  const w = mobile.clientWidth;
+  if (Math.abs(mobile.scrollLeft - target*w) > 4) mobile.scrollTo({left: target*w, behavior: animating ? 'smooth' : 'auto'});
+}
+mobile.addEventListener('scroll', () => {
+  if (window.innerWidth > 900) return;
+  const w = mobile.clientWidth || 1;
+  const i = Math.round(mobile.scrollLeft / w);
+  if (i !== mIndex){
+    mIndex = i; cur = i; updateChrome();
+    // 移动端：按可见页处理金光与镜子（不依赖桌面页码）
+    mtrack.querySelectorAll('.spread-active').forEach(e => e.classList.remove('spread-active'));
+    const pg = mtrack.children[i];
+    if (pg){
+      const g = pg.querySelector('.page[data-glow="1"]');
+      if (g) g.classList.add('spread-active');
+      const card = pg.querySelector('.mapcard');
+      if (card) setTimeout(() => initMirror(card), 60);
+    }
+  }
+}, {passive:true});
+document.getElementById('btnNext').onclick = () => { if (window.innerWidth > 900) next(); else mobile.scrollBy({left: mobile.clientWidth, behavior:'smooth'}); };
+document.getElementById('btnPrev').onclick = () => { if (window.innerWidth > 900) prev(); else mobile.scrollBy({left: -mobile.clientWidth, behavior:'smooth'}); };
+
+/* 首次交互解锁音频 */
+['pointerdown','keydown'].forEach(ev => document.addEventListener(ev, () => actx(), {once:true}));
+
+/* ================= 启动 ================= */
+layout();
+onSpreadChange();
+setTimeout(() => { initMirror(); fitAll(); }, 300);
+</script>
+</body>
+</html>
